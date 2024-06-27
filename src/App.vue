@@ -1,23 +1,11 @@
-<template>
-  <NavigationBar />
-</template>
-
-<script lang="ts">
-import { defineComponent } from "vue";
-import NavigationBar from "./components/NavigationBar.vue";
-
-export default defineComponent({
-  name: "App",
-  components: {
-    NavigationBar,
-  },
-});
+<script lang="ts" setup>
+import HeaderBar from "./components/HeaderBar.vue";
 </script>
+
+<template>
+  <HeaderBar />
+</template>
 
 <style>
 @import url("./App.css");
-
-#app {
-  text-align: center;
-}
 </style>
