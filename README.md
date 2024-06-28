@@ -1,24 +1,15 @@
 # programmer-type
 
-## Project setup
-```
-pnpm install
+To install dependencies:
+
+```bash
+bun install
 ```
 
-### Compiles and hot-reloads for development
-```
-pnpm run serve
+To run:
+
+```bash
+bun run index.html
 ```
 
-### Compiles and minifies for production
-```
-pnpm run build
-```
-
-### Lints and fixes files
-```
-pnpm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+This project was created using `bun init` in bun v1.1.17. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
