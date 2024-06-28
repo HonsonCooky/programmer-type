@@ -1,4 +1,5 @@
 {
   "plugins": ["prettier-plugin-css-order", "prettier-plugin-organize-attributes"],
-  "printWidth": 120
+  "printWidth": 120,
+  "proseWrap": "always"
 }
