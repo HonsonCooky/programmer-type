@@ -92,11 +92,12 @@ button {
   position: relative;
 }
 
-#language-select {
+.dropdown>button {
   display: flex;
   column-gap: var(--s-s);
   flex-direction: row;
-  align-items: end;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropdown-content {
@@ -105,10 +106,15 @@ button {
   z-index: 1;
   background-color: var(--surface);
   width: 100%;
+
+  &>*:hover {
+    background-color: var(--rose);
+    color: var(--base);
+  }
 }
 
-.dropdown.selected #language-select,
-.dropdown.selected #language-select > * {
+.dropdown.selected>button,
+.dropdown.selected>button>* {
   background-color: var(--gold);
   color: var(--base);
 }
@@ -147,9 +153,5 @@ header {
     align-items: center;
     background-color: var(--surface);
     padding: var(--s-3xs) var(--s-m);
-
-    &:focus-within {
-      border: var(--border) solid var(--rose);
-    }
   }
 }

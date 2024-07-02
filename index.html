@@ -1,37 +1,41 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link href="./style.css" rel="stylesheet" />
+    <script src="script.js" defer type="module"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title></title>
-  <link href="./style.css" rel="stylesheet" />
-  <script src="script.js" defer type="module"></script>
-</head>
-
-<body>
-  <header>
-    <hgroup>
-      <h2>&lt;Programmer See/&gt;</h2>
-      <h1>&lt;Programmer Type/&gt;</h1>
-    </hgroup>
-    <nav id="nav">
-      <label for="nav">[N]av</label>
-      <div class="dropdown">
-        <button id="language-select"><span>Language Select</span><i class="nf nf-fa-chevron_down"></i></button>
-        <div class="dropdown-content">
-          <button>TypeScript</button>
-          <button>C#</button>
-          <button>PowerShell</button>
-          <button>Windows OS Nav</button>
+  <body>
+    <header>
+      <hgroup>
+        <h2>&lt;Programmer See/&gt;</h2>
+        <h1>&lt;Programmer Type/&gt;</h1>
+      </hgroup>
+      <nav id="nav">
+        <div class="dropdown">
+          <button>[T]heme <i class="nf nf-fa-chevron_down"></i></button>
+          <div class="dropdown-content">
+            <button>Light</button>
+            <button>Dark</button>
+          </div>
         </div>
-      </div>
-    </nav>
-  </header>
+        <div class="dropdown">
+          <button id="language-select">[L]anguage Select <i class="nf nf-fa-chevron_down"></i></button>
+          <div class="dropdown-content">
+            <button>TypeScript</button>
+            <button>C#</button>
+            <button>PowerShell</button>
+            <button>Windows OS Nav</button>
+          </div>
+        </div>
+      </nav>
+    </header>
 
-  <main></main>
+    <main></main>
 
-  <footer></footer>
-</body>
-
+    <footer></footer>
+  </body>
 </html>

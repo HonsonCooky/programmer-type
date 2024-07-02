@@ -1,46 +1,25 @@
-const themeAttr = "theme";
-const isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-const theme = isDark ? "dark" : "light";
-document.documentElement.setAttribute(themeAttr, theme);
+class ThemeManager {
+  themeAttrTag = "theme";
+  isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-const nav = document.getElementById("nav");
-const languageSelectBtn = document.getElementById("language-select");
+  constructor() {
+    this.setTheme();
+  }
 
-function languageSelectActions(event) {
-	const dropdown = languageSelectBtn.parentElement;
+  getThemeValue() {
+    return this.isDark ? "dark" : "light";
+  }
+
+  setTheme() {
+    document.documentElement.setAttribute(this.themeAttrTag, this.getThemeValue());
+  }
+
+  toggleTheme() {
+    this.isDark != this.isDark;
+    this.setTheme();
+  }
 }
 
-function focusNavActions(event) {
-	if (document.activeElement != nav) return;
+class NavigationPanel {}
 
-	const key = event.key.toLowerCase();
-
-	// Remove Nav Focus
-	if (key === "n" || key === "escape") {
-		window.removeEventListener("keydown", focusNavActions);
-		languageSelectBtn.querySelector("span").innerHTML = "Language Select";
-		nav.blur();
-		return;
-	}
-
-	// Select Language
-	if (key === "l") {
-	}
-}
-
-function focusNav() {
-	nav.tabIndex = -1;
-	nav.focus();
-	languageSelectBtn.querySelector("span").innerHTML = "[L]anguage Select";
-	window.addEventListener("keydown", focusNavActions);
-}
-
-window.addEventListener("keydown", (event) => {
-	const key = event.key.toLowerCase();
-	if (document.activeElement != document.body) return;
-
-	if (key === "n") {
-		event.preventDefault();
-		focusNav();
-	}
-});
+const themeManager = new ThemeManager();
