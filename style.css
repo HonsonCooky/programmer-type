@@ -1,5 +1,4 @@
 @import url("https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@100..700&display=swap");
-@import url("https://www.nerdfonts.com/assets/css/webfont.css");
 
 :root {
   --base: #faf4ed;
@@ -61,7 +60,11 @@
   --highlight-high: #56526e;
 }
 
-html,
+html {
+  margin: 0;
+  background: var(--base);
+}
+
 body {
   margin: 0;
   background: var(--base);
@@ -73,23 +76,25 @@ body {
   border-radius: var(--border);
   background-color: transparent;
   color: var(--text);
+  font-size: var(--fs-0);
   font-family: "M PLUS 1 Code", monospace;
 }
 
 button {
   border: none;
-  background-color: var(--surface);
   padding: var(--s-3xs) var(--s-s);
 }
 
-.nf {
-  margin: 0;
-  padding: 0;
+code {
+  border: calc(var(--border) * 3);
+  background: var(--overlay);
+  padding: var(--border) var(--s-3xs);
 }
 
 .dropdown {
-  display: inline-block;
+  display: flex;
   position: relative;
+  flex-direction: column;
 }
 
 .dropdown>button {
@@ -103,25 +108,28 @@ button {
 .dropdown-content {
   display: none;
   position: absolute;
+  top: 100%;
+  flex-direction: column;
   z-index: 1;
   background-color: var(--surface);
-  width: 100%;
+  min-width: 100%;
 
-  &>*:hover {
-    background-color: var(--rose);
-    color: var(--base);
+  >button {
+    &:hover {
+      background-color: var(--highlight-high);
+    }
   }
 }
 
-.dropdown.selected>button,
-.dropdown.selected>button>* {
-  background-color: var(--gold);
-  color: var(--base);
-}
+.dropdown:hover,
+.dropdown:focus {
+  >button {
+    background-color: var(--highlight-high);
+  }
 
-.dropdown.selected .dropdown-content {
-  display: flex;
-  flex-direction: column;
+  .dropdown-content {
+    display: flex;
+  }
 }
 
 header {
@@ -137,6 +145,12 @@ header {
       margin: 0;
       font-weight: bold;
       font-size: var(--fs-5);
+
+      #title {
+        color: var(--gold);
+        font-weight: inherit;
+        font-size: inherit;
+      }
     }
 
     h2 {
@@ -150,8 +164,70 @@ header {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
-    background-color: var(--surface);
-    padding: var(--s-3xs) var(--s-m);
+
+    >* {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: var(--s-3xs) var(--s-m);
+    }
+
+    #style-settings {
+      justify-content: end;
+    }
+
+    .dropdown {
+      span {
+        width: 100%;
+        color: var(--subtle);
+        text-align: center;
+      }
+    }
+
+    .dropdown-content {
+      top: calc(100% - var(--fs-0));
+    }
   }
+}
+
+main {
+  padding: var(--s-m);
+
+  @media screen and (min-width: 1440px) {
+    padding: var(--s-m) calc((100dvw - 1440px) / 2);
+  }
+
+  #introduction {
+    display: flex;
+    flex-direction: column;
+
+    p {
+      margin: 0;
+      text-align: justify;
+    }
+
+    button {
+      width: 100%;
+      text-decoration: underline;
+    }
+
+    #keyboard-navigation-help {
+      padding: var(--s-3xs) var(--s-m);
+
+      p {
+        text-align: justify;
+      }
+    }
+  }
+}
+
+footer {
+  display: flex;
+  position: fixed;
+  bottom: 0%;
+  flex-direction: row;
+  justify-content: end;
+  background-color: var(--surface);
+  padding: var(--s-3xs) var(--s-m);
+  width: 100%;
 }
