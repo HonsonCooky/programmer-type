@@ -1,84 +1,95 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title></title>
-    <link href="./style.css" rel="stylesheet" />
-    <script src="script.js" defer type="module"></script>
-  </head>
 
-  <body>
-    <header>
-      <hgroup>
-        <h2>Programmer See?</h2>
-        <h1>No; <span id="title">Programmer Type!</span></h1>
-      </hgroup>
-      <nav id="nav">
-        <div id="typing-settings">
-          <div class="dropdown" id="duration-select">
-            <button>[D]uration &#9013;</button>
-            <div class="dropdown-content">
-              <button id="duration-15">15s</button>
-              <button id="duration-30">30s</button>
-              <button id="duration-60">60s</button>
-              <button id="duration-90">90s</button>
-              <button id="duration-120">120s</button>
-            </div>
-            <span id="duration-selected">60s</span>
-          </div>
-        </div>
-        <div id="style-settings">
-          <div class="dropdown" id="language-select">
-            <button>[L]anguage &#9013;</button>
-            <div class="dropdown-content">
-              <button>TypeScript</button>
-              <button>C#</button>
-              <button>PowerShell</button>
-              <button>Windows OS</button>
-            </div>
-            <span id="language-selected">TypeScript</span>
-          </div>
-          <div class="dropdown" id="theme-select">
-            <button>[T]heme &#9013;</button>
-            <div class="dropdown-content">
-              <button id="system-theme">[S]ystem</button>
-              <button id="light-theme">[L]ight</button>
-              <button id="dark-theme">[D]ark</button>
-            </div>
-            <span id="theme-selected">System</span>
-          </div>
-        </div>
-      </nav>
-    </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title></title>
+  <link href="./style.css" rel="stylesheet" />
+  <script src="script.js" defer type="module"></script>
+</head>
 
-    <main>
-      <div id="introduction">
-        <p>
-          Welcome to programmer-type; A typing test designed by developer for developer.<br /><br />
-          <b>[JIRA-69420]</b><br />
-          As a developer I would like to... test out my sick new keyboard layout on my Advantage 360 with some real
-          world programming tests. I can QWERTY on the MonkeyType, but can I hit Neovim with an anonymous function
-          declaration without breaking a pinky? Here's a quick way to find out.<br /><br />
-        </p>
-        <div class="dropdown" id="keyboard-navigation">
-          <button>&#8505; [K]eyboard Navigation</button>
-          <div class="dropdown-content" id="keyboard-navigation-help">
+<body>
+  <header>
+    <hgroup>
+      <h2>Programmer See?</h2>
+      <h1>No; <span id="title">Programmer Type!</span></h1>
+    </hgroup>
+    <nav id="nav">
+      <div id="typing-settings">
+        <div class="dropdown" id="duration-select">
+          <button>[D] Duration &#9013;</button>
+          <div class="dropdown-content">
+            <button id="duration-15">[0] 15s</button>
+            <button id="duration-30">[1] 30s</button>
+            <button id="duration-60">[2] 60s</button>
+            <button id="duration-90">[3] 90s</button>
+            <button id="duration-120">[4] 120s</button>
+            <button id="duration-120">[5] Infinite</button>
+          </div>
+          <span id="duration-selected">60s</span>
+        </div>
+      </div>
+      <div id="style-settings">
+        <div class="dropdown" id="language-select">
+          <button>[L] Language &#9013;</button>
+          <div class="dropdown-content">
+            <button>[0] C#</button>
+            <button>[1] PowerShell</button>
+            <button>[2] TypeScript</button>
+            <button>[3] Windows OS</button>
+          </div>
+          <span id="language-selected">TypeScript</span>
+        </div>
+        <div class="dropdown" id="theme-select">
+          <button>[T] Theme &#9013;</button>
+          <div class="dropdown-content">
+            <button id="system-theme">[S] System</button>
+            <button id="light-theme">[L] Light</button>
+            <button id="dark-theme">[D] Dark</button>
+          </div>
+          <span id="theme-selected">System</span>
+        </div>
+        <div class="dropdown" id="help">
+          <button>&#8505; [H] Help</button>
+          <div class="dropdown-content">
+            <h3>Keyboard Inputs</h3>
             <p>
               This web app has been designed with context-driven keyboard navigation in mind. Turn off your Vimium and
-              follow the bindings wrapped with braces <code>[X]</code>. Context-Driven meaning that if some sub-menu is
-              open, only those keys will be valid next inputs. You can view the current key combination in the bottom
-              right; Where *base* indicates that you have no context.<br />
+              follow the bindings wrapped with braces <code>[X]</code>. Context-driven meaning that if some sub-menu
+              is open, only keys from this menu will be valid next inputs; Anything else will reset the context. You
+              can view the current key combination in the bottom right; Where *base* indicates that you have no
+              context.<br />
               - Press <code>Esc</code> to reset the context.<br />
-              - Press <code>Esc</code> three times to exit the text editor.
+              - Press <code>:q</code> to exit the text editor.
             </p>
           </div>
         </div>
       </div>
-    </main>
+    </nav>
+  </header>
 
-    <footer>
-      <div id="key-context">*base*</div>
-    </footer>
-  </body>
+  <main>
+    <div id="introduction">
+      <p>
+        Welcome to programmer-type; A typing test designed by developer for developer.<br /><br />
+        <b>[JIRA-69420]</b><br />
+        As a developer I would like to... test out my sick new keyboard layout on my Advantage 360 with some real
+        world programming tests. I can QWERTY on the MonkeyType, but can I hit Neovim with an anonymous function
+        declaration without breaking a pinky? Here's a quick way to find out.<br /><br />
+      </p>
+    </div>
+    <div id="text-editor">
+      <div id="pause">
+        <button>Hold Up</button>
+      </div>
+      <div id="play">Lets Go!</div>
+    </div>
+  </main>
+
+  <footer>
+    <div id="key-context">*base*</div>
+  </footer>
+</body>
+
 </html>

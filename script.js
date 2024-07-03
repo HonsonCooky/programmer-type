@@ -38,6 +38,9 @@ class NavigationMangager {
     d: {
       element: document.getElementById("duration-select"),
     },
+    h: {
+      element: document.getElementById("help"),
+    },
     l: {
       element: document.getElementById("language-select"),
     },

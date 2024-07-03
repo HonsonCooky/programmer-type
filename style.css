@@ -63,11 +63,19 @@
 html {
   margin: 0;
   background: var(--base);
+
+  @media screen and (min-width: 1440px) {
+    padding: 0 calc((100dvw - 1440px) / 2);
+  }
 }
 
 body {
+  display: flex;
+  flex-direction: column;
   margin: 0;
   background: var(--base);
+  height: 100dvh;
+  max-height: 100dvh;
 }
 
 * {
@@ -115,6 +123,8 @@ code {
   min-width: 100%;
 
   >button {
+    text-align: left;
+
     &:hover {
       background-color: var(--highlight-high);
     }
@@ -174,6 +184,7 @@ header {
 
     #style-settings {
       justify-content: end;
+      align-items: start;
     }
 
     .dropdown {
@@ -187,15 +198,31 @@ header {
     .dropdown-content {
       top: calc(100% - var(--fs-0));
     }
+
+    #help {
+      .dropdown-content {
+        position: absolute;
+        top: 150%;
+        right: 0;
+        box-shadow: 0 0 var(--s-m) var(--subtle);
+        border: var(--border) solid var(--gold);
+        padding: var(--s-3xs) var(--s-m);
+        width: calc(100vw - (var(--s-m) * 2));
+
+        h3 {
+          margin: 0;
+          font-size: var(--fs-1);
+        }
+      }
+    }
   }
 }
 
 main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   padding: var(--s-m);
-
-  @media screen and (min-width: 1440px) {
-    padding: var(--s-m) calc((100dvw - 1440px) / 2);
-  }
 
   #introduction {
     display: flex;
@@ -205,17 +232,30 @@ main {
       margin: 0;
       text-align: justify;
     }
+  }
 
-    button {
-      width: 100%;
-      text-decoration: underline;
+  #text-editor {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    #pause {
+      display: none;
     }
 
-    #keyboard-navigation-help {
-      padding: var(--s-3xs) var(--s-m);
+    #play {
+      display: block;
+    }
 
-      p {
-        text-align: justify;
+    &:focus-within {
+      #pause {
+        display: block;
+      }
+
+      #play {
+        display: none;
       }
     }
   }
@@ -223,11 +263,8 @@ main {
 
 footer {
   display: flex;
-  position: fixed;
-  bottom: 0%;
   flex-direction: row;
   justify-content: end;
-  background-color: var(--surface);
   padding: var(--s-3xs) var(--s-m);
   width: 100%;
 }
