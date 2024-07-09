@@ -1,12 +1,13 @@
 # programmer-type
 
-As a developer, I’ve been on a quest to find a keyboard that offers the least resistance to programming. This journey
+As a developer, I’ve been on a quest to find a keyboard that offers me the least resistance to programming. This journey
 has taken me through various keyboard form factors and layouts, as well as different tools, all in pursuit of a seamless
 keyboard-only setup. Despite my progress, one persistent challenge has been the testing and compatibility of new
 layouts.
 
-While there are numerous typing tests available online, including some tailored for programming, I haven't found any
-that match the finesse of `Monkeytype.com`.
+While there are numerous typing tests available online, I haven't found any that match the finesse of `Monkeytype.com`
+that are tailored for programming. Programming often uses special characters, numbers, etc, and most common layouts do
+not put these keys in easy reach.
 
 `programmer-type` is designed to be a similar typing test to `Monkeytype`, but with a focus on programming and
 keyboard-based navigation. Instead of words and paragraphs, users will encounter random code snippets, navigation
