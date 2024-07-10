@@ -26,6 +26,9 @@ export class ContextManager {
     window.addEventListener("keydown", this.keydown);
   }
 
+  /**
+   * @param {KeyboardEvent} ev 
+  */
   keydown(ev) {
     this.currentContext.keydown(ev);
   }

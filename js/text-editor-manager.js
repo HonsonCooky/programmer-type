@@ -6,6 +6,13 @@ export class TextEditorManager {
 		});
 	}
 
-	keydown(ev) { }
+	/**
+	* @param {KeyboardEvent} ev
+	*/
+	keydown(ev) {
+		let key = ev.key;
+
+	}
+
 	lostFocus() { }
 }
