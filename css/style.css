@@ -1,270 +1,270 @@
 @import url("https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@100..700&display=swap");
 
 :root {
-	--base: #faf4ed;
-	--surface: #fffaf3;
-	--overlay: #f2e9e1;
-	--muted: #9893a5;
-	--subtle: #797593;
-	--text: #575279;
-	--love: #b4637a;
-	--gold: #ea9d34;
-	--rose: #d7827e;
-	--pine: #286983;
-	--foam: #56949f;
-	--iris: #907aa9;
-	--highlight-low: #f4ede8;
-	--highlight-med: #dfdad9;
-	--highlight-high: #cecacd;
+  --base: #faf4ed;
+  --surface: #fffaf3;
+  --overlay: #f2e9e1;
+  --muted: #9893a5;
+  --subtle: #797593;
+  --text: #575279;
+  --love: #b4637a;
+  --gold: #ea9d34;
+  --rose: #d7827e;
+  --pine: #286983;
+  --foam: #56949f;
+  --iris: #907aa9;
+  --highlight-low: #f4ede8;
+  --highlight-med: #dfdad9;
+  --highlight-high: #cecacd;
 
-	--fs--2: clamp(0.5208rem, 0.4573rem + 0.339vi, 0.72rem);
-	--fs--1: clamp(0.625rem, 0.5372rem + 0.4681vi, 0.9rem);
-	--fs-0: clamp(0.75rem, 0.6303rem + 0.6383vi, 1.125rem);
-	--fs-1: clamp(0.9rem, 0.7384rem + 0.8617vi, 1.4063rem);
-	--fs-2: clamp(1.08rem, 0.8637rem + 1.1537vi, 1.7578rem);
-	--fs-3: clamp(1.296rem, 1.0084rem + 1.5341vi, 2.1973rem);
-	--fs-4: clamp(1.5552rem, 1.175rem + 2.0279vi, 2.7466rem);
-	--fs-5: clamp(1.8662rem, 1.3661rem + 2.6672vi, 3.4332rem);
+  --fs--2: clamp(0.5208rem, 0.4573rem + 0.339vi, 0.72rem);
+  --fs--1: clamp(0.625rem, 0.5372rem + 0.4681vi, 0.9rem);
+  --fs-0: clamp(0.75rem, 0.6303rem + 0.6383vi, 1.125rem);
+  --fs-1: clamp(0.9rem, 0.7384rem + 0.8617vi, 1.4063rem);
+  --fs-2: clamp(1.08rem, 0.8637rem + 1.1537vi, 1.7578rem);
+  --fs-3: clamp(1.296rem, 1.0084rem + 1.5341vi, 2.1973rem);
+  --fs-4: clamp(1.5552rem, 1.175rem + 2.0279vi, 2.7466rem);
+  --fs-5: clamp(1.8662rem, 1.3661rem + 2.6672vi, 3.4332rem);
 
-	--s-3xs: clamp(0.1875rem, 0.1476rem + 0.2128vi, 0.3125rem);
-	--s-2xs: clamp(0.375rem, 0.2952rem + 0.4255vi, 0.625rem);
-	--s-xs: clamp(0.5625rem, 0.4428rem + 0.6383vi, 0.9375rem);
-	--s-s: clamp(0.75rem, 0.5904rem + 0.8511vi, 1.25rem);
-	--s-m: clamp(1.125rem, 0.8856rem + 1.2766vi, 1.875rem);
-	--s-l: clamp(1.5rem, 1.1809rem + 1.7021vi, 2.5rem);
-	--s-xl: clamp(2.25rem, 1.7713rem + 2.5532vi, 3.75rem);
-	--s-2xl: clamp(3rem, 2.3617rem + 3.4043vi, 5rem);
-	--s-3xl: clamp(4.5rem, 3.5426rem + 5.1064vi, 7.5rem);
+  --s-3xs: clamp(0.1875rem, 0.1476rem + 0.2128vi, 0.3125rem);
+  --s-2xs: clamp(0.375rem, 0.2952rem + 0.4255vi, 0.625rem);
+  --s-xs: clamp(0.5625rem, 0.4428rem + 0.6383vi, 0.9375rem);
+  --s-s: clamp(0.75rem, 0.5904rem + 0.8511vi, 1.25rem);
+  --s-m: clamp(1.125rem, 0.8856rem + 1.2766vi, 1.875rem);
+  --s-l: clamp(1.5rem, 1.1809rem + 1.7021vi, 2.5rem);
+  --s-xl: clamp(2.25rem, 1.7713rem + 2.5532vi, 3.75rem);
+  --s-2xl: clamp(3rem, 2.3617rem + 3.4043vi, 5rem);
+  --s-3xl: clamp(4.5rem, 3.5426rem + 5.1064vi, 7.5rem);
 
-	--border: clamp(0.0625rem, 0.0426rem + 0.1064vi, 0.125rem);
+  --border: clamp(0.0625rem, 0.0426rem + 0.1064vi, 0.125rem);
 
-	--scroll-top: 0;
-	--scroll-bottom: 0;
+  --scroll-top: 0;
+  --scroll-bottom: 0;
 }
 
 [theme="dark"] {
-	--base: #232136;
-	--surface: #2a273f;
-	--overlay: #393552;
-	--muted: #6e6a86;
-	--subtle: #908caa;
-	--text: #e0def4;
-	--love: #eb6f92;
-	--gold: #f6c177;
-	--rose: #ea9a97;
-	--pine: #3e8fb0;
-	--foam: #9ccfd8;
-	--iris: #c4a7e7;
-	--highlight-low: #2a283e;
-	--highlight-med: #44415a;
-	--highlight-high: #56526e;
+  --base: #232136;
+  --surface: #2a273f;
+  --overlay: #393552;
+  --muted: #6e6a86;
+  --subtle: #908caa;
+  --text: #e0def4;
+  --love: #eb6f92;
+  --gold: #f6c177;
+  --rose: #ea9a97;
+  --pine: #3e8fb0;
+  --foam: #9ccfd8;
+  --iris: #c4a7e7;
+  --highlight-low: #2a283e;
+  --highlight-med: #44415a;
+  --highlight-high: #56526e;
 }
 
 html {
-	margin: 0;
-	background: var(--base);
+  margin: 0;
+  background: var(--base);
 }
 
 body {
-	display: flex;
-	position: relative;
-	flex-direction: column;
-	margin: 0;
-	background: var(--base);
-	height: 100dvh;
-	max-height: 100dvh;
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  margin: 0;
+  background: var(--base);
+  height: 100dvh;
+  max-height: 100dvh;
 }
 
 * {
-	box-sizing: border-box;
-	outline: none;
-	border-radius: var(--border);
-	background-color: transparent;
-	color: var(--text);
-	font-size: var(--fs-0);
-	font-family: "M PLUS 1 Code", monospace;
+  box-sizing: border-box;
+  outline: none;
+  border-radius: var(--border);
+  background-color: transparent;
+  color: var(--text);
+  font-size: var(--fs-0);
+  font-family: "M PLUS 1 Code", monospace;
 }
 
 button {
-	border: none;
-	padding: var(--s-3xs) var(--s-s);
+  border: none;
+  padding: var(--s-3xs) var(--s-s);
 
-	&:hover {
-		background-color: var(--highlight-high) !important;
-	}
+  &:hover {
+    background-color: var(--highlight-high) !important;
+  }
 }
 
 code {
-	border: calc(var(--border) * 3);
-	background: var(--overlay);
-	padding: var(--border) var(--s-3xs);
+  border: calc(var(--border) * 3);
+  background: var(--overlay);
+  padding: var(--border) var(--s-3xs);
 }
 
 .dropdown {
-	display: flex;
-	position: relative;
-	flex-direction: column;
+  display: flex;
+  position: relative;
+  flex-direction: column;
 }
 
-.dropdown>button {
-	display: flex;
-	column-gap: var(--s-s);
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
+.dropdown > button {
+  display: flex;
+  column-gap: var(--s-s);
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 }
 
 .dropdown-content {
-	display: none;
-	position: absolute;
-	top: 100%;
-	flex-direction: column;
-	z-index: 1;
-	border: var(--border) solid var(--highlight-high);
-	border-top: none;
-	background-color: var(--surface);
-	min-width: 100%;
+  display: none;
+  position: absolute;
+  top: 100%;
+  flex-direction: column;
+  z-index: 1;
+  border: var(--border) solid var(--highlight-high);
+  border-top: none;
+  background-color: var(--surface);
+  min-width: 100%;
 
-	>button {
-		text-align: left;
-	}
+  > button {
+    text-align: left;
+  }
 }
 
 .dropdown:hover,
 .dropdown:focus {
-	.dropdown-content {
-		display: flex;
-	}
+  .dropdown-content {
+    display: flex;
+  }
 }
 
 header {
-	background: var(--surface);
+  background: var(--surface);
 
-	@media screen and (min-width: 1440px) {
-		padding: 0 calc((100dvw - 1440px) / 2);
-	}
+  @media screen and (min-width: 1440px) {
+    padding: 0 calc((100dvw - 1440px) / 2);
+  }
 
-	hgroup {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		padding: var(--s-3xs) 0;
+  hgroup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: var(--s-3xs) 0;
 
-		h1 {
-			margin: 0;
-			color: var(--gold);
-			font-weight: bold;
-			font-size: var(--fs-5);
-		}
+    h1 {
+      margin: 0;
+      color: var(--gold);
+      font-weight: bold;
+      font-size: var(--fs-5);
+    }
 
-		h2 {
-			margin: 0;
-			color: var(--rose);
-			font-weight: normal;
-			font-size: var(--fs-2);
-		}
-	}
+    h2 {
+      margin: 0;
+      color: var(--rose);
+      font-weight: normal;
+      font-size: var(--fs-2);
+    }
+  }
 
-	nav {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
+  nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 
-		>* {
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			padding: var(--s-3xs) var(--s-m);
-		}
+    > * {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: var(--s-3xs) var(--s-m);
+    }
 
-		#style-settings {
-			justify-content: end;
-			align-items: start;
-		}
+    #style-settings {
+      justify-content: end;
+      align-items: start;
+    }
 
-		.dropdown {
-			span {
-				width: 100%;
-				color: var(--subtle);
-				text-align: center;
-			}
-		}
+    .dropdown {
+      span {
+        width: 100%;
+        color: var(--subtle);
+        text-align: center;
+      }
+    }
 
-		.dropdown-content {
-			top: calc(100% - var(--fs-0));
-		}
+    .dropdown-content {
+      top: calc(100% - var(--fs-0));
+    }
 
-		#help {
-			.dropdown-content {
-				top: calc(200% + var(--s-m) * 2);
-				right: 0;
-				border: var(--border) solid var(--highlight-high);
-				padding: var(--s-3xs) var(--s-m);
-				width: calc(100vw - (var(--s-m) * 2));
+    #help {
+      .dropdown-content {
+        top: calc(200% + var(--s-m) * 2);
+        right: 0;
+        border: var(--border) solid var(--highlight-high);
+        padding: var(--s-3xs) var(--s-m);
+        width: calc(100vw - (var(--s-m) * 2));
 
-				@media screen and (min-width: 1440px) {
-					width: calc(100vw - (100dvw - 1440px) - (var(--s-m) * 2));
-				}
+        @media screen and (min-width: 1440px) {
+          width: calc(100vw - (100dvw - 1440px) - (var(--s-m) * 2));
+        }
 
-				h3 {
-					font-size: var(--fs-2);
-				}
+        h3 {
+          font-size: var(--fs-2);
+        }
 
-				p {
-					text-align: justify;
-				}
+        p {
+          text-align: justify;
+        }
 
-				h3,
-				p {
-					margin: var(--s-3xs) 0;
-				}
-			}
-		}
-	}
+        h3,
+        p {
+          margin: var(--s-3xs) 0;
+        }
+      }
+    }
+  }
 }
 
 main {
-	display: flex;
-	row-gap: var(--s-m);
-	flex: 1;
-	flex-direction: column;
-	align-items: center;
-	padding: var(--s-m);
+  display: flex;
+  row-gap: var(--s-m);
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--s-m);
 
-	@media screen and (min-width: 1440px) {
-		padding: var(--s-m) calc((100dvw - 1440px) / 2);
-	}
+  @media screen and (min-width: 1440px) {
+    padding: var(--s-m) calc((100dvw - 1440px) / 2);
+  }
 
-	#text-editor {
-		display: flex;
-		flex: 1;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		filter: blur(2px);
-		width: 100%;
+  #text-editor {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    filter: blur(2px);
+    width: 100%;
 
-		&:focus-within {
-			filter: none;
-		}
-	}
+    &:focus-within {
+      filter: none;
+    }
+  }
 
-	#play {
-		background-color: var(--overlay);
-		padding: var(--s-3xs) var(--s-s);
-		text-align: center;
-	}
+  #play {
+    background-color: var(--overlay);
+    padding: var(--s-3xs) var(--s-s);
+    text-align: center;
+  }
 }
 
 footer {
-	display: flex;
-	flex-direction: row;
-	justify-content: end;
-	background-color: var(--surface);
-	padding: var(--s-3xs) var(--s-m);
-	width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: end;
+  background-color: var(--surface);
+  padding: var(--s-3xs) var(--s-m);
+  width: 100%;
 
-	@media screen and (min-width: 1440px) {
-		padding: 0 calc((100dvw - 1440px) / 2);
-	}
+  @media screen and (min-width: 1440px) {
+    padding: 0 calc((100dvw - 1440px) / 2);
+  }
 }

@@ -1,26 +1,37 @@
-import { TestsManager } from "./tests-manager.js"
+import { ProblemSetManager } from "./problem-set-manager.js";
 
 export class NavigationMangager {
-	keymappings = {
-		d: {
-			element: document.getElementById("duration-select")
-		},
-		p: {
-			element: document.getElementById("duration-select")
-		}
-	}
+  /**
+   * @param {Object} param0
+   * @param {ProblemSetManager} param0.problemSetManager
+   */
+  constructor({ problemSetManager }) {
+    this.problemSetManager = problemSetManager;
+  }
 
-	setup() {
-		this.testsManager = new TestsManager();
-		this.testsManager.setup().then(() => {
-			console.log(this.testsManager.testsList);
-		})
-	}
+  keymappings = {
+    d: {
+      element: document.getElementById("duration-select"),
+    },
+    p: {
+      element: document.getElementById("duration-select"),
+    },
+  };
 
-	/**
-	* @param {KeyboardEvent} ev
-	*/
-	keydown(ev) { }
+  _onNewSet() {}
 
-	lostFocus() { }
+  _onNewExample() {}
+
+  setup() {
+    this.problemSetManager.addEventListener("setSelected", this._onNewSet);
+    this.problemSetManager.addEventListener("exampleSelected", this._onNewExample);
+    this.problemSetManager.setup();
+  }
+
+  /**
+   * @param {KeyboardEvent} ev
+   */
+  keydown(ev) {}
+
+  lostFocus() {}
 }

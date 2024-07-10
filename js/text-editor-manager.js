@@ -1,18 +1,31 @@
+import { ProblemSetManager } from "./problem-set-manager.js";
+
 export class TextEditorManager {
-	setup() {
-		document.getElementById("play").addEventListener("click", () => {
-			document.getElementById("text-editor").tabIndex = -1;
-			document.getElementById("text-editor").focus();
-		});
-	}
+  /**
+   * @param {Object} param0
+   * @param {ProblemSetManager} param0.problemSetManager
+   */
+  constructor({ problemSetManager }) {
+    this.problemSetManager = problemSetManager;
+  }
 
-	/**
-	* @param {KeyboardEvent} ev
-	*/
-	keydown(ev) {
-		let key = ev.key;
+  _onNewExample() {}
 
-	}
+  setup() {
+    this.problemSetManager.addEventListener("exampleSelected", this._onNewExample);
 
-	lostFocus() { }
+    document.getElementById("play").addEventListener("click", () => {
+      document.getElementById("text-editor").tabIndex = -1;
+      document.getElementById("text-editor").focus();
+    });
+  }
+
+  /**
+   * @param {KeyboardEvent} ev
+   */
+  keydown(ev) {
+    let key = ev.key;
+  }
+
+  lostFocus() {}
 }
