@@ -9,12 +9,16 @@ export class TextEditorManager {
    */
   constructor({ problemSetManager }) {
     this.problemSetManager = problemSetManager;
+    this.textEditorElement = document.getElementById("text-editor");
   }
 
-  _onExampleSelected() {}
+  async _onExampleSelected() {
+    const blob = await this.problemSetManager.currentExample.text();
+    this.textEditorElement.textContent = blob;
+  }
 
   setup() {
-    this.problemSetManager.addEventListener("exampleSelected", this._onExampleSelected);
+    this.problemSetManager.addEventListener("exampleSelected", this._onExampleSelected.bind(this));
 
     document.getElementById("play").addEventListener("click", () => {
       document.getElementById("text-editor").tabIndex = -1;
@@ -28,6 +32,4 @@ export class TextEditorManager {
   keydown(ev) {
     let key = ev.key;
   }
-
-  lostFocus() {}
 }

@@ -3,7 +3,10 @@ export class ProblemSetManager extends EventTarget {
     this.sets = await this._getFolderContents("/");
     this.dispatchEvent(new Event("setsLoaded"));
 
-    if (this.sets[0]) await this.selectSet(this.sets[0]);
+    if (this.sets[0]) {
+      await this.selectSet(this.sets[0]);
+      await this.selectNextExample();
+    }
   }
 
   /**
@@ -34,18 +37,17 @@ export class ProblemSetManager extends EventTarget {
 
     this.selectedSet = set;
     this.selectedSet.metaData = metaData;
-    this.selectedSet.examples = examples.filter((o) => !o.title.startsWith("_"));
+    this.selectedSet.examples = examples.filter((o) => o.title.startsWith("example"));
 
     this.dispatchEvent(new Event("setSelected"));
   }
 
   async selectNextExample() {
-    const nextIndex = Math.floor(Math.random() * this.selectedExamples.length);
-    const nextExample = this.selectedExamples[nextIndex];
-    console.log(nextExample);
-    this.currentExample = await fetch(`${window.location.origin}/tests/${this.selectedSet}/${nextExample}`).then(
-      (res) => res.blob(),
-    );
+    const nextIndex = Math.floor(Math.random() * this.selectedSet.examples.length);
+    const nextExample = this.selectedSet.examples[nextIndex];
+    this.currentExample = await fetch(
+      `${window.location.origin}/tests/${this.selectedSet.title}/${nextExample.title}`,
+    ).then((res) => res.blob());
     this.dispatchEvent(new Event("exampleSelected"));
   }
 }

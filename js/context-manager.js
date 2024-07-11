@@ -12,7 +12,7 @@ export class ContextManager {
    * @param {NavigationMangager} param0.navigationManager
    * @param {TextEditorManager} param0.textEditor
    */
-  constructor({ navigationManager, textEditor: textEditorManager }) {
+  constructor({ navigationManager, textEditorManager }) {
     this.navigationManager = navigationManager;
     this.textEditorManager = textEditorManager;
   }
@@ -31,7 +31,7 @@ export class ContextManager {
     // Here, we give control of the "keydown" event to the ContextManager, and it decides what context should be
     // triggered with this event. This is apposed to each manager deciding if the event was intended for them or
     // not.
-    window.addEventListener("keydown", this.keydown);
+    window.addEventListener("keydown", this.keydown.bind(this));
   }
 
   /**

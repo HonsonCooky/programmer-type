@@ -17,7 +17,7 @@ navigationManager.setup();
 const textEditorManager = new TextEditorManager({ problemSetManager });
 textEditorManager.setup();
 
-const contextManager = new ContextManager({ navigationManager, textEditor: textEditorManager });
+const contextManager = new ContextManager({ navigationManager, textEditorManager });
 contextManager.setup();
 
 // Load in problem sets - Do last so references and event listeners are ready to go.
