@@ -9,10 +9,10 @@ export class TextEditorManager {
     this.problemSetManager = problemSetManager;
   }
 
-  _onNewExample() {}
+  _onExampleSelected() {}
 
   setup() {
-    this.problemSetManager.addEventListener("exampleSelected", this._onNewExample);
+    this.problemSetManager.addEventListener("exampleSelected", this._onExampleSelected);
 
     document.getElementById("play").addEventListener("click", () => {
       document.getElementById("text-editor").tabIndex = -1;

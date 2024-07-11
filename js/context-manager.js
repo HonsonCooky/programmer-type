@@ -18,8 +18,6 @@ export class ContextManager {
   }
 
   setup() {
-    this.navigationManager.setup();
-    this.textEditorManager.setup();
     this.currentContext = this.navigationManager;
 
     // This is the critical logic for why this class exists
