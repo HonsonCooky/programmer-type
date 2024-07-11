@@ -1,6 +1,8 @@
 import { ProblemSetManager } from "./problem-set-manager.js";
 
 export class TextEditorManager {
+  input = [];
+
   /**
    * @param {Object} param0
    * @param {ProblemSetManager} param0.problemSetManager

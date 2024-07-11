@@ -3,28 +3,39 @@ export class ProblemSetManager extends EventTarget {
     this.sets = await this._getFolderContents("/");
     this.dispatchEvent(new Event("setsLoaded"));
 
-    await this.selectSet(this.sets[0]);
+    if (this.sets[0]) await this.selectSet(this.sets[0]);
   }
 
   /**
    *
    * @param {string} folder
-   * @returns {Promise<string[]>}
+   * @returns {Promise<{title:string, isDirectory: boolean}[]>}
    */
   async _getFolderContents(folder) {
-    const filesHtmlStr = await fetch(`${window.location.origin}/tests${folder}`).then((res) => res.text());
-    const htmlElement = new DOMParser().parseFromString(filesHtmlStr, "text/html");
-    return Array.from(htmlElement.querySelector("#files").children)
-      .map((c) => c.querySelector("a")?.title)
-      .filter((t) => t && !t.includes("..") && !t.includes("_assist"));
+    const fetchFiles = await fetch(`${window.location.origin}/tests${folder}`).then((res) => res.text());
+    return Array.from(fetchFiles.matchAll(/class="([^"]*)" title="([^"]*)"/g))
+      .map(([_, c, t]) => {
+        return { title: t, isDirectory: c.includes("directory") };
+      })
+      .filter((o) => o.title != "..");
   }
 
-  /** @param {string} set  */
+  async _determineSetType() {}
+
+  /** @param {{title: string, isDirectory: boolean}} set  */
   async selectSet(set) {
-    const examples = await this._getFolderContents(`/${set}`);
+    if (!set.isDirectory) return;
+
+    const examples = await this._getFolderContents(`/${set.title}`);
     if (examples.length === 0) return;
+
+    const metaData = await fetch(`${window.location.origin}/tests/${set.title}/_meta.json`).then((res) => res.json());
+    if (!metaData) return;
+
     this.selectedSet = set;
-    this.selectedExamples = examples;
+    this.selectedSet.metaData = metaData;
+    this.selectedSet.examples = examples.filter((o) => !o.title.startsWith("_"));
+
     this.dispatchEvent(new Event("setSelected"));
   }
 

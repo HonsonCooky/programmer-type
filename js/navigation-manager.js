@@ -22,7 +22,7 @@ export class NavigationMangager {
     const problemSetDropdownContent = document.getElementById("problem-set-select").querySelector(".dropdown-content");
     for (const set of this.problemSetManager.sets) {
       const btn = document.createElement("button");
-      btn.innerText = set;
+      btn.innerText = set.title;
       btn.addEventListener("click", () => {
         this.problemSetManager.selectSet(set);
       });
@@ -33,15 +33,17 @@ export class NavigationMangager {
   _onSetSelected() {
     // Update Label
     const problemSetLabel = document.getElementById("problem-set-selected");
-    problemSetLabel.innerText = this.problemSetManager.selectedSet;
+    problemSetLabel.innerText = this.problemSetManager.selectedSet.title;
 
     // Highlight Selected
     Array.from(document.getElementById("problem-set-select").querySelector(".dropdown-content").children).forEach(
       (child) => {
-        if (child.innerText === this.problemSetManager.selectedSet) child.style.color = "var(--rose)";
+        if (child.innerText === this.problemSetManager.selectedSet.title) child.style.color = "var(--rose)";
         else child.style.color = "var(--text)";
       },
     );
+
+    console.log(this.problemSetManager.selectedSet);
   }
 
   setup() {
