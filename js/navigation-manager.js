@@ -1,6 +1,6 @@
 import { ProblemSetManager } from "./problem-set-manager.js";
 
-class NavigationKeyboardManager {
+export class NavigationMangager {
   footerLabel = document.getElementById("key-context");
 
   keyMappings = {
@@ -40,7 +40,7 @@ class NavigationKeyboardManager {
       element: document.getElementById("help"),
     },
     p: {
-      element: document.getElementById("duration-select"),
+      element: document.getElementById("problem-set-select"),
     },
     t: {
       element: document.getElementById("theme-select"),
@@ -60,6 +60,17 @@ class NavigationKeyboardManager {
   };
 
   currentKeyMap = this.keyMappings;
+
+  /**
+   * @param {Object} param0
+   * @param {ProblemSetManager} param0.problemSetManager
+   * @param {TimingManager} param0.timingManger
+   */
+  constructor({ problemSetManager, timingManger }) {
+    this.problemSetManager = problemSetManager;
+    this.timingManger = timingManger;
+    this.currentKeyMap = this.keyMappings;
+  }
 
   _reset() {
     document.activeElement.blur();
@@ -101,57 +112,8 @@ class NavigationKeyboardManager {
       return;
     }
 
+    this.footerLabel.innerText = this.footerLabel.innerText === "*base*" ? key : `${this.footerLabel.innerText}-${key}`;
     this.currentKeyMap = newMap;
     this._evaluate();
-  }
-}
-
-export class NavigationMangager {
-  /**
-   * @param {Object} param0
-   * @param {ProblemSetManager} param0.problemSetManager
-   */
-  constructor({ problemSetManager }) {
-    this.problemSetManager = problemSetManager;
-    this.currentKeyMap = this.keyMappings;
-    this.keyboardManager = new NavigationKeyboardManager();
-  }
-
-  _onSetsLoaded() {
-    const problemSetDropdownContent = document.getElementById("problem-set-select").querySelector(".dropdown-content");
-    for (const set of this.problemSetManager.sets) {
-      const btn = document.createElement("button");
-      btn.innerText = set.title;
-      btn.addEventListener("click", () => {
-        this.problemSetManager.selectSet(set);
-      });
-      problemSetDropdownContent.appendChild(btn);
-    }
-  }
-
-  _onSetSelected() {
-    // Update Label
-    const problemSetLabel = document.getElementById("problem-set-selected");
-    problemSetLabel.innerText = this.problemSetManager.selectedSet.title;
-
-    // Highlight Selected
-    Array.from(document.getElementById("problem-set-select").querySelector(".dropdown-content").children).forEach(
-      (child) => {
-        if (child.innerText === this.problemSetManager.selectedSet.title) child.style.color = "var(--rose)";
-        else child.style.color = "var(--text)";
-      },
-    );
-  }
-
-  setup() {
-    this.problemSetManager.addEventListener("setsLoaded", this._onSetsLoaded.bind(this));
-    this.problemSetManager.addEventListener("setSelected", this._onSetSelected.bind(this));
-  }
-
-  /**
-   * @param {KeyboardEvent} ev
-   */
-  keydown(ev) {
-    this.keyboardManager.keydown(ev);
   }
 }

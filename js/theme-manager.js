@@ -1,28 +1,38 @@
 export class ThemeManager {
   themeAttrTag = "theme";
   isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  selectedTheme = document.getElementById("theme-selected");
+  themeLabel = document.getElementById("theme-selected");
+  themeDropdownContent = document.getElementById("theme-select").querySelector(".dropdown-content");
+
+  _updateUI(theme) {
+    this.themeLabel.innerText = theme;
+    Array.from(this.themeDropdownContent.children).forEach((child) => {
+      if (child.innerText.includes(theme)) child.style.color = "var(--rose)";
+      else child.style.color = "var(--text)";
+    });
+  }
 
   setup() {
     // Set default theme
+    this._updateUI("System");
     this.setTheme();
 
     // Setup theme switching buttons
     document.getElementById("system-theme").addEventListener("click", () => {
       this.isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      this.selectedTheme.innerText = "System";
+      this._updateUI("System");
       this.setTheme();
     });
 
     document.getElementById("light-theme").addEventListener("click", () => {
       this.isDark = false;
-      this.selectedTheme.innerText = "Light";
+      this._updateUI("Light");
       this.setTheme();
     });
 
     document.getElementById("dark-theme").addEventListener("click", () => {
       this.isDark = true;
-      this.selectedTheme.innerText = "Dark";
+      this._updateUI("Dark");
       this.setTheme();
     });
   }
