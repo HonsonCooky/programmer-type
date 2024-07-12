@@ -1,4 +1,5 @@
 export class ProblemSetManager extends EventTarget {
+	problemSetDescription = document.getElementById("description");
 	problemSetLabel = document.getElementById("problem-set-selected");
 	problemSetDropdownContent = document.getElementById("problem-set-select").querySelector(".dropdown-content");
 
@@ -37,6 +38,13 @@ export class ProblemSetManager extends EventTarget {
 			if (child.innerText === this.selectedSet.title) child.style.color = "var(--rose)";
 			else child.style.color = "var(--text)";
 		});
+
+		switch (this.selectedSet.metaData.type) {
+			case "programming":
+				this.problemSetDescription.innerHTML =
+					"<b>Programming:</b> A simple typing test. Type out the sequence of characters as best you can.<br/>Indentation is done automatically, but you will need to enter new lines.";
+				break;
+		}
 	}
 
 	/** @param {{title: string, isDirectory: boolean}} set  */

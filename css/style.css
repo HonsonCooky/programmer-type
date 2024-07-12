@@ -236,6 +236,18 @@ main {
     padding: var(--s-m) calc((100dvw - 1440px) / 2);
   }
 
+  #description {
+    width: 100%;
+    color: var(--subtle);
+    font-size: var(--fs-0);
+    text-align: center;
+
+    * {
+      color: var(--subtle);
+      font-size: var(--fs-0);
+    }
+  }
+
   #timer {
     color: var(--subtle);
     font-size: var(--fs-2);
