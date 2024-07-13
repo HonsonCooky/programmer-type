@@ -24,7 +24,8 @@ export class ProblemSetManager extends EventTarget {
    * @returns {Promise<{title:string, isDirectory: boolean}[]>}
    */
   async _getFolderContents(folder) {
-    const fetchFiles = await fetch(`${window.location.origin}/tests${folder}`).then((res) => res.text());
+    const fetchFiles = await fetch(`../tests${folder}`).then((res) => res.text());
+    console.log(fetchFiles);
     return Array.from(fetchFiles.matchAll(/class="([^"]*)" title="([^"]*)"/g))
       .map(([_, c, t]) => {
         return { title: t, isDirectory: c.includes("directory") };
