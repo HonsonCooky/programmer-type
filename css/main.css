@@ -1,0 +1,8 @@
+main {
+	flex: 1;
+	padding: var(--s-3xs) var(--s-m);
+
+	@media screen and (min-width: 1440px) {
+		padding: var(--s-3xs) calc(((100dvw - 1440px) / 2) + var(--s-m));
+	}
+}

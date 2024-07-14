@@ -1,0 +1,118 @@
+html {
+	margin: 0;
+	background: var(--base);
+}
+
+body {
+	display: flex;
+	position: relative;
+	flex-direction: column;
+	margin: 0;
+	background: var(--base);
+	height: 100dvh;
+	max-height: 100dvh;
+}
+
+* {
+	box-sizing: border-box;
+	outline: none;
+	border-radius: var(--border);
+	background-color: transparent;
+	color: var(--text);
+	font-size: var(--fs-0);
+	font-family: "M PLUS 1 Code", monospace;
+}
+
+button {
+	border: none;
+	padding: var(--s-3xs) var(--s-s);
+
+	&:hover {
+		background-color: var(--highlight-high) !important;
+	}
+}
+
+code {
+	border: calc(var(--border) * 3);
+	background: var(--overlay);
+	padding: var(--border) var(--s-3xs);
+}
+
+table {
+	border: var(--border) solid var(--muted);
+
+	caption {
+		h3 {
+			color: var(--subtle);
+			font-weight: 400;
+			font-size: var(--fs-0);
+			white-space: nowrap;
+		}
+	}
+
+	th {
+		width: 30%;
+		color: var(--gold);
+		font-weight: 900;
+		text-align: start;
+	}
+
+	td {
+		font-weight: 400;
+		font-family: monospace;
+	}
+
+	th,
+	td {
+		border: var(--border) solid var(--muted);
+		padding: var(--border) var(--s-s);
+	}
+}
+
+.selected {
+	color: var(--rose);
+}
+
+/* DROPDOWN */
+.dropdown {
+	display: flex;
+	position: relative;
+	flex-direction: column;
+}
+
+.dropdown>button {
+	display: flex;
+	column-gap: var(--s-s);
+	flex-direction: column;
+	justify-content: start;
+	align-items: center;
+
+	.current-value {
+		color: var(--subtle);
+		text-decoration: underline;
+	}
+}
+
+.dropdown-content {
+	display: none;
+	position: absolute;
+	top: 100%;
+	flex-direction: column;
+	z-index: 1;
+	border: var(--border) solid var(--highlight-high);
+	border-top: none;
+	background-color: var(--surface);
+	min-width: 100%;
+
+	>button {
+		width: 100%;
+		text-align: left;
+	}
+}
+
+.dropdown:hover,
+.dropdown:focus {
+	.dropdown-content {
+		display: flex;
+	}
+}

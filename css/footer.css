@@ -1,0 +1,31 @@
+footer {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	border-top: var(--border) solid var(--muted);
+	background-color: var(--surface);
+
+	padding: var(--s-3xs) var(--s-m);
+	width: 100%;
+
+	>* {
+		display: flex;
+	}
+
+	#info-creator {
+		color: var(--muted);
+	}
+
+	#info-version {
+		justify-content: center;
+		color: var(--muted);
+	}
+
+	#key-context {
+		justify-content: end;
+		color: var(--pine);
+	}
+
+	@media screen and (min-width: 1440px) {
+		padding: var(--s-3xs) calc(((100dvw - 1440px) / 2) + var(--s-m));
+	}
+}

@@ -1,123 +1,83 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>programmer-type</title>
+    <link href="./css/style.css" rel="stylesheet" />
+    <script src="./js/script.js" type="module" defer></script>
+  </head>
 
-<head>
-	<meta charset="UTF-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<title></title>
-	<link href="./css/style.css" rel="stylesheet" />
-	<script src="./js/script.js" defer type="module"></script>
-</head>
+  <body>
+    <header>
+      <hgroup>
+        <h2>Programmer See?</h2>
+        <h1>No; Programmer Type!</h1>
+      </hgroup>
+      <nav>
+        <!-- Gameplay Settings -->
+        <div>
+          <div class="dropdown" id="duration">
+            <button>
+              <span>[D] Duration &#9013;</span>
+              <span class="current-value" id="duration-selected">60s</span>
+            </button>
+            <div class="dropdown-content">
+              <button id="duration-15">[0] 15s</button>
+              <button id="duration-30">[1] 30s</button>
+              <button id="duration-60">[2] 60s</button>
+              <button id="duration-90">[3] 90s</button>
+              <button id="duration-120">[4] 120s</button>
+              <button id="duration-infinite">[5] Infinite</button>
+            </div>
+          </div>
+          <div class="dropdown" id="suite">
+            <button>
+              <span>[S] Test Suite &#9013;</span>
+              <span class="current-value" id="suite-selected">TypeScript</span>
+            </button>
+            <div class="dropdown-content">
+              <button id="typescript" suite="code">TypeScript</button>
+              <button id="csharp" suite="code">CSharp</button>
+            </div>
+          </div>
+        </div>
 
-<body>
-	<header>
-		<hgroup>
-			<h2>Programmer See?</h2>
-			<h1>No; Programmer Type!</h1>
-		</hgroup>
-		<nav id="nav">
-			<div id="typing-settings">
-				<div class="dropdown" id="duration-select">
-					<button>[D] Duration &#9013;</button>
-					<div class="dropdown-content">
-						<button id="duration-15">[0] 15s</button>
-						<button id="duration-30">[1] 30s</button>
-						<button id="duration-60">[2] 60s</button>
-						<button id="duration-90">[3] 90s</button>
-						<button id="duration-120">[4] 120s</button>
-						<button id="duration-infinite">[5] Infinite</button>
-					</div>
-					<span id="duration-selected">60s</span>
-				</div>
-				<div class="dropdown" id="problem-set-select">
-					<button>[P] Problem Set &#9013;</button>
-					<div class="dropdown-content"></div>
-					<span id="problem-set-selected">...</span>
-				</div>
-			</div>
-			<div id="style-settings">
-				<div class="dropdown" id="theme-select">
-					<button>[T] Theme &#9013;</button>
-					<div class="dropdown-content">
-						<button id="system-theme">[S] System</button>
-						<button id="light-theme">[L] Light</button>
-						<button id="dark-theme">[D] Dark</button>
-					</div>
-					<span id="theme-selected">System</span>
-				</div>
-				<div class="dropdown" id="help">
-					<button>&#8505; [H] Help</button>
-					<div class="dropdown-content">
-						<h3>Welcome</h3>
-						<p>
-							In the endless attempt to find a frictionless, keyboard centric, developer setup, I've created myself
-							lot of extra work. This web app is one such solution to the issue of testing a keyboard layout's
-							effectiveness in development based activities.
-						</p>
-						<h3>Keyboard Inputs</h3>
-						<p>
-							Designed with context-driven keyboard navigation in mind (kind of the whole point of the application).
-							Turn off your Vimium and follow the bindings wrapped with braces <code>[X]</code>. Context-driven
-							meaning that if some sub-menu is open, only keys from this menu will be valid next inputs; Anything else
-							will reset the context. You can view the current key combination in the bottom right; Where *base*
-							indicates that you have no context.<br />
-							The buttons work too, but don't be expecting a flawless experience if you're jumping from mouse
-							interactions to keyboard interactions.<br />
-							- Press <code>Esc</code> to reset the context.<br />
-							- Press <code>:q</code> to exit the text editor.
-						</p>
-						<h3>Test Types</h3>
-						<p>
-							A keyboard layout's effectiveness goes beyond being able to just program. There is OS navigation, File
-							Navigation, Web Searches and other common actions that a keyboard centric developer may want to test
-							out. In the "Problem Set", you will find a range of different tests:<br />
-							- [Code]: Programming / typing test.<br />
-							- [KeyNav]: Keyboard-based navigation test.<br />
-							- [Multi]: A combination from above.<br />
-						</p>
-						<div>
-							<table>
-								<caption>
-									<h3>Programming</h3>
-								</caption>
-								<tbody>
-									<tr>
-										<th>Description</th>
-										<td></td>
-									</tr>
-									<tr>
-										<th>Addition Info</th>
-										<td></td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						<h3>Warning:</h3>
-						<p>
-							Tests are loaded via the GitHub API. If a test is not loading, you might have expended the 60 API
-							requests per hour. Caching is being used to mitigate this problem, so tests previously loaded should
-							work.
-						</p>
-					</div>
-				</div>
-			</div>
-		</nav>
-	</header>
+        <!-- App Settings -->
+        <div>
+          <div class="dropdown" id="theme">
+            <button>
+              <span>[T] Theme &#9013;</span>
+              <span class="current-value" id="theme-selected">System</span>
+            </button>
+            <div class="dropdown-content">
+              <button id="system-theme">[S] System</button>
+              <button id="light-theme">[L] Light</button>
+              <button id="dark-theme">[D] Dark</button>
+            </div>
+          </div>
+          <div class="dropdown">
+            <button id="help-btn">
+              <span>[I] Info &#x1f6c8;</span>
+            </button>
+          </div>
+        </div>
+      </nav>
+    </header>
 
-	<main>
-		<div id="timer-element">
-			<span id="timer-span">Time:</span>
-			<div id="timer">60</div>
-		</div>
-		<div id="text-editor">...</div>
-		<button id="play">[G] Go!</button>
-	</main>
+    <main>
+      <div id="timer">
+        <span>Time:</span>
+        <span id="timer-value">60</span>
+      </div>
+      <div id="text-editor"></div>
+      <button>Play</button>
+    </main>
 
-	<footer>
-		<div id="info-creator">HonsonCooky</div>
-		<div id="info-version">v1.0.0</div>
-		<div id="key-context">*base*</div>
-	</footer>
-</body>
-
+    <footer>
+      <div id="info-creator">HonsonCooky</div>
+      <div id="info-version">v1.0.0</div>
+      <div id="key-context">*base*</div>
+    </footer>
+  </body>
 </html>
