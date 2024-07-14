@@ -1,5 +1,3 @@
-import { DurationManager } from "./duration-manager.js";
-
 export class TimeManager extends EventTarget {
   timerElement = document.getElementById("timer-value");
   selectedTime = 60;
@@ -8,14 +6,9 @@ export class TimeManager extends EventTarget {
   running = false;
   timeSpent = undefined;
 
-  constructor() {
-    super();
-    window.durationManager.addEventListener("durationUpdated", this._setTimer.bind(this));
-  }
-
-  _setTimer() {
+  setTimer(durationValue) {
     const event = new Event("timerUpdate");
-    this.selectedTime = Number.parseInt(window.durationManager.selectedDuration);
+    this.selectedTime = Number.parseInt(durationValue);
     this.currentTime = isNaN(this.selectedTime) ? 0 : this.selectedTime;
     this.timerElement.innerText = this.currentTime;
     this.dispatchEvent(event);
@@ -32,7 +25,7 @@ export class TimeManager extends EventTarget {
   run() {
     if (this.primed) {
       this.primed = false;
-      this.running = true;
+      this.running = true; // This is the only place "this.running" is set to true
       this.timerElement.className = "running";
       this.dispatchEvent(new Event("timerStart"));
     }

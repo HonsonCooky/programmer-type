@@ -13,9 +13,7 @@ export class ThemeManager extends EventTarget {
     });
   }
 
-  constructor() {
-    super();
-
+  setup() {
     // Set default theme
     this._updateUI("System");
     this.setTheme();

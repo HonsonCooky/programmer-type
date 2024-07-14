@@ -1,4 +1,4 @@
-export class NavigationMangager {
+export class Navigation {
   keymap = {
     d: {
       element: document.getElementById("duration"),
@@ -48,8 +48,6 @@ export class NavigationMangager {
   currentMap = this.keymap;
   footerElement = document.getElementById("key-context");
 
-  constructor() {}
-
   _reset() {
     this.footerElement.innerText = "*base*";
     this.currentMap = this.keymap;
@@ -57,6 +55,7 @@ export class NavigationMangager {
 
   /** @param {KeyboardEvent} ev */
   keydown(ev) {
+    console.log("Navigation")
     let key = ev.key;
 
     const insert = this.currentMap[key];

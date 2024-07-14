@@ -1,21 +1,20 @@
 import { DurationManager } from "./duration-manager.js";
-import { KeyboardInputManager } from "./keyboard-input-manager.js";
-import { NavigationMangager } from "./navigation-manager.js";
+import { Navigation } from "./navigation.js";
+import { Program } from "./program.js";
 import { SuiteManager } from "./suite-manager.js";
-import { TextEditorManager } from "./text-editor-manager.js";
+import { TextEditor } from "./text-editor.js";
 import { ThemeManager } from "./theme-manager.js";
 import { TimeManager } from "./time-manager.js";
 
-// Independant managers
-window.themeManager = new ThemeManager();
-window.suiteManager = new SuiteManager();
-window.durationManager = new DurationManager();
+const context = new Program();
+context.setup({
+  // Managers
+  themeManager: new ThemeManager(),
+  suiteManager: new SuiteManager(),
+  durationManager: new DurationManager(),
+  timeManager: new TimeManager(),
 
-// Dependant managers, require initialization of above
-window.timeManager = new TimeManager(); // USE: DurationManager
-
-// Major Context Managers
-window.textEditorManager = new TextEditorManager(); // USE: SuiteManager, TimeManager
-window.navigationManager = new NavigationMangager();
-
-window.keyboardInputManager = new KeyboardInputManager(); // CONNECTS: NavigationMangager, TextEditorManager
+  // Contexts
+  textEditor: new TextEditor(),
+  navigator: new Navigation(),
+});
