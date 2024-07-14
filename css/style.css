@@ -273,19 +273,6 @@ main {
 		padding: var(--s-m) calc((100dvw - 1440px) / 2);
 	}
 
-	#problem-set-description {
-		display: flex;
-		column-gap: var(--s-3xl);
-		row-gap: var(--s-3xs);
-		flex-direction: row;
-		align-items: end;
-		width: 100%;
-
-		table {
-			flex: 1;
-		}
-	}
-
 	#timer-element {
 		display: flex;
 		column-gap: var(--s-xs);

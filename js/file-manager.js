@@ -24,12 +24,9 @@ export class FileManager {
   }
 
   async fetchSetData(set) {
-    const tests = await this._fetch(set).then((items) => items.filter((item) => !item.name.startsWith("_")));
-    const metaData = await this._fetch(`${set}/_meta.json`).then((data) => JSON.parse(atob(data.content)));
-    return {
-      tests,
-      metaData,
-    };
+    return await this._fetch(set).then((items) =>
+      items.filter((item) => !item.name.startsWith("_") && item.type != "dir"),
+    );
   }
 
   async fetchTest(set, test) {

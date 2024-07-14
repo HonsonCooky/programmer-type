@@ -1,7 +1,6 @@
 import { FileManager } from "./file-manager.js";
 
 export class ProblemSetManager extends EventTarget {
-  problemSetDescription = document.getElementById("problem-set-description");
   problemSetLabel = document.getElementById("problem-set-selected");
   problemSetDropdownContent = document.getElementById("problem-set-select").querySelector(".dropdown-content");
 
@@ -31,23 +30,16 @@ export class ProblemSetManager extends EventTarget {
       if (child.innerText === this.selectedSet.name) child.classList.add("selected");
       else child.classList.remove("selected");
     });
-
-    switch (this.selectedSet.metaData.type) {
-      case "programming":
-        // this.problemSetDescription.innerHTML =
-        break;
-    }
   }
 
   /** @param {{name: string, path: string, isDirectory: boolean}} set  */
   async selectSet(set) {
     if (!set.type === "dir") return;
 
-    const { tests, metaData } = await this.fileManager.fetchSetData(set.name);
-    if (!tests || !metaData) return;
+    const tests = await this.fileManager.fetchSetData(set.name);
+    if (!tests) return;
 
     this.selectedSet = set;
-    this.selectedSet.metaData = metaData;
     this.selectedSet.tests = tests;
 
     this._updateUI();
