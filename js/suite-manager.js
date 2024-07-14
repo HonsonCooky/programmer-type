@@ -17,32 +17,37 @@ export class SuiteManager extends EventTarget {
       type: "Code",
       tests: ["example1.cs", "example2.cs"],
     },
+    {
+      name: "Neovim",
+      type: "Action",
+      tests: ["example1.cmd"],
+    },
   ];
 
   constructor() {
     super();
 
     // Init selected test suite.
-    this.selectedSuite = this.suiteCurrentValueElement.innerText;
+    this.selectedSuiteName = this.suiteCurrentValueElement.innerText;
 
     // Add event listners for each button.
     for (const suiteBtn of this.suiteDropdownContentElements) {
-      if (suiteBtn.innerText.includes(this.selectedSuite)) suiteBtn.classList.add("selected");
+      if (suiteBtn.innerText.includes(this.selectedSuiteName)) suiteBtn.classList.add("selected");
       suiteBtn.addEventListener("click", this._onSuiteClick.bind(this, suiteBtn));
     }
   }
 
   _onSuiteClick(suiteBtn) {
-    this.selectedSuite = suiteBtn.innerText.replace(/\[.\]\s/g, "");
+    this.selectedSuiteName = suiteBtn.innerText.replace(/\[.\]\s/g, "");
     this.updateRandomTest();
     this._updateUI();
     this.dispatchEvent(new Event("suiteUpdated"));
   }
 
   _updateUI() {
-    this.suiteCurrentValueElement.innerText = this.selectedSuite;
+    this.suiteCurrentValueElement.innerText = this.selectedSuiteName;
     for (const suiteBtn of this.suiteDropdownContentElements) {
-      if (suiteBtn.innerText.includes(this.selectedSuite)) suiteBtn.classList.add("selected");
+      if (suiteBtn.innerText.includes(this.selectedSuiteName)) suiteBtn.classList.add("selected");
       else suiteBtn.classList.remove("selected");
     }
   }
@@ -64,17 +69,17 @@ export class SuiteManager extends EventTarget {
    * @returns {Promise<string|undefined>}
    */
   updateRandomTest() {
-    const setObjs = this.SUITES.filter((i) => i.name === this.selectedSuite);
+    const setObjs = this.SUITES.filter((i) => i.name === this.selectedSuiteName);
     if (setObjs.length === 0) {
-      console.log("Unknown Test Suite", this.selectedSuite);
+      console.log("Unknown Test Suite", this.selectedSuiteName);
       return;
     }
 
-    const setObj = setObjs[0];
-    const randomIndex = Math.floor(Math.random() * setObj.tests.length);
-    const randomTestPath = setObj.tests[randomIndex];
+    this.selectedSuite = setObjs[0];
+    const randomIndex = Math.floor(Math.random() * this.selectedSuite.tests.length);
+    const randomTestPath = this.selectedSuite.tests[randomIndex];
 
-    const url = `${this.TESTS_ORIGIN}/${this.selectedSuite}/${randomTestPath}`;
+    const url = `${this.TESTS_ORIGIN}/${this.selectedSuiteName}/${randomTestPath}`;
     const cachedData = localStorage.getItem(url);
 
     if (!cachedData) return this._fetchAndCache();

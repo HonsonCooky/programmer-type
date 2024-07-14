@@ -1,4 +1,3 @@
-import { SuiteManager } from "./suite-manager.js";
 import { TimeManager } from "./time-manager.js";
 
 export class TextEditorManager {
@@ -21,6 +20,7 @@ export class TextEditorManager {
     this.textEditorElement.addEventListener(
       "focusin",
       function () {
+        window.timeManager.prime();
         this.textEditorInstructionsElement.innerText = "[:q] Quit, [Ctrl +] Increase Font, [Ctrl -] Decrease Font";
       }.bind(this),
     );
@@ -28,6 +28,7 @@ export class TextEditorManager {
       "focusout",
       function () {
         this.textEditorInstructionsElement.innerText = "[Enter] Start";
+        if (window.suiteManager.selectedSuite.type != "code") window.timeManager.pause();
       }.bind(this),
     );
     this.textEditorInstructionsElement.innerText = "[Enter] Start";
@@ -68,6 +69,8 @@ export class TextEditorManager {
     ev.preventDefault();
     const key = ev.key;
     const ctrl = ev.ctrlKey;
+
+    if (window.timeManager.primed) window.timeManager.run();
 
     if (ctrl && key === "+") this._updateFontSize(1);
     if (ctrl && key === "-") this._updateFontSize(-1);

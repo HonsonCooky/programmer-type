@@ -6,11 +6,16 @@ import { TextEditorManager } from "./text-editor-manager.js";
 import { ThemeManager } from "./theme-manager.js";
 import { TimeManager } from "./time-manager.js";
 
+// Independant managers
+window.themeManager = new ThemeManager();
 window.suiteManager = new SuiteManager();
 window.durationManager = new DurationManager();
-window.themeManager = new ThemeManager();
 
-window.timeManager = new TimeManager();
+// Dependant managers, require initialization of above
+window.timeManager = new TimeManager(); // USE: DurationManager
+
+// Major Context Managers
+window.textEditorManager = new TextEditorManager(); // USE: SuiteManager, TimeManager
 window.navigationManager = new NavigationMangager();
-window.textEditorManager = new TextEditorManager();
-window.keyboardInputManager = new KeyboardInputManager();
+
+window.keyboardInputManager = new KeyboardInputManager(); // CONNECTS: NavigationMangager, TextEditorManager
