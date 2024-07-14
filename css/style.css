@@ -278,22 +278,10 @@ main {
 		column-gap: var(--s-xs);
 		flex-direction: row;
 		align-items: center;
-		color: var(--subtle);
-		font-size: var(--fs-2);
 
-		#timer-txt {
-			&.primed {
-				color: var(--gold);
-			}
-
-			&.running {
-				color: var(--foam);
-			}
-		}
-
-		span {
-			color: inherit;
-			font-size: inherit;
+		* {
+			color: var(--subtle);
+			font-size: var(--fs-2);
 		}
 	}
 

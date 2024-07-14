@@ -2,7 +2,7 @@ export class TimingManager extends EventTarget {
   durationDropdownContent = document.getElementById("duration-select").querySelector(".dropdown-content");
   timingLabel = document.getElementById("duration-selected");
   timerElement = document.getElementById("timer");
-  timerTitle = document.getElementById("timer-txt");
+  timerTitle = document.getElementById("timer-span");
   selectedTime = 60;
   currentTime = 60;
   primed = false;
