@@ -5,11 +5,12 @@ export class DurationManager extends EventTarget {
   );
   durationCurrentValueElement = this.durationDropdownElement.querySelector(".current-value");
 
-  _updateUI() {
-    this.durationCurrentValueElement.innerText = this.selectedDuration;
+  constructor() {
+    super();
+    this.selectedDuration = this.durationCurrentValueElement.innerText;
     for (const durationBtn of this.durationDropdownContentElements) {
       if (durationBtn.innerText.includes(this.selectedDuration)) durationBtn.classList.add("selected");
-      else durationBtn.classList.remove("selected");
+      durationBtn.addEventListener("click", this._durationChangeAction(durationBtn).bind(this));
     }
   }
 
@@ -24,12 +25,11 @@ export class DurationManager extends EventTarget {
     };
   }
 
-  constructor() {
-    super();
-    this.selectedDuration = this.durationCurrentValueElement.innerText;
+  _updateUI() {
+    this.durationCurrentValueElement.innerText = this.selectedDuration;
     for (const durationBtn of this.durationDropdownContentElements) {
       if (durationBtn.innerText.includes(this.selectedDuration)) durationBtn.classList.add("selected");
-      durationBtn.addEventListener("click", this._durationChangeAction(durationBtn).bind(this));
+      else durationBtn.classList.remove("selected");
     }
   }
 }

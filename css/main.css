@@ -1,6 +1,46 @@
 main {
+	display: flex;
+	row-gap: var(--s-s);
 	flex: 1;
-	padding: var(--s-3xs) var(--s-m);
+	flex-direction: column;
+	align-items: center;
+	padding: var(--s-s) var(--s-m);
+
+	#timer {
+		color: var(--subtle);
+		font-size: var(--fs-2);
+
+		* {
+			color: inherit;
+			font-size: inherit;
+		}
+	}
+
+	#text-editor {
+		display: flex;
+		flex: 1;
+		flex-direction: column;
+		background: var(--overlay);
+		padding: var(--s-s) var(--s-m);
+		width: 100%;
+		overflow-y: auto;
+		font-size: var(--fs-0);
+
+		.line {
+			word-wrap: break-word;
+		}
+
+		* {
+			filter: blur(2px);
+			font-size: inherit;
+		}
+
+		&:focus-within {
+			* {
+				filter: none;
+			}
+		}
+	}
 
 	@media screen and (min-width: 1440px) {
 		padding: var(--s-3xs) calc(((100dvw - 1440px) / 2) + var(--s-m));

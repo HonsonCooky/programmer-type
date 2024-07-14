@@ -6,11 +6,11 @@ import { TextEditorManager } from "./text-editor-manager.js";
 import { ThemeManager } from "./theme-manager.js";
 import { TimeManager } from "./time-manager.js";
 
-const suiteManager = new SuiteManager();
-const durationManger = new DurationManager();
-const themeManager = new ThemeManager();
+window.suiteManager = new SuiteManager();
+window.durationManager = new DurationManager();
+window.themeManager = new ThemeManager();
 
-const timeManager = new TimeManager();
-const navigationManager = new NavigationMangager();
-const textEditorManager = new TextEditorManager();
-const keyboardInputManager = new KeyboardInputManager({ navigationManager, textEditorManager });
+window.timeManager = new TimeManager();
+window.navigationManager = new NavigationMangager();
+window.textEditorManager = new TextEditorManager();
+window.keyboardInputManager = new KeyboardInputManager();
