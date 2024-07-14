@@ -100,6 +100,41 @@ code {
 	padding: var(--border) var(--s-3xs);
 }
 
+table {
+	border: var(--border) solid var(--muted);
+
+	caption {
+		h3 {
+			color: var(--subtle);
+			font-weight: 400;
+			font-size: var(--fs-0);
+			white-space: nowrap;
+		}
+	}
+
+	th {
+		width: 30%;
+		color: var(--gold);
+		font-weight: 900;
+		text-align: start;
+	}
+
+	td {
+		font-weight: 400;
+		font-family: monospace;
+	}
+
+	th,
+	td {
+		border: var(--border) solid var(--muted);
+		padding: var(--border) var(--s-s);
+	}
+}
+
+.selected {
+	color: var(--rose);
+}
+
 .dropdown {
 	display: flex;
 	position: relative;
@@ -201,11 +236,13 @@ header {
 
 		#help {
 			.dropdown-content {
-				top: calc(200% + var(--s-m) * 2);
+				top: 100%;
 				right: 0;
 				border: var(--border) solid var(--highlight-high);
 				padding: var(--s-3xs) var(--s-m);
 				width: calc(100vw - (var(--s-m) * 2));
+				height: 70dvh;
+				overflow-y: auto;
 
 				@media screen and (min-width: 1440px) {
 					width: calc(100vw - (100dvw - 1440px) - (var(--s-m) * 2));
@@ -230,15 +267,47 @@ main {
 	flex: 1;
 	flex-direction: column;
 	align-items: center;
-	padding: var(--s-m) 0;
+	padding: var(--s-3xs) var(--s-xl);
 
 	@media screen and (min-width: 1440px) {
 		padding: var(--s-m) calc((100dvw - 1440px) / 2);
 	}
 
-	#timer {
+	#problem-set-description {
+		display: flex;
+		column-gap: var(--s-3xl);
+		row-gap: var(--s-3xs);
+		flex-direction: row;
+		align-items: end;
+		width: 100%;
+
+		table {
+			flex: 1;
+		}
+	}
+
+	#timer-element {
+		display: flex;
+		column-gap: var(--s-xs);
+		flex-direction: row;
+		align-items: center;
 		color: var(--subtle);
 		font-size: var(--fs-2);
+
+		#timer-txt {
+			&.primed {
+				color: var(--gold);
+			}
+
+			&.running {
+				color: var(--foam);
+			}
+		}
+
+		span {
+			color: inherit;
+			font-size: inherit;
+		}
 	}
 
 	#text-editor {
@@ -246,9 +315,8 @@ main {
 		flex: 1;
 		flex-direction: column;
 		justify-content: center;
-		padding: 0 var(--s-3xl);
+		padding: 0 var(--s-s);
 		width: 100%;
-		overflow: auto;
 		white-space: pre;
 
 		>* {
@@ -266,6 +334,7 @@ main {
 	}
 
 	#play {
+		margin-bottom: var(--s-m);
 		background-color: var(--pine);
 		padding: var(--s-3xs) var(--s-s);
 		min-width: calc(var(--s-3xl) * 2);

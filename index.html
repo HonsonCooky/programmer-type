@@ -75,6 +75,29 @@
 							- [KeyNav]: Keyboard-based navigation test.<br />
 							- [Multi]: A combination from above.<br />
 						</p>
+						<div id="problem-set-description">
+							<table>
+								<caption>
+									<h3 id="problem-set-description-type">Programming</h3>
+								</caption>
+								<tbody>
+									<tr>
+										<th>Description</th>
+										<td id="problem-set-description-outline"></td>
+									</tr>
+									<tr>
+										<th>Addition Info</th>
+										<td id="problem-set-description-info"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<h3>Warning:</h3>
+						<p>
+							Tests are loaded via the GitHub API. If a test is not loading, you might have expended the 60 API
+							requests per hour. Caching is being used to mitigate this problem, so tests previously loaded should
+							work.
+						</p>
 					</div>
 				</div>
 			</div>
@@ -82,24 +105,10 @@
 	</header>
 
 	<main>
-		<div id="problem-set-description">
-			<table>
-				<caption>
-					<h3 id="problem-set-description-type">Programming</h3>
-				</caption>
-				<tbody>
-					<tr>
-						<th>Description</th>
-						<td id="problem-set-description-outline"></td>
-					</tr>
-					<tr>
-						<th>Addition Info</th>
-						<td id="problem-set-description-info"></td>
-					</tr>
-				</tbody>
-			</table>
+		<div id="timer-element">
+			<span id="timer-txt">Time:</span>
+			<div id="timer">60</div>
 		</div>
-		<div id="timer">60</div>
 		<div id="text-editor">...</div>
 		<button id="play">[G] Go!</button>
 	</main>

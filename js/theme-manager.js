@@ -7,8 +7,8 @@ export class ThemeManager {
   _updateUI(theme) {
     this.themeLabel.innerText = theme;
     Array.from(this.themeDropdownContent.children).forEach((child) => {
-      if (child.innerText.includes(theme)) child.style.color = "var(--rose)";
-      else child.style.color = "var(--text)";
+      if (child.innerText.includes(theme)) child.classList.add("selected");
+      else child.classList.remove("selected");
     });
   }
 

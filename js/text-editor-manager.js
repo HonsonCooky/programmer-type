@@ -3,7 +3,6 @@ import { TimingManager } from "./timing-manager.js";
 
 export class TextEditorManager {
   input = [];
-  primed = false;
 
   /**
    * @param {Object} param0
@@ -16,8 +15,8 @@ export class TextEditorManager {
     this.textEditorElement = document.getElementById("text-editor");
   }
 
-  async _onExampleSelected() {
-    const blob = await this.problemSetManager.currentExample.text();
+  async _onTestSelected() {
+    const blob = this.problemSetManager.currentTest;
     this.textEditorElement.innerHTML = blob
       .split(/\r?\n/g)
       .map((line) => {
@@ -32,26 +31,33 @@ export class TextEditorManager {
       .join("");
   }
 
-  _calculateScore() { }
+  _calculateScore() {}
+
+  _timerStart() {}
+
   _timerFinished() {
+    document.getElementById("play").innerText = "[G] Go!";
     this.textEditorElement.blur();
   }
 
   setup() {
-    this.problemSetManager.addEventListener("exampleSelected", this._onExampleSelected.bind(this));
+    this.problemSetManager.addEventListener("testSelected", this._onTestSelected.bind(this));
+    this.timingManger.addEventListener("timerStart", this._timerStart.bind(this));
     this.timingManger.addEventListener("timerFinished", this._timerFinished.bind(this));
 
     const playBtn = document.getElementById("play");
-    this.textEditorElement.addEventListener("focusin", () => {
-      this.primed = true;
-      playBtn.innerText = "[:q] Stop";
-    });
-    this.textEditorElement.addEventListener("focusout", () => {
-      this.primed = false;
-      playBtn.innerText = "[G] Go!";
-    });
+
+    this.textEditorElement.addEventListener("focusin", () => {});
+    this.textEditorElement.addEventListener("focusout", () => {});
 
     playBtn.addEventListener("click", () => {
+      if (this.timingManger.running || this.timingManger.primed) {
+        this.timingManger.finish();
+        return;
+      }
+
+      playBtn.innerText = "[:q] Stop";
+      this.timingManger.prime();
       document.getElementById("text-editor").tabIndex = -1;
       document.getElementById("text-editor").focus();
     });
@@ -62,9 +68,6 @@ export class TextEditorManager {
    */
   keydown(ev) {
     let key = ev.key;
-    if (this.primed) {
-      this.primed = false;
-      this.timingManger.start();
-    }
+    if (this.timingManger.primed) this.timingManger.run();
   }
 }
