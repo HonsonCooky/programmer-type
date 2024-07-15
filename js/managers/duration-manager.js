@@ -5,7 +5,8 @@ export class DurationManager extends EventTarget {
   );
   durationCurrentValueElement = this.durationDropdownElement.querySelector(".current-value");
 
-  setup() {
+  constructor() {
+    super();
     this.selectedDuration = this.durationCurrentValueElement.innerText;
     for (const durationBtn of this.durationDropdownContentElements) {
       if (durationBtn.innerText.includes(this.selectedDuration)) durationBtn.classList.add("selected");
@@ -17,7 +18,7 @@ export class DurationManager extends EventTarget {
    * @param {HTMLElement} btn
    */
   _durationChangeAction(btn) {
-    return function() {
+    return function () {
       this.selectedDuration = btn.innerText.replace(/\[.\]\s/g, "");
       this._updateUI();
       this.dispatchEvent(new Event("durationUpdated"));

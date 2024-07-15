@@ -5,6 +5,7 @@ import { TextEditor } from "./contexts/text-editor.js";
 import { ThemeManager } from "./managers/theme-manager.js";
 import { TimeManager } from "./managers/time-manager.js";
 import { InfoManager } from "./managers/info-manager.js";
+import { TestResults } from "./contexts/test-results.js";
 
 export class Program {
   /**
@@ -14,10 +15,11 @@ export class Program {
    * @param {Object} param0
    * @param {SuiteManager} param0.suiteManager
    * @param {TimeManager} param0.timeManager
-   * @param {TextEditor} param0.textEditor
    * @param {Navigation} param0.navigation
+   * @param {TextEditor} param0.textEditor
+   * @param {TestResults} param0.testResults
    */
-  _contextUpdate({ suiteManager, timeManager, textEditor, navigation }) {
+  _contextUpdate({ suiteManager, timeManager, navigation, textEditor, testResults }) {
     textEditor.textEditorElement.addEventListener("focusin", () => {
       this.curContext = textEditor;
       textEditor.focusTextEditor();
@@ -28,6 +30,12 @@ export class Program {
       textEditor.blurTextEditor();
       if (suiteManager.selectedSuite.type === "Code") timeManager.pause();
     });
+    testResults.addEventListener(
+      "resultsClosed",
+      function () {
+        this.curContext = navigation;
+      }.bind(this),
+    );
   }
 
   /**
@@ -100,8 +108,9 @@ export class Program {
    * @param {SuiteManager} param0.suiteManager
    * @param {TimeManager} param0.timeManager
    * @param {TextEditor} param0.textEditor
+   * @param {TestResults} param0.testResults
    */
-  _testFinished({ durationManager, suiteManager, timeManager, textEditor }) {
+  _testFinished({ durationManager, suiteManager, timeManager, textEditor, testResults }) {
     const testFinished = function () {
       textEditor._reset();
       const testValues = {
@@ -110,8 +119,9 @@ export class Program {
         suite: suiteManager.selectedSuite,
       };
 
-      console.log(testValues);
       timeManager.setTimer(durationManager.selectedDuration);
+      this.curContext = testResults;
+      testResults.displayResults(testValues);
     };
 
     textEditor.addEventListener("testFinished", testFinished);
@@ -121,28 +131,23 @@ export class Program {
   setup() {
     // Managers
     const themeManager = new ThemeManager();
-    themeManager.setup();
     const durationManager = new DurationManager();
-    durationManager.setup();
     const suiteManager = new SuiteManager();
-    suiteManager.setup();
     const infoManager = new InfoManager();
-    infoManager.setup();
     const timeManager = new TimeManager();
 
     // Contexts
-    const textEditor = new TextEditor();
-    textEditor.setup();
     const navigation = new Navigation();
+    const textEditor = new TextEditor();
+    const testResults = new TestResults();
 
     // We could make these globally available, but by using them locally, we can see function dependencies.
-
     this.curContext = navigation;
-    this._contextUpdate({ suiteManager, timeManager, textEditor, navigation });
+    this._contextUpdate({ suiteManager, timeManager, navigation, textEditor, testResults });
     this._keyboardInput({ textEditor, timeManager });
     this._durationUpdate({ durationManager, timeManager });
     this._suiteUpdate({ suiteManager, textEditor });
-    this._testFinished({ durationManager, suiteManager, timeManager, textEditor });
+    this._testFinished({ durationManager, suiteManager, timeManager, textEditor, testResults });
   }
 }
 

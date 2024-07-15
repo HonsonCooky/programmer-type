@@ -1,13 +1,11 @@
 export class InfoManager extends EventTarget {
-  setup() {
+  constructor() {
+    super();
+
     fetch("../../assets/help-message.html")
       .then((res) => res.text())
       .then((htmlStr) => new DOMParser().parseFromString(htmlStr, "text/html"))
       .then((element) => (this.helpInfoElement = element));
-
-    fetch("../../tests/FSharp/example1.fs")
-      .then((res) => res.text())
-      .then((txt) => console.log(txt));
   }
 
   loadHelpInformation(retryCount = 0) {

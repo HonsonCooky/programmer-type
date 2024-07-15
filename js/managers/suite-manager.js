@@ -5,22 +5,29 @@ export class SuiteManager extends EventTarget {
   suiteCurrentValueElement = this.suiteDropdownElement.querySelector(".current-value");
 
   // Constants
-  TESTS_ORIGIN = "https://api.github.com/repos/HonsonCooky/programmer-type/contents/tests";
+  TESTS_ORIGIN = "../../tests";
+
+  // Hardcoding these to avoid needing a database or GitHub API call.
   SUITES = [
-    {
-      name: "TypeScript",
-      type: "Code",
-      tests: ["example1.ts", "example2.ts"],
-    },
     {
       name: "CSharp",
       type: "Code",
       tests: ["example1.cs", "example2.cs"],
     },
     {
+      name: "FSharp",
+      type: "Code",
+      tests: ["example1.fs", "example2.fs"],
+    },
+    {
       name: "Neovim",
       type: "Action",
-      tests: ["example1.cmd"],
+      tests: ["example1.js"],
+    },
+    {
+      name: "TypeScript",
+      type: "Code",
+      tests: ["example1.ts", "example2.ts"],
     },
   ];
 
@@ -51,18 +58,18 @@ export class SuiteManager extends EventTarget {
   }
 
   _fetchAndCache(url) {
-    console.warn("Using GitHub API");
     fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        const txt = atob(data.content);
-        localStorage.setItem(url, JSON.stringify(txt));
+      .then((response) => response.text())
+      .then((txt) => {
+        localStorage.setItem(url, txt);
         this.currentTest = txt;
         this.dispatchEvent(new Event("testUpdated"));
       });
   }
 
-  setup() {
+  constructor() {
+    super();
+
     // Init selected test suite.
     this.selectedSuiteName = this.suiteCurrentValueElement.innerText;
     this._findSelectedSuite();
@@ -93,7 +100,7 @@ export class SuiteManager extends EventTarget {
     // Async call: will dispatch event independantly.
     if (!cachedData) return this._fetchAndCache(url);
 
-    this.currentTest = JSON.parse(cachedData);
+    this.currentTest = cachedData;
     this.dispatchEvent(new Event("testUpdated"));
   }
 }

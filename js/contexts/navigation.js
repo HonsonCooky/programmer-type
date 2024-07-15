@@ -33,6 +33,14 @@ export class Navigation {
         element: document.getElementById("suite-csharp"),
         action: "click",
       },
+      f: {
+        element: document.getElementById("suite-fsharp"),
+        action: "click",
+      },
+      n: {
+        element: document.getElementById("suite-neovim"),
+        action: "click",
+      },
       t: {
         element: document.getElementById("suite-typescript"),
         action: "click",
@@ -56,6 +64,7 @@ export class Navigation {
 
   /** @param {KeyboardEvent} ev */
   keydown(ev) {
+    ev.preventDefault();
     let key = ev.key;
 
     const insert = this.currentMap[key];

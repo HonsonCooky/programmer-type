@@ -38,9 +38,9 @@ export class TextEditor extends EventTarget {
       if (i.element.classList.contains("correct")) correct++;
       if (i.element.classList.contains("invalid")) invalid++;
       if (i.element.classList.length === 0) break;
-    };
+    }
 
-    this._testAnalysis = { invalid, correct }
+    this._testAnalysis = { invalid, correct };
   }
 
   /** @param {KeyboardEvent} ev */
@@ -91,18 +91,42 @@ export class TextEditor extends EventTarget {
     element.scrollIntoView();
   }
 
-  _loadCodeEvaluation() {
+  _loadCodeEvaluation(currentTest) {
+    this.textEditorElement.innerHTML = currentTest
+      .split(/\r?\n/g)
+      .map((line) => {
+        const indentLevel = (line.match(/^(\s+)/) || [""])[0].length;
+        let chars = line
+          .trim()
+          .split("")
+          .map((c) => `<span>${c}</span>`);
+        chars.push('<span class="newline">\\n</span>');
+        chars = chars.join("");
+
+        return `<div class="line" style="margin-left:calc(var(--fs--2) * ${indentLevel})">${chars}</div>`;
+      })
+      .join("");
+
     this._testSequence = Array.from(this.textEditorElement.children)
       .map((line) => Array.from(line.children).map((c) => ({ char: c.innerText, element: c })))
       .flat();
     this._testIndex = 0;
   }
 
-  setup() {
+  _loadActionEvaluation(currentTest) {
+    const objStr = currentTest.replace("module.export = ", "").replaceAll(";", "");
+    const mod = eval(`(${objStr})`);
+    const lines = Object.entries(mod);
+    console.log(lines);
+  }
+
+  constructor() {
+    super();
+
     this._updateFontSize(0);
     this.textEditorElement.addEventListener(
       "click",
-      function() {
+      function () {
         this.textEditorElement.tabIndex = -1;
         this.textEditorElement.focus();
       }.bind(this),
@@ -127,23 +151,10 @@ export class TextEditor extends EventTarget {
 
   loadTestSuite(suite, currentTest) {
     this.suite = suite;
-    this.textEditorElement.innerHTML = currentTest
-      .split(/\r?\n/g)
-      .map((line) => {
-        const indentLevel = (line.match(/^(\s+)/) || [""])[0].length;
-        let chars = line
-          .trim()
-          .split("")
-          .map((c) => `<span>${c}</span>`);
-        chars.push('<span class="newline">\\n</span>');
-        chars = chars.join("");
-
-        return `<div class="line" style="margin-left:calc(var(--fs--2) * ${indentLevel})">${chars}</div>`;
-      })
-      .join("");
 
     // Load analysis sequence
-    if (this.suite.type === "Code") return this._loadCodeEvaluation();
+    if (this.suite.type === "Code") return this._loadCodeEvaluation(currentTest);
+    if (this.suite.type === "Action") return this._loadActionEvaluation(currentTest);
   }
 
   loadingTest() {
@@ -172,13 +183,15 @@ export class TextEditor extends EventTarget {
 
   /** @param {KeyboardEvent} ev */
   keydown(ev) {
+    ev.preventDefault();
+
     // Shouldn't be able to get here, but just in case
     if (this._testIndex >= this._testSequence.length) {
       this._reset();
       this.dispatchEvent(new Event("testFinished"));
       return;
     }
-    ev.preventDefault();
+
     const key = ev.key;
     const ctrl = ev.ctrlKey;
 
