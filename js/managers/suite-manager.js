@@ -20,9 +20,9 @@ export class SuiteManager extends EventTarget {
       tests: ["example1.fs", "example2.fs"],
     },
     {
-      name: "Neovim",
+      name: "Vim",
       type: "Action",
-      tests: ["example1.js"],
+      tests: ["example1.json"],
     },
     {
       name: "TypeScript",

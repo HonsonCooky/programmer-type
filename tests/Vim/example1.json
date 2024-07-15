@@ -1,0 +1,34 @@
+{
+  "1": {
+    "keybind": "ggVG",
+    "comment": ["yank buffer: Copy the entire buffer to the clipboard."],
+    "action": "copy",
+    "content": [
+      "S8ogjPokwvJMTLr3McrT7rFM",
+      "ed5YcFGDEyZK2AFiSc8qTrNx",
+      "qAniMUFmd0l9Vyc48ZDt24Cw",
+      "RaJsXAvgXlahVGl8jPSGENpl",
+      "JMaPBX1pTtlz7YuZOIac7QAM",
+      "TKNAomMMqyLjUgxjqeFNxNfS",
+      "zEvIsRf68SCTcQdI9VMH4FuF",
+      "KXaTchijCtfmdO7IWiX7jz7S",
+      "ZvCFK8uMI2R827eiNDVqXKZv",
+      "tsNwSvR17VyQDyoZBj2q4QQU"
+    ]
+  },
+  "2": {
+    "comment": ["Go To Vim/Neovim.", "Paste the copied text.", "Copy the first 5 lines : <ggV4jy>", "then..."]
+  },
+  "3": {
+    "keybind": "p",
+    "comment": ["paste: Paste the first 5 lines into programmer-type"],
+    "action": "paste:assert",
+    "content": [
+      "S8ogjPokwvJMTLr3McrT7rFM",
+      "ed5YcFGDEyZK2AFiSc8qTrNx",
+      "qAniMUFmd0l9Vyc48ZDt24Cw",
+      "RaJsXAvgXlahVGl8jPSGENpl",
+      "JMaPBX1pTtlz7YuZOIac7QAM"
+    ]
+  }
+}
