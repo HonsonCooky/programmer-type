@@ -49,13 +49,13 @@ export class Navigation {
   footerElement = document.getElementById("key-context");
 
   _reset() {
+    document.activeElement.blur();
     this.footerElement.innerText = "*base*";
     this.currentMap = this.keymap;
   }
 
   /** @param {KeyboardEvent} ev */
   keydown(ev) {
-    console.log("Navigation")
     let key = ev.key;
 
     const insert = this.currentMap[key];
@@ -69,7 +69,6 @@ export class Navigation {
 
     if (element && action) {
       element[action]();
-      document.activeElement.blur();
       this._reset();
       return;
     }

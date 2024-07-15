@@ -6,6 +6,9 @@ export class TimeManager extends EventTarget {
   running = false;
   timeSpent = undefined;
 
+  /**
+   * @param {string} durationValue
+   */
   setTimer(durationValue) {
     const event = new Event("timerUpdate");
     this.selectedTime = Number.parseInt(durationValue);
@@ -40,7 +43,6 @@ export class TimeManager extends EventTarget {
   }
 
   pause() {
-    this.primed = true;
     this.running = false;
     this.timerElement.className = "primed";
     this.dispatchEvent(new Event("timerPaused"));
