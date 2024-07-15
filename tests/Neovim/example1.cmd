@@ -1,2 +1,0 @@
-// Yank Line
-:yy

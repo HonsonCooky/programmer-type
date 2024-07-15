@@ -1,5 +1,5 @@
 export class TextEditor extends EventTarget {
-  fontSize = 2;
+  fontSize = 1;
   textEditorElement = document.getElementById("text-editor");
   textEditorInstructionsElement = document.getElementById("text-editor-instructions");
   _testAnalysisLastSpace = [];
@@ -16,6 +16,7 @@ export class TextEditor extends EventTarget {
   }
 
   _reset(noBlur) {
+    this._analyseTest();
     this._quitPrimed = false;
     this._testAnalysisLastSpace = [];
     this._testAnalysisIndex = 0;
@@ -25,6 +26,10 @@ export class TextEditor extends EventTarget {
       if (sc.char === "\\n") sc.element.className = "newline";
       else sc.element.className = "";
     });
+  }
+
+  _analyseTest() {
+    this._testAnalysis = {}
   }
 
   /** @param {KeyboardEvent} ev */
@@ -86,7 +91,7 @@ export class TextEditor extends EventTarget {
     this._updateFontSize(0);
     this.textEditorElement.addEventListener(
       "click",
-      function () {
+      function() {
         this.textEditorElement.tabIndex = -1;
         this.textEditorElement.focus();
       }.bind(this),
