@@ -5,14 +5,6 @@ export class ThemeManager extends EventTarget {
   themeDropdownContentElement = this.themeDropdownElement.querySelector(".dropdown-content");
   themeCurrentValueElement = this.themeDropdownElement.querySelector(".current-value");
 
-  _updateUI(theme) {
-    this.themeCurrentValueElement.innerText = theme;
-    Array.from(this.themeDropdownContentElement.children).forEach((child) => {
-      if (child.innerText.includes(theme)) child.classList.add("selected");
-      else child.classList.remove("selected");
-    });
-  }
-
   constructor() {
     super();
 
@@ -37,6 +29,14 @@ export class ThemeManager extends EventTarget {
       this.isDark = true;
       this._updateUI("Dark");
       this.setTheme();
+    });
+  }
+
+  _updateUI(theme) {
+    this.themeCurrentValueElement.innerText = theme;
+    Array.from(this.themeDropdownContentElement.children).forEach((child) => {
+      if (child.innerText.includes(theme)) child.classList.add("selected");
+      else child.classList.remove("selected");
     });
   }
 

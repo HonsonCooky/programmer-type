@@ -4,17 +4,31 @@ export class TimeManager extends EventTarget {
   currentTime = 60;
   primed = false;
   running = false;
-  timeSpent = undefined;
+  /**@type {{start: number, end: number}[]}*/
+  timeIntervals = [];
+
+  resetTimer() {
+    this.primed = false;
+    this.running = false;
+    this.timeIntervals = [];
+    this.currentTime = isNaN(this.selectedTime) ? 0 : this.selectedTime;
+    this.timerElement.innerText = this.currentTime;
+    this.dispatchEvent(new Event("timerReset"));
+  }
 
   /**
    * @param {string} durationValue
    */
   setTimer(durationValue) {
-    const event = new Event("timerUpdate");
     this.selectedTime = Number.parseInt(durationValue);
     this.currentTime = isNaN(this.selectedTime) ? 0 : this.selectedTime;
+    this.timeIntervals = [];
     this.timerElement.innerText = this.currentTime;
-    this.dispatchEvent(event);
+    this.dispatchEvent(new Event("timerUpdate"));
+  }
+
+  timeSpent() {
+    return this.timeIntervals.reduce((p, c) => p + ((c.end ?? Date.now()) - c.start), 0);
   }
 
   prime() {
@@ -28,7 +42,10 @@ export class TimeManager extends EventTarget {
   run() {
     if (this.primed) {
       this.primed = false;
-      this.running = true; // This is the only place "this.running" is set to true
+      this.running = true; // This is the only place "this.running" is set to timer-value
+      this.timeIntervals.push({
+        start: Date.now(),
+      });
       this.timerElement.className = "running";
       this.dispatchEvent(new Event("timerStart"));
     }
@@ -44,16 +61,18 @@ export class TimeManager extends EventTarget {
 
   pause() {
     this.running = false;
+    if (this.timeIntervals[this.timeIntervals.length - 1])
+      this.timeIntervals[this.timeIntervals.length - 1].end = Date.now();
     this.timerElement.className = "primed";
     this.dispatchEvent(new Event("timerPaused"));
   }
 
-  finish() {
+  finish(quite = false) {
     this.primed = false;
     this.running = false;
-    this.timeSpent = this.selectedTime - this.currentTime;
     this.currentTime = this.selectedTime;
+    this.timeIntervals[this.timeIntervals.length - 1].end = Date.now();
     this.timerElement.innerText = this.currentTime;
-    this.dispatchEvent(new Event("timerFinished"));
+    if (!quite) this.dispatchEvent(new Event("timerFinished"));
   }
 }

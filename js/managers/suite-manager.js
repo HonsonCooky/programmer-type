@@ -31,6 +31,20 @@ export class SuiteManager extends EventTarget {
     },
   ];
 
+  constructor() {
+    super();
+
+    // Init selected test suite.
+    this.selectedSuiteName = this.suiteCurrentValueElement.innerText;
+    this._findSelectedSuite();
+
+    // Add event listners for each button.
+    for (const suiteBtn of this.suiteDropdownContentElements) {
+      if (suiteBtn.innerText.includes(this.selectedSuiteName)) suiteBtn.classList.add("selected");
+      suiteBtn.addEventListener("click", this._onSuiteClick.bind(this, suiteBtn));
+    }
+  }
+
   _onSuiteClick(suiteBtn) {
     this.selectedSuiteName = suiteBtn.innerText.replace(/\[.\]\s/g, "");
     this._findSelectedSuite();
@@ -67,20 +81,6 @@ export class SuiteManager extends EventTarget {
       });
   }
 
-  constructor() {
-    super();
-
-    // Init selected test suite.
-    this.selectedSuiteName = this.suiteCurrentValueElement.innerText;
-    this._findSelectedSuite();
-
-    // Add event listners for each button.
-    for (const suiteBtn of this.suiteDropdownContentElements) {
-      if (suiteBtn.innerText.includes(this.selectedSuiteName)) suiteBtn.classList.add("selected");
-      suiteBtn.addEventListener("click", this._onSuiteClick.bind(this, suiteBtn));
-    }
-  }
-
   /**
    * @param {string} set
    * @returns {Promise<string|undefined>}
@@ -91,8 +91,12 @@ export class SuiteManager extends EventTarget {
       console.error("No selected suite", this.selectedSuite);
       return;
     }
-    const randomIndex = Math.floor(Math.random() * this.selectedSuite.tests.length);
-    const randomTestPath = this.selectedSuite.tests[randomIndex];
+
+    const curIndex = this._randomIndex;
+    while (this._randomIndex === curIndex)
+      this._randomIndex = Math.floor(Math.random() * this.selectedSuite.tests.length);
+
+    const randomTestPath = this.selectedSuite.tests[this._randomIndex];
 
     const url = `${this.TESTS_ORIGIN}/${this.selectedSuiteName}/${randomTestPath}`;
     const cachedData = localStorage.getItem(url);

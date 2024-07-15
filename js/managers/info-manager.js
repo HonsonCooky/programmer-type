@@ -2,6 +2,10 @@ export class InfoManager extends EventTarget {
   constructor() {
     super();
 
+    const info = document.getElementById("info");
+    info.addEventListener("focusin", this.loadHelpInformation.bind(this));
+    info.addEventListener("focusout", () => this.dispatchEvent(new Event("reloadTest")));
+
     fetch("../../assets/help-message.html")
       .then((res) => res.text())
       .then((htmlStr) => new DOMParser().parseFromString(htmlStr, "text/html"))
@@ -14,5 +18,9 @@ export class InfoManager extends EventTarget {
       return;
     }
     if (!this.helpInfoElement) setTimeout(this.helpInfoElement, 200);
+
+    console.log(this.helpInfoElement);
+    const textEditor = document.getElementById("text-editor");
+    textEditor.innerHTML = this.helpInfoElement.querySelector("body").innerHTML;
   }
 }

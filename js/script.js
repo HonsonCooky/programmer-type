@@ -21,6 +21,10 @@ export class Program {
    */
   _contextUpdate({ suiteManager, timeManager, navigation, textEditor, testResults }) {
     textEditor.textEditorElement.addEventListener("focusin", () => {
+      if (this.curContext === testResults) {
+        suiteManager.updateRandomTest();
+        return;
+      }
       this.curContext = textEditor;
       textEditor.focusTextEditor();
       timeManager.prime();
@@ -33,6 +37,7 @@ export class Program {
     testResults.addEventListener(
       "resultsClosed",
       function () {
+        suiteManager.updateRandomTest();
         this.curContext = navigation;
       }.bind(this),
     );
@@ -104,28 +109,65 @@ export class Program {
 
   /**
    * @param {Object} param0
-   * @param {DurationManager} param0.durationManager
+   * @param {SuiteManager} param0.suiteManager
+   * @param {InfoManager} param0.infoManager
+   * @param {TextEditor} param0.textEditor
+   */
+  _infoHover({ suiteManager, infoManager, textEditor }) {
+    const reloadTest = function () {
+      textEditor.loadTestSuite(suiteManager.selectedSuite, suiteManager.currentTest);
+    };
+    infoManager.addEventListener("reloadTest", reloadTest);
+  }
+
+  /**
+   * @param {Object} param0
    * @param {SuiteManager} param0.suiteManager
    * @param {TimeManager} param0.timeManager
    * @param {TextEditor} param0.textEditor
    * @param {TestResults} param0.testResults
    */
-  _testFinished({ durationManager, suiteManager, timeManager, textEditor, testResults }) {
-    const testFinished = function () {
-      textEditor._reset();
-      const testValues = {
-        ...textEditor._testAnalysis,
-        time: timeManager.currentTime,
-        suite: suiteManager.selectedSuite,
-      };
+  _testFinished({ suiteManager, timeManager, textEditor, testResults }) {
+    let testEvaluations = [];
 
-      timeManager.setTimer(durationManager.selectedDuration);
+    const _evaluateResults = function () {
       this.curContext = testResults;
-      testResults.displayResults(testValues);
+      textEditor.textEditorElement.innerHTML = "";
+      textEditor.textEditorElement.appendChild(testResults.resultsHTML([...testEvaluations]));
+      testEvaluations = [];
+    }.bind(this);
+
+    const _saveResults = function (forceQuit) {
+      let { invalid, correct } = textEditor.analyseTest();
+      if (forceQuit) invalid--;
+      const timeStamp = timeManager.timeSpent();
+      const suite = suiteManager.selectedSuite;
+      testEvaluations.push({ invalid, correct, timeStamp, suite });
     };
 
-    textEditor.addEventListener("testFinished", testFinished);
+    const testCompleted = function () {
+      _saveResults();
+      suiteManager.updateRandomTest();
+    };
+
+    const testFinished = function () {
+      _saveResults();
+      textEditor.reset();
+      timeManager.resetTimer();
+      _evaluateResults();
+    };
+
+    const testForceFinished = function () {
+      timeManager.finish(true);
+      _saveResults(true);
+      textEditor.reset();
+      timeManager.resetTimer();
+      _evaluateResults();
+    };
+
     timeManager.addEventListener("timerFinished", testFinished);
+    textEditor.addEventListener("testForceFinished", testForceFinished);
+    textEditor.addEventListener("testCompleted", testCompleted);
   }
 
   setup() {
@@ -147,7 +189,8 @@ export class Program {
     this._keyboardInput({ textEditor, timeManager });
     this._durationUpdate({ durationManager, timeManager });
     this._suiteUpdate({ suiteManager, textEditor });
-    this._testFinished({ durationManager, suiteManager, timeManager, textEditor, testResults });
+    this._infoHover({ suiteManager, infoManager, textEditor });
+    this._testFinished({ suiteManager, timeManager, textEditor, testResults });
   }
 }
 

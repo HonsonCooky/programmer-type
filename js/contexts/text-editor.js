@@ -2,7 +2,27 @@ export class TextEditor extends EventTarget {
   fontSize = 1;
   textEditorElement = document.getElementById("text-editor");
   textEditorInstructionsElement = document.getElementById("text-editor-instructions");
-  _testLastSpace = [];
+  _quitPrimed = false;
+  _testIndex = 0;
+  _testSequence = [];
+  _testLastWord = [];
+
+  constructor() {
+    super();
+
+    this._updateFontSize(0);
+    this.textEditorElement.addEventListener(
+      "click",
+      function () {
+        this.textEditorElement.tabIndex = -1;
+        this.textEditorElement.focus();
+      }.bind(this),
+    );
+    this.textEditorInstructionsElement.innerText = "[Enter] Start";
+
+    this._maxHeightCalc();
+    window.addEventListener("resize", this._maxHeightCalc.bind(this));
+  }
 
   _updateFontSize(increment) {
     this.fontSize += increment;
@@ -15,38 +35,10 @@ export class TextEditor extends EventTarget {
     this.textEditorElement.style.maxHeight = window.getComputedStyle(this.textEditorElement).height;
   }
 
-  _reset(noBlur) {
-    this._analyseTest();
-    this._quitPrimed = false;
-    this._testLastSpace = [];
-    this._testIndex = 0;
-    if (!noBlur) this.textEditorElement.blur();
-    this._testSequence.forEach((sc) => {
-      sc.element.innerText = sc.char;
-      if (sc.char === "\\n") sc.element.className = "newline";
-      else sc.element.className = "";
-    });
-  }
-
-  _analyseTest() {
-    // Nothing to analyze - likely because reset has been called twice
-    if (this._testSequence[0].element.classList.length === 0) return;
-
-    let invalid = 0;
-    let correct = 0;
-    for (const i of this._testSequence) {
-      if (i.element.classList.contains("correct")) correct++;
-      if (i.element.classList.contains("invalid")) invalid++;
-      if (i.element.classList.length === 0) break;
-    }
-
-    this._testAnalysis = { invalid, correct };
-  }
-
   /** @param {KeyboardEvent} ev */
   _codeEvaluationBackspace(ev) {
     let newIndex = this._testIndex - 1;
-    if (ev.ctrlKey) newIndex = this._testLastSpace.length > 0 ? this._testLastSpace.pop() + 1 : 0;
+    if (ev.ctrlKey) newIndex = this._testLastWord.length > 0 ? this._testLastWord.pop() + 1 : 0;
     if (newIndex < 0) newIndex = 0;
 
     this._testSequence.slice(newIndex, this._testIndex + 1).forEach((sc) => {
@@ -67,7 +59,9 @@ export class TextEditor extends EventTarget {
     }
 
     // New line
-    if (char === " " || char === "\\n") this._testLastSpace.push(this._testIndex);
+    if (char === " " || char === "\\n") this._testLastWord.push(this._testIndex);
+
+    // Char Eval
     if (key === char || (key === "Enter" && char === "\\n")) element.className = "correct";
     else {
       if (char === " ") element.innerText = "_";
@@ -120,27 +114,7 @@ export class TextEditor extends EventTarget {
     console.log(lines);
   }
 
-  constructor() {
-    super();
-
-    this._updateFontSize(0);
-    this.textEditorElement.addEventListener(
-      "click",
-      function () {
-        this.textEditorElement.tabIndex = -1;
-        this.textEditorElement.focus();
-      }.bind(this),
-    );
-    this.textEditorInstructionsElement.innerText = "[Enter] Start";
-
-    this._maxHeightCalc;
-    window.addEventListener("resize", this._maxHeightCalc.bind(this));
-  }
-
   focusTextEditor() {
-    if (this._testIndex >= this._testSequence.length) {
-      this._reset(true);
-    }
     this.textEditorInstructionsElement.innerText = "[:q] Quit, [Ctrl +] Increase Font, [Ctrl -] Decrease Font";
     this._testSequence[0].element.scrollIntoView();
   }
@@ -181,16 +155,34 @@ export class TextEditor extends EventTarget {
     return ![this.isModifierKey(key), ctrl && key === "+", ctrl && key === "-"].includes(true);
   }
 
+  reset(noBlur) {
+    this._quitPrimed = false;
+    this._testLastWord = [];
+    this._testIndex = 0;
+    if (!noBlur) this.textEditorElement.blur();
+    this._testSequence = [];
+    this.textEditorElement.innerHTML = "";
+  }
+
+  analyseTest() {
+    // Nothing to analyze - likely because reset has been called twice
+    let invalid = 0;
+    let correct = 0;
+    for (const i of this._testSequence) {
+      if (i.element.classList.contains("correct")) correct++;
+      if (i.element.classList.contains("invalid")) invalid++;
+      if (i.element.classList.length === 0) break;
+    }
+
+    return { invalid, correct };
+  }
+
   /** @param {KeyboardEvent} ev */
   keydown(ev) {
     ev.preventDefault();
 
-    // Shouldn't be able to get here, but just in case
-    if (this._testIndex >= this._testSequence.length) {
-      this._reset();
-      this.dispatchEvent(new Event("testFinished"));
-      return;
-    }
+    // Whilst loading another test, wait for the reset
+    if (this._testIndex >= this._testSequence.length) return;
 
     const key = ev.key;
     const ctrl = ev.ctrlKey;
@@ -201,18 +193,19 @@ export class TextEditor extends EventTarget {
 
     if (this.isModifierKey(key)) return;
 
+    // Force Quit
     if (key === ":") this._quitPrimed = true;
+    else if (this._quitPrimed && key !== "q") this._quitPrimed = false;
     if (this._quitPrimed && key === "q") {
-      this._reset();
-      this.dispatchEvent(new Event("testFinished"));
+      this.dispatchEvent(new Event("testForceFinished"));
       return;
     }
 
-    if (this.suite?.type === "Code") return this._codeEvaluation(ev);
+    if (this.suite?.type === "Code") this._codeEvaluation(ev);
 
-    if (this._testIndex >= this._testSequence.length) {
-      this._reset();
-      this.dispatchEvent(new Event("testFinished"));
+    // Finished Test
+    if (this._testIndex >= this._testSequence.length - 1) {
+      this.dispatchEvent(new Event("testCompleted"));
       return;
     }
   }

@@ -27,6 +27,9 @@ export class Navigation {
         action: "click",
       },
     },
+    i: {
+      element: document.getElementById("info"),
+    },
     s: {
       element: document.getElementById("suite"),
       c: {
@@ -64,7 +67,6 @@ export class Navigation {
 
   /** @param {KeyboardEvent} ev */
   keydown(ev) {
-    ev.preventDefault();
     let key = ev.key;
 
     const insert = this.currentMap[key];
