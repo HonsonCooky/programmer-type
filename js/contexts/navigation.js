@@ -73,6 +73,13 @@ export class Navigation {
       return;
     }
 
+    if (key === "Enter") {
+      this._reset();
+      element.tabIndex = -1;
+      element.focus();
+      return;
+    }
+
     element.tabIndex = -1;
     element.focus();
     this.footerElement.innerText =

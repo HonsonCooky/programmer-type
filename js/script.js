@@ -82,7 +82,7 @@ export class Program {
     };
 
     const testUpdated = function () {
-      textEditor.loadTestSuite(suiteManager.currentTest);
+      textEditor.loadTestSuite(suiteManager.selectedSuite, suiteManager.currentTest);
     };
 
     suiteManager.addEventListener("updatingTest", updatingTest);
@@ -91,6 +91,22 @@ export class Program {
     // Load initial test - avoid doing before linking.
     // This is a unique scenario, as we cannot easily pre-load this data.
     suiteManager.updateRandomTest();
+  }
+
+  /**
+   * @param {Object} param0
+   * @param {DurationManager} param0.durationManager
+   * @param {TimeManager} param0.timeManager
+   * @param {TextEditor} param0.textEditor
+   */
+  _testFinished({ durationManager, timeManager, textEditor }) {
+    const testFinished = function () {
+      timeManager.setTimer(durationManager.selectedDuration);
+      textEditor._reset();
+    };
+
+    textEditor.addEventListener("testFinished", testFinished);
+    timeManager.addEventListener("timerFinished", testFinished);
   }
 
   setup() {
@@ -115,6 +131,7 @@ export class Program {
     this._keyboardInput({ textEditor, timeManager });
     this._durationUpdate({ durationManager, timeManager });
     this._suiteUpdate({ suiteManager, textEditor });
+    this._testFinished({ durationManager, timeManager, textEditor });
   }
 }
 
