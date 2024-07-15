@@ -38,6 +38,7 @@ export class Program {
       "resultsClosed",
       function () {
         suiteManager.updateRandomTest();
+        textEditor.textEditorInstructionsElement.innerText = "[Enter] Start";
         this.curContext = navigation;
       }.bind(this),
     );
@@ -134,6 +135,8 @@ export class Program {
       this.curContext = testResults;
       textEditor.textEditorElement.innerHTML = "";
       textEditor.textEditorElement.appendChild(testResults.resultsHTML([...testEvaluations]));
+      textEditor.textEditorInstructionsElement.innerText = "[Enter | Esc | q] Done";
+      console.log("here");
       testEvaluations = [];
     }.bind(this);
 
