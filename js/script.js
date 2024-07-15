@@ -136,7 +136,6 @@ export class Program {
       textEditor.textEditorElement.innerHTML = "";
       textEditor.textEditorElement.appendChild(testResults.resultsHTML([...testEvaluations]));
       textEditor.textEditorInstructionsElement.innerText = "[Enter | Esc | q] Done";
-      console.log("here");
       testEvaluations = [];
     }.bind(this);
 

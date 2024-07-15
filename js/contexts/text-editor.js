@@ -108,10 +108,13 @@ export class TextEditor extends EventTarget {
   }
 
   _loadActionEvaluation(currentTest) {
-    const objStr = currentTest.replace("module.export = ", "").replaceAll(";", "");
-    const mod = eval(`(${objStr})`);
-    const lines = Object.entries(mod);
-    console.log(lines);
+    try {
+      const objStr = currentTest.replace("module.export = ", "").replaceAll(";", "");
+      const mod = eval(`(${objStr})`);
+      const lines = Object.entries(mod);
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   focusTextEditor() {

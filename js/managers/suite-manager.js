@@ -56,7 +56,6 @@ export class SuiteManager extends EventTarget {
   _findSelectedSuite() {
     const possibleSuites = this.SUITES.filter((i) => i.name === this.selectedSuiteName);
     if (possibleSuites.length === 0) {
-      console.log("Unknown Test Suite", this.selectedSuiteName);
       return;
     }
 

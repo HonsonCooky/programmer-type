@@ -19,7 +19,6 @@ export class InfoManager extends EventTarget {
     }
     if (!this.helpInfoElement) setTimeout(this.helpInfoElement, 200);
 
-    console.log(this.helpInfoElement);
     const textEditor = document.getElementById("text-editor");
     textEditor.innerHTML = this.helpInfoElement.querySelector("body").innerHTML;
   }
