@@ -140,11 +140,11 @@ export class Program {
     }.bind(this);
 
     const _saveResults = function(forceQuit) {
-      let { invalid, correct } = textEditor.analyseTest();
+      let { invalid, correct, backspaces } = textEditor.analyseTest();
       if (forceQuit) invalid--;
       const timeStamp = timeManager.timeSpent();
       const suite = suiteManager.selectedSuite;
-      testEvaluations.push({ invalid, correct, timeStamp, suite });
+      testEvaluations.push({ invalid, correct, timeStamp, suite, backspaces });
     };
 
     const testCompleted = function() {

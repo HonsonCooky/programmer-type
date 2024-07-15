@@ -1,7 +1,7 @@
 {
   "1": {
     "keybind": "ggVG",
-    "comment": ["yank buffer: Copy the entire buffer to the clipboard."],
+    "comments": ["yank buffer: Copy the entire buffer to the clipboard."],
     "action": "copy",
     "content": [
       "S8ogjPokwvJMTLr3McrT7rFM",
@@ -17,11 +17,11 @@
     ]
   },
   "2": {
-    "comment": ["Go To Vim/Neovim.", "Paste the copied text.", "Copy the first 5 lines : <ggV4jy>", "then..."]
+    "comments": ["Go To Vim/Neovim.", "Paste the copied text.", "Copy the first 5 lines : <ggV4jy>", "then..."]
   },
   "3": {
     "keybind": "p",
-    "comment": ["paste: Paste the first 5 lines into programmer-type"],
+    "comments": ["paste: Paste the first 5 lines into programmer-type"],
     "action": "paste:assert",
     "content": [
       "S8ogjPokwvJMTLr3McrT7rFM",

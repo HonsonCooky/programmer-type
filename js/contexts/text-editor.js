@@ -14,10 +14,6 @@ export class TextEditor extends EventTarget {
   /**@type {IEvaluator|undefined}*/
   _currentEvaluator = undefined;
 
-  _testIndex = undefined;
-  _testSequence = undefined;
-  _testLastWord = undefined;
-
   constructor() {
     super();
 
@@ -38,11 +34,15 @@ export class TextEditor extends EventTarget {
     window.addEventListener("resize", this._maxHeightCalc.bind(this));
   }
 
+  /** @param {number} increment  */
   _updateFontSize(increment) {
     this._fontSize += increment;
     if (this._fontSize < -2) this._fontSize = -2;
     if (this._fontSize > 5) this._fontSize = 5;
     this.textEditorElement.style.fontSize = `var(--fs-${this._fontSize})`;
+    Array.from(this.textEditorElement.querySelectorAll(".line")).forEach(
+      (e) => (e.style.minHeight = `var(--fs-${this._fontSize})`),
+    );
   }
 
   _maxHeightCalc() {
@@ -65,6 +65,32 @@ export class TextEditor extends EventTarget {
     this._textEditorInstructionsElement.innerText = "[Enter] Start";
   }
 
+  /**@param {boolean} noBlur */
+  reset(noBlur) {
+    this._quitPrimed = false;
+    if (!noBlur) this.textEditorElement.blur();
+    this.textEditorElement.innerHTML = "";
+  }
+
+  /** @returns {{
+   * invalid: number,
+   * correct: number,
+   * backspaces: number|undefined,
+   * }} */
+  analyseTest() {
+    // Nothing to analyze - likely because reset has been called twice
+    const { seq, backspaces } = this._currentEvaluator.results();
+    let invalid = 0;
+    let correct = 0;
+    for (const i of seq) {
+      if (i.element.classList.contains("correct")) correct++;
+      if (i.element.classList.contains("invalid")) invalid++;
+      if (i.element.classList.length === 0) break;
+    }
+
+    return { invalid, correct, backspaces };
+  }
+
   loadingTest() {
     this.textEditorElement.innerText = "Loading...";
   }
@@ -76,7 +102,8 @@ export class TextEditor extends EventTarget {
     if (this.suite.type === "Code") this._currentEvaluator = this._codeEvaluator;
     else this._currentEvaluator = this._actionEvaluator;
 
-    this._currentEvaluator.load(currentTest, this.textEditorElement);
+    this._currentEvaluator.load({ currentTest, textEditorElement: this.textEditorElement });
+    this._updateFontSize(0);
   }
 
   /** @param {string} key */
@@ -97,26 +124,6 @@ export class TextEditor extends EventTarget {
     const key = ev.key;
     const ctrl = ev.ctrlKey;
     return ![this.isModifierKey(key), ctrl && key === "+", ctrl && key === "-"].includes(true);
-  }
-
-  reset(noBlur) {
-    this._quitPrimed = false;
-    if (!noBlur) this.textEditorElement.blur();
-    this.textEditorElement.innerHTML = "";
-  }
-
-  analyseTest() {
-    // Nothing to analyze - likely because reset has been called twice
-    const { index, seq } = this._currentEvaluator.results();
-    let invalid = 0;
-    let correct = 0;
-    for (const i of seq) {
-      if (i.element.classList.contains("correct")) correct++;
-      if (i.element.classList.contains("invalid")) invalid++;
-      if (i.element.classList.length === 0) break;
-    }
-
-    return { invalid, correct };
   }
 
   /** @param {KeyboardEvent} ev */

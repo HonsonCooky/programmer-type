@@ -1,12 +1,15 @@
 import { IEvaluator } from "./ievaluator.js";
 
 export class CodeTestEvaluation extends IEvaluator {
+  _backspaceCounter = 0;
+
   /** @param {KeyboardEvent} ev */
   _codeEvaluationBackspace(ev) {
     let newIndex = this._testIndex - 1;
     if (ev.ctrlKey) newIndex = this._testLastWord.length > 0 ? this._testLastWord.pop() + 1 : 0;
     if (newIndex < 0) newIndex = 0;
 
+    this._backspaceCounter += this._testIndex - newIndex;
     this._testSequence.slice(newIndex, this._testIndex + 1).forEach((sc) => {
       sc.element.innerText = sc.char;
       if (sc.char === "\\n") sc.element.className = "newline";
@@ -36,7 +39,10 @@ export class CodeTestEvaluation extends IEvaluator {
     this._testIndex++;
   }
 
-  reset() { }
+  reset() {
+    super.reset();
+    this._backspaceCounter = 0;
+  }
 
   /**
    * @returns {{
@@ -48,6 +54,7 @@ export class CodeTestEvaluation extends IEvaluator {
     return {
       index: this._testIndex,
       seq: this._testSequence,
+      backspaces: this._backspaceCounter,
     };
   }
 
@@ -69,27 +76,36 @@ export class CodeTestEvaluation extends IEvaluator {
     element.scrollIntoView();
   }
 
-  /**@param {string} currentTest */
-  load(currentTest, textEditorElement) {
-    this._textEditorElement = textEditorElement;
-    this._textEditorElement.innerHTML = currentTest
-      .split(/\r?\n/g)
-      .map((line) => {
-        const indentLevel = (line.match(/^(\s+)/) || [""])[0].length;
-        let chars = line
-          .trim()
-          .split("")
-          .map((c) => `<span>${c}</span>`);
-        chars.push('<span class="newline">\\n</span>');
-        chars = chars.join("");
+  /**
+   * @param {Object} param0
+   * @param {string} param0.currentTest
+   * @param {HTMLElement} param0.textEditorElement
+   */
+  load({ currentTest, textEditorElement }) {
+    try {
+      this._textEditorElement = textEditorElement;
+      this._textEditorElement.innerHTML = currentTest
+        .split(/\r?\n/g)
+        .map((line) => {
+          const indentLevel = (line.match(/^(\s+)/) || [""])[0].length;
+          let chars = line
+            .trim()
+            .split("")
+            .map((c) => `<span>${c}</span>`);
+          chars.push('<span class="newline">\\n</span>');
+          chars = chars.join("");
 
-        return `<div class="line" style="margin-left:calc(var(--fs--2) * ${indentLevel})">${chars}</div>`;
-      })
-      .join("");
+          return `<div class="line" style="margin-left:calc(var(--fs--2) * ${indentLevel})">${chars}</div>`;
+        })
+        .join("");
 
-    this._testSequence = Array.from(this._textEditorElement.children)
-      .map((line) => Array.from(line.children).map((c) => ({ char: c.innerText, element: c })))
-      .flat();
-    this._testIndex = 0;
+      this._testSequence = Array.from(this._textEditorElement.children)
+        .map((line) => Array.from(line.children).map((c) => ({ char: c.innerText, element: c })))
+        .flat();
+      this._testIndex = 0;
+    } catch (e) {
+      textEditorElement.innerHTML = `<span class="error">Unable to load test</span>`;
+      console.error(e);
+    }
   }
 }

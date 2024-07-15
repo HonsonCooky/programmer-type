@@ -2,9 +2,12 @@ export class IEvaluator {
   _testIndex = 0;
   _testLastWord = [];
   _testSequence = [];
+  _textEditorElement = undefined;
 
   reset() {
-    throw Error("Unimplemented Method");
+    this._testIndex = 0;
+    this._testLastWord = [];
+    this._testSequence = [];
   }
 
   /**
@@ -25,8 +28,12 @@ export class IEvaluator {
     throw Error("Unimplemented Method");
   }
 
-  /**@param {string} currentTest */
-  load(currentTest) {
+  /**
+   * @param {Object} param0
+   * @param {string} param0.currentTest
+   * @param {HTMLElement} param0.textEditorElement
+   */
+  load({ currentTest, textEditorElement }) {
     throw Error("Unimplemented Method");
   }
 }

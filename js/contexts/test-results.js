@@ -11,8 +11,9 @@ export class TestResults extends EventTarget {
    * @param {{
    *   invalid: number,
    *   correct: number,
+   *   backspaces: number|undefined,
    *   timeStamp: number,
-   *   suite: { name: string; type: string; tests: string[]; }
+   *   suite: { name: string; type: string; tests: string[]; },
    * }[]} testValues */
   resultsHTML(testValues) {
     const wrapper = document.createElement("div");
