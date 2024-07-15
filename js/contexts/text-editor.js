@@ -112,6 +112,7 @@ export class TextEditor extends EventTarget {
       const objStr = currentTest.replace("module.export = ", "").replaceAll(";", "");
       const mod = eval(`(${objStr})`);
       const lines = Object.entries(mod);
+      console.log(lines);
     } catch (error) {
       console.error(error);
     }
