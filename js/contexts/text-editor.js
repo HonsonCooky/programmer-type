@@ -2,7 +2,7 @@ export class TextEditor extends EventTarget {
   fontSize = 1;
   textEditorElement = document.getElementById("text-editor");
   textEditorInstructionsElement = document.getElementById("text-editor-instructions");
-  _testAnalysisLastSpace = [];
+  _testLastSpace = [];
 
   _updateFontSize(increment) {
     this.fontSize += increment;
@@ -18,10 +18,10 @@ export class TextEditor extends EventTarget {
   _reset(noBlur) {
     this._analyseTest();
     this._quitPrimed = false;
-    this._testAnalysisLastSpace = [];
-    this._testAnalysisIndex = 0;
+    this._testLastSpace = [];
+    this._testIndex = 0;
     if (!noBlur) this.textEditorElement.blur();
-    this._testAnalysisSequence.forEach((sc) => {
+    this._testSequence.forEach((sc) => {
       sc.element.innerText = sc.char;
       if (sc.char === "\\n") sc.element.className = "newline";
       else sc.element.className = "";
@@ -29,26 +29,37 @@ export class TextEditor extends EventTarget {
   }
 
   _analyseTest() {
-    this._testAnalysis = {}
+    // Nothing to analyze - likely because reset has been called twice
+    if (this._testSequence[0].element.classList.length === 0) return;
+
+    let invalid = 0;
+    let correct = 0;
+    for (const i of this._testSequence) {
+      if (i.element.classList.contains("correct")) correct++;
+      if (i.element.classList.contains("invalid")) invalid++;
+      if (i.element.classList.length === 0) break;
+    };
+
+    this._testAnalysis = { invalid, correct }
   }
 
   /** @param {KeyboardEvent} ev */
   _codeEvaluationBackspace(ev) {
-    let newIndex = this._testAnalysisIndex - 1;
-    if (ev.ctrlKey) newIndex = this._testAnalysisLastSpace.length > 0 ? this._testAnalysisLastSpace.pop() + 1 : 0;
+    let newIndex = this._testIndex - 1;
+    if (ev.ctrlKey) newIndex = this._testLastSpace.length > 0 ? this._testLastSpace.pop() + 1 : 0;
     if (newIndex < 0) newIndex = 0;
 
-    this._testAnalysisSequence.slice(newIndex, this._testAnalysisIndex + 1).forEach((sc) => {
+    this._testSequence.slice(newIndex, this._testIndex + 1).forEach((sc) => {
       sc.element.innerText = sc.char;
       if (sc.char === "\\n") sc.element.className = "newline";
       else sc.element.className = "";
     });
-    this._testAnalysisIndex = newIndex;
+    this._testIndex = newIndex;
   }
 
   /** @param {string} key */
   _codeEvaluationCharacter(key) {
-    const { char, element } = this._testAnalysisSequence[this._testAnalysisIndex];
+    const { char, element } = this._testSequence[this._testIndex];
 
     if (!char) {
       console.error("Test failed, unable to access next character");
@@ -56,35 +67,35 @@ export class TextEditor extends EventTarget {
     }
 
     // New line
-    if (char === " " || char === "\\n") this._testAnalysisLastSpace.push(this._testAnalysisIndex);
+    if (char === " " || char === "\\n") this._testLastSpace.push(this._testIndex);
     if (key === char || (key === "Enter" && char === "\\n")) element.className = "correct";
     else {
       if (char === " ") element.innerText = "_";
       element.className = "invalid";
     }
-    this._testAnalysisIndex++;
+    this._testIndex++;
   }
 
   /** @param {KeyboardEvent} ev */
   _codeEvaluation(ev) {
-    if (!this._testAnalysisSequence) return;
+    if (!this._testSequence) return;
 
     const key = ev.key;
     if (key === "Backspace") this._codeEvaluationBackspace(ev);
     else this._codeEvaluationCharacter(key);
 
     // Next Element
-    const element = this._testAnalysisSequence[this._testAnalysisIndex].element;
+    const element = this._testSequence[this._testIndex].element;
     if (!element) return;
     element.className = "current";
     element.scrollIntoView();
   }
 
   _loadCodeEvaluation() {
-    this._testAnalysisSequence = Array.from(this.textEditorElement.children)
+    this._testSequence = Array.from(this.textEditorElement.children)
       .map((line) => Array.from(line.children).map((c) => ({ char: c.innerText, element: c })))
       .flat();
-    this._testAnalysisIndex = 0;
+    this._testIndex = 0;
   }
 
   setup() {
@@ -103,11 +114,11 @@ export class TextEditor extends EventTarget {
   }
 
   focusTextEditor() {
-    if (this._testAnalysisIndex >= this._testAnalysisSequence.length) {
+    if (this._testIndex >= this._testSequence.length) {
       this._reset(true);
     }
     this.textEditorInstructionsElement.innerText = "[:q] Quit, [Ctrl +] Increase Font, [Ctrl -] Decrease Font";
-    this._testAnalysisSequence[0].element.scrollIntoView();
+    this._testSequence[0].element.scrollIntoView();
   }
 
   blurTextEditor() {
@@ -162,7 +173,7 @@ export class TextEditor extends EventTarget {
   /** @param {KeyboardEvent} ev */
   keydown(ev) {
     // Shouldn't be able to get here, but just in case
-    if (this._testAnalysisIndex >= this._testAnalysisSequence.length) {
+    if (this._testIndex >= this._testSequence.length) {
       this._reset();
       this.dispatchEvent(new Event("testFinished"));
       return;
@@ -186,7 +197,7 @@ export class TextEditor extends EventTarget {
 
     if (this.suite?.type === "Code") return this._codeEvaluation(ev);
 
-    if (this._testAnalysisIndex >= this._testAnalysisSequence.length) {
+    if (this._testIndex >= this._testSequence.length) {
       this._reset();
       this.dispatchEvent(new Event("testFinished"));
       return;

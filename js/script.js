@@ -4,6 +4,7 @@ import { SuiteManager } from "./managers/suite-manager.js";
 import { TextEditor } from "./contexts/text-editor.js";
 import { ThemeManager } from "./managers/theme-manager.js";
 import { TimeManager } from "./managers/time-manager.js";
+import { InfoManager } from "./managers/info-manager.js";
 
 export class Program {
   /**
@@ -40,7 +41,7 @@ export class Program {
   _keyboardInput({ textEditor, timeManager }) {
     window.addEventListener(
       "keydown",
-      function (ev) {
+      function(ev) {
         // Start the test if the user is typing into the text editor, and the timer hasn't started
         if (this.curContext === textEditor) {
           const timerReady = timeManager.primed && !timeManager.running;
@@ -62,7 +63,7 @@ export class Program {
    * @param {TimeManager} param0.timeManager
    */
   _durationUpdate({ durationManager, timeManager }) {
-    const callback = function () {
+    const callback = function() {
       timeManager.setTimer(durationManager.selectedDuration);
     };
 
@@ -77,11 +78,11 @@ export class Program {
    * @param {TextEditor} param0.textEditor
    */
   _suiteUpdate({ suiteManager, textEditor }) {
-    const updatingTest = function () {
+    const updatingTest = function() {
       textEditor.loadingTest();
     };
 
-    const testUpdated = function () {
+    const testUpdated = function() {
       textEditor.loadTestSuite(suiteManager.selectedSuite, suiteManager.currentTest);
     };
 
@@ -96,13 +97,21 @@ export class Program {
   /**
    * @param {Object} param0
    * @param {DurationManager} param0.durationManager
+   * @param {SuiteManager} param0.suiteManager
    * @param {TimeManager} param0.timeManager
    * @param {TextEditor} param0.textEditor
    */
-  _testFinished({ durationManager, timeManager, textEditor }) {
-    const testFinished = function () {
-      timeManager.setTimer(durationManager.selectedDuration);
+  _testFinished({ durationManager, suiteManager, timeManager, textEditor }) {
+    const testFinished = function() {
       textEditor._reset();
+      const testValues = {
+        ...textEditor._testAnalysis,
+        time: timeManager.currentTime,
+        suite: suiteManager.selectedSuite,
+      }
+
+      console.log(testValues);
+      timeManager.setTimer(durationManager.selectedDuration);
     };
 
     textEditor.addEventListener("testFinished", testFinished);
@@ -117,6 +126,8 @@ export class Program {
     durationManager.setup();
     const suiteManager = new SuiteManager();
     suiteManager.setup();
+    const infoManager = new InfoManager();
+    infoManager.setup();
     const timeManager = new TimeManager();
 
     // Contexts
@@ -131,7 +142,7 @@ export class Program {
     this._keyboardInput({ textEditor, timeManager });
     this._durationUpdate({ durationManager, timeManager });
     this._suiteUpdate({ suiteManager, textEditor });
-    this._testFinished({ durationManager, timeManager, textEditor });
+    this._testFinished({ durationManager, suiteManager, timeManager, textEditor });
   }
 }
 
