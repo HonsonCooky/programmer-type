@@ -84,6 +84,7 @@ export class TestResults extends EventTarget {
     ev.preventDefault();
     const key = ev.key;
 
-    if (key === "Enter" || key === "Escape" || key === "q") this._closeResults();
+    if (key === "Enter" || key === "Escape" || key === "q") return this._closeResults();
+    this.dispatchEvent(new CustomEvent("noResultKeyOveride", { detail: ev }));
   }
 }

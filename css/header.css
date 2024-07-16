@@ -14,9 +14,12 @@ header {
 
 hgroup {
 	display: flex;
-	flex-direction: column;
-	align-items: center;
+	column-gap: var(--s-m);
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: start;
 	padding: var(--s-xs) 0;
+	width: 100%;
 
 	h1 {
 		margin: 0;

@@ -79,7 +79,7 @@ export class CodeTestEvaluation extends IEvaluator {
       return;
     }
     element.className = "current";
-    element.scrollIntoView();
+    element.scrollIntoView({ behavior: "smooth" });
   }
 
   /**

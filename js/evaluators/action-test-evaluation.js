@@ -104,7 +104,7 @@ export class ActionTestEvaluation extends IEvaluator {
 
     if (!element) return;
     element.className = "current";
-    element.scrollIntoView();
+    element.scrollIntoView({ behavior: "smooth" });
   }
 
   _correctCharacter(curTerm) {
@@ -134,8 +134,6 @@ export class ActionTestEvaluation extends IEvaluator {
     if (!this._testSequence || this._locked) return;
     const key = ev.key;
     const curTerm = this._testSequence[this._testIndex];
-
-    console.log(this._testSequence, this._testIndex);
 
     if (curTerm.char != key) {
       this._resetLine(curTerm);

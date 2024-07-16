@@ -42,6 +42,9 @@ export class Program {
         this.curContext = navigation;
       }.bind(this),
     );
+    testResults.addEventListener("noResultKeyOveride", function (ev) {
+      navigation.keydown(ev.detail);
+    });
   }
 
   /**
@@ -89,9 +92,14 @@ export class Program {
    *
    * @param {Object} param0
    * @param {SuiteManager} param0.suiteManager
+   * @param {TimeManager} param0.timeManager
    * @param {TextEditor} param0.textEditor
    */
-  _suiteUpdate({ suiteManager, textEditor }) {
+  _suiteUpdate({ suiteManager, timeManager, textEditor }) {
+    const suiteUpdated = function () {
+      timeManager.resetTimer();
+    };
+
     const updatingTest = function () {
       textEditor.loadingTest();
     };
@@ -100,6 +108,7 @@ export class Program {
       textEditor.loadTestSuite(suiteManager.selectedSuite, suiteManager.currentTest);
     };
 
+    suiteManager.addEventListener("suiteUpdated", suiteUpdated);
     suiteManager.addEventListener("updatingTest", updatingTest);
     suiteManager.addEventListener("testUpdated", testUpdated);
 
@@ -190,7 +199,7 @@ export class Program {
     this._contextUpdate({ suiteManager, timeManager, navigation, textEditor, testResults });
     this._keyboardInput({ textEditor, timeManager });
     this._durationUpdate({ durationManager, timeManager });
-    this._suiteUpdate({ suiteManager, textEditor });
+    this._suiteUpdate({ suiteManager, timeManager, textEditor });
     this._infoHover({ suiteManager, infoManager, textEditor });
     this._testFinished({ suiteManager, timeManager, textEditor, testResults });
   }

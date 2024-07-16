@@ -40,13 +40,18 @@ export class TextEditor extends EventTarget {
     if (this._fontSize < -2) this._fontSize = -2;
     if (this._fontSize > 5) this._fontSize = 5;
     this.textEditorElement.style.fontSize = `var(--fs-${this._fontSize})`;
-    Array.from(this.textEditorElement.querySelectorAll(".line")).forEach(
-      (e) => (e.style.minHeight = `var(--fs-${this._fontSize})`),
-    );
   }
 
   _maxHeightCalc() {
-    this.textEditorElement.style.maxHeight = window.getComputedStyle(this.textEditorElement).height;
+    const header = document.querySelector("header");
+    const footer = document.querySelector("footer");
+    const main = document.querySelector("main");
+
+    const headerSize = Number.parseFloat(getComputedStyle(header).height);
+    const footerSize = Number.parseFloat(getComputedStyle(footer).height);
+
+    main.style.height = 0;
+    main.style.maxHeight = window.innerHeight - headerSize - footerSize + "px";
   }
 
   focusTextEditor() {
