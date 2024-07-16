@@ -23,7 +23,7 @@ export class TextEditor extends EventTarget {
     this._updateFontSize(0);
     this.textEditorElement.addEventListener(
       "click",
-      function() {
+      function () {
         this.textEditorElement.tabIndex = -1;
         this.textEditorElement.focus();
       }.bind(this),
@@ -103,6 +103,12 @@ export class TextEditor extends EventTarget {
     else this._currentEvaluator = this._actionEvaluator;
 
     this._currentEvaluator.load({ currentTest, textEditorElement: this.textEditorElement });
+    this._currentEvaluator.addEventListener(
+      "evaluationComplete",
+      function () {
+        this.dispatchEvent(new Event("testCompleted"));
+      }.bind(this),
+    );
     this._updateFontSize(0);
   }
 
@@ -154,12 +160,6 @@ export class TextEditor extends EventTarget {
       return;
     }
 
-    const isDone = this._currentEvaluator.evaluate(ev);
-
-    // Finished Test
-    if (isDone) {
-      this.dispatchEvent(new Event("testCompleted"));
-      return;
-    }
+    this._currentEvaluator.evaluate(ev);
   }
 }

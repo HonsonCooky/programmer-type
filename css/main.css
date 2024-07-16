@@ -59,8 +59,16 @@ main {
 			}
 
 			.invalid {
-				color: var(--rose);
+				color: var(--love);
 			}
+		}
+
+		.comment {
+			color: var(--muted);
+		}
+
+		.title {
+			color: var(--iris);
 		}
 
 		&:focus-within {

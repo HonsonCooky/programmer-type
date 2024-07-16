@@ -91,9 +91,16 @@ export class SuiteManager extends EventTarget {
       return;
     }
 
-    const curIndex = this._randomIndex;
-    while (this._randomIndex === curIndex)
-      this._randomIndex = Math.floor(Math.random() * this.selectedSuite.tests.length);
+    if (this.selectedSuite.tests.length > 1) {
+      const curIndex = this._randomIndex;
+      let attempt = 0;
+      while (this._randomIndex === curIndex && attempt < 5) {
+        attempt++;
+        this._randomIndex = Math.floor(Math.random() * this.selectedSuite.tests.length);
+      }
+    } else {
+      this._randomIndex = 0;
+    }
 
     const randomTestPath = this.selectedSuite.tests[this._randomIndex];
 

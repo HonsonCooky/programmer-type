@@ -1,8 +1,12 @@
-export class IEvaluator {
+export class IEvaluator extends EventTarget {
   _testIndex = 0;
   _testLastWord = [];
   _testSequence = [];
   _textEditorElement = undefined;
+
+  constructor() {
+    super();
+  }
 
   reset() {
     this._testIndex = 0;
@@ -17,7 +21,10 @@ export class IEvaluator {
    * }}
    */
   results() {
-    throw Error("Unimplemented Method");
+    return {
+      index: this._testIndex,
+      seq: this._testSequence,
+    };
   }
 
   /**

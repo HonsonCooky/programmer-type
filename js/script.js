@@ -27,7 +27,7 @@ export class Program {
       }
       this.curContext = textEditor;
       textEditor.focusTextEditor();
-      timeManager.prime();
+      if (!timeManager.running) timeManager.prime();
     });
     textEditor.textEditorElement.addEventListener("focusout", () => {
       this.curContext = navigation;
@@ -36,7 +36,7 @@ export class Program {
     });
     testResults.addEventListener(
       "resultsClosed",
-      function() {
+      function () {
         textEditor.resultsHide();
         suiteManager.updateRandomTest();
         this.curContext = navigation;
@@ -55,7 +55,7 @@ export class Program {
   _keyboardInput({ textEditor, timeManager }) {
     window.addEventListener(
       "keydown",
-      function(ev) {
+      function (ev) {
         // Start the test if the user is typing into the text editor, and the timer hasn't started
         if (this.curContext === textEditor) {
           const timerReady = timeManager.primed && !timeManager.running;
@@ -77,7 +77,7 @@ export class Program {
    * @param {TimeManager} param0.timeManager
    */
   _durationUpdate({ durationManager, timeManager }) {
-    const callback = function() {
+    const callback = function () {
       timeManager.setTimer(durationManager.selectedDuration);
     };
 
@@ -92,11 +92,11 @@ export class Program {
    * @param {TextEditor} param0.textEditor
    */
   _suiteUpdate({ suiteManager, textEditor }) {
-    const updatingTest = function() {
+    const updatingTest = function () {
       textEditor.loadingTest();
     };
 
-    const testUpdated = function() {
+    const testUpdated = function () {
       textEditor.loadTestSuite(suiteManager.selectedSuite, suiteManager.currentTest);
     };
 
@@ -115,7 +115,7 @@ export class Program {
    * @param {TextEditor} param0.textEditor
    */
   _infoHover({ suiteManager, infoManager, textEditor }) {
-    const reloadTest = function() {
+    const reloadTest = function () {
       textEditor.loadTestSuite(suiteManager.selectedSuite, suiteManager.currentTest);
     };
     infoManager.addEventListener("reloadTest", reloadTest);
@@ -131,7 +131,7 @@ export class Program {
   _testFinished({ suiteManager, timeManager, textEditor, testResults }) {
     let testEvaluations = [];
 
-    const _evaluateResults = function() {
+    const _evaluateResults = function () {
       this.curContext = testResults;
       textEditor.textEditorElement.innerHTML = "";
       textEditor.textEditorElement.appendChild(testResults.resultsHTML([...testEvaluations]));
@@ -139,7 +139,7 @@ export class Program {
       testEvaluations = [];
     }.bind(this);
 
-    const _saveResults = function(forceQuit) {
+    const _saveResults = function (forceQuit) {
       let { invalid, correct, backspaces } = textEditor.analyseTest();
       if (forceQuit) invalid--;
       const timeStamp = timeManager.timeSpent();
@@ -147,19 +147,19 @@ export class Program {
       testEvaluations.push({ invalid, correct, timeStamp, suite, backspaces });
     };
 
-    const testCompleted = function() {
+    const testCompleted = function () {
       _saveResults();
       suiteManager.updateRandomTest();
     };
 
-    const testFinished = function() {
+    const testFinished = function () {
       _saveResults();
       textEditor.reset();
       timeManager.resetTimer();
       _evaluateResults();
     };
 
-    const testForceFinished = function() {
+    const testForceFinished = function () {
       timeManager.finish(true);
       _saveResults(true);
       textEditor.reset();

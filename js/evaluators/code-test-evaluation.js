@@ -3,6 +3,10 @@ import { IEvaluator } from "./ievaluator.js";
 export class CodeTestEvaluation extends IEvaluator {
   _backspaceCounter = 0;
 
+  constructor() {
+    super();
+  }
+
   /** @param {KeyboardEvent} ev */
   _codeEvaluationBackspace(ev) {
     let newIndex = this._testIndex - 1;
@@ -52,8 +56,7 @@ export class CodeTestEvaluation extends IEvaluator {
    */
   results() {
     return {
-      index: this._testIndex,
-      seq: this._testSequence,
+      ...super.results(),
       backspaces: this._backspaceCounter,
     };
   }
@@ -70,8 +73,11 @@ export class CodeTestEvaluation extends IEvaluator {
     else this._codeEvaluationCharacter(key);
 
     // Next Element
-    const element = this._testSequence[this._testIndex].element;
-    if (!element) return;
+    const element = this._testSequence[this._testIndex]?.element;
+    if (!element) {
+      this.dispatchEvent(new Event("evaluationComplete"));
+      return;
+    }
     element.className = "current";
     element.scrollIntoView();
   }
