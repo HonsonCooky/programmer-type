@@ -4,9 +4,17 @@ export class InfoManager extends EventTarget {
 
     const info = document.getElementById("info");
     info.addEventListener("focusin", this.loadHelpInformation.bind(this));
+    info.addEventListener(
+      "click",
+      function () {
+        const helpMessageElement = document.getElementById("text-editor").querySelector("#help-message");
+        if (helpMessageElement) return this.dispatchEvent(new Event("reloadTest"));
+        this.loadHelpInformation();
+      }.bind(this),
+    );
     info.addEventListener("focusout", () => this.dispatchEvent(new Event("reloadTest")));
 
-    fetch("../../assets/help-message.html")
+    fetch("../../assets/templates/help-message.html")
       .then((res) => res.text())
       .then((htmlStr) => new DOMParser().parseFromString(htmlStr, "text/html"))
       .then((element) => (this.helpInfoElement = element));

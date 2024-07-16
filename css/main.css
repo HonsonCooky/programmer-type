@@ -75,6 +75,14 @@ main {
 				filter: none;
 			}
 		}
+
+		#help-message {
+			font-size: var(--fs-0);
+
+			* {
+				font-size: inherit;
+			}
+		}
 	}
 
 	#text-editor-instructions {
