@@ -66,7 +66,6 @@ export class SuiteManager extends EventTarget {
   _updateUI() {
     this.suiteCurrentValueElement.innerText = this.selectedSuiteName;
     this.suiteTypeHeader.innerText = this.selectedSuite.type;
-    this.suiteTypeHeader.className = this.selectedSuite.type.toLowerCase();
     for (const suiteBtn of this.suiteDropdownContentElements) {
       if (suiteBtn.innerText.includes(this.selectedSuiteName)) suiteBtn.classList.add("selected");
       else suiteBtn.classList.remove("selected");

@@ -27,11 +27,7 @@ main {
 		}
 
 		.value {
-			color: var(--subtle);
-		}
-
-		.code {
-			color: var(--foam);
+			color: var(--iris);
 		}
 
 		.action {
@@ -97,6 +93,11 @@ main {
 
 		#help-message {
 			font-size: var(--fs-0);
+
+			h3 {
+				color: var(--iris);
+				font-size: var(--fs-2);
+			}
 
 			* {
 				font-size: inherit;
