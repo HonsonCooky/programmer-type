@@ -6,7 +6,6 @@ import { ThemeManager } from "./managers/theme-manager.js";
 import { TimeManager } from "./managers/time-manager.js";
 import { InfoManager } from "./managers/info-manager.js";
 import { TestResults } from "./contexts/test-results.js";
-import env from "./.env.js";
 
 export class Program {
   /**
@@ -226,6 +225,5 @@ export class Program {
   }
 }
 
-if (env.development) window.env = env;
 const context = new Program();
 context.setup();
