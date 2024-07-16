@@ -4,6 +4,8 @@ export class SuiteManager extends EventTarget {
   suiteDropdownContentElements = Array.from(this.suiteDropdownElement.querySelector(".dropdown-content").children);
   suiteCurrentValueElement = this.suiteDropdownElement.querySelector(".current-value");
   suiteTypeHeader = document.getElementById("suite-value");
+  cacheCheckbox = document.getElementById("cache-btn");
+  _useLocalCache = true;
 
   // Constants
   TESTS_ORIGIN = "../../assets/test-suites";
@@ -44,6 +46,22 @@ export class SuiteManager extends EventTarget {
     for (const suiteBtn of this.suiteDropdownContentElements) {
       suiteBtn.addEventListener("click", this._onSuiteClick.bind(this, suiteBtn));
     }
+
+    // Optional Caching
+    this._useLocalCache = JSON.parse(localStorage.getItem("should-cache") ?? "true");
+
+    if (this._useLocalCache) {
+      this.cacheCheckbox.checked = this._useLocalCache;
+      localStorage.setItem("should-cache", this._useLocalCache);
+    }
+
+    this.cacheCheckbox.addEventListener(
+      "click",
+      function() {
+        this._useLocalCache = this.cacheCheckbox.checked;
+        localStorage.setItem("should-cache", this._useLocalCache);
+      }.bind(this),
+    );
   }
 
   _onSuiteClick(suiteBtn) {
@@ -76,7 +94,7 @@ export class SuiteManager extends EventTarget {
     fetch(url)
       .then((response) => response.text())
       .then((txt) => {
-        localStorage.setItem(url, txt);
+        if (this._useLocalCache) localStorage.setItem(url, txt);
         this.currentTest = txt;
         this.dispatchEvent(new Event("testUpdated"));
       });

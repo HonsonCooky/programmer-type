@@ -20,9 +20,41 @@ footer {
 		color: var(--muted);
 	}
 
-	#key-context {
+	#info-app {
+		display: flex;
+		column-gap: var(--s-l);
+		flex-direction: row;
 		justify-content: end;
-		color: var(--pine);
+		align-items: center;
+
+		#cache {
+			display: flex;
+			column-gap: var(--s-2xs);
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			cursor: pointer;
+
+			* {
+				cursor: pointer;
+			}
+
+			label {
+				user-select: none;
+			}
+
+			>input {
+				margin: 0;
+				background-color: var(--muted);
+				padding: 0;
+				accent-color: var(--iris);
+			}
+		}
+
+		#key-context {
+			justify-content: end;
+			color: var(--pine);
+		}
 	}
 
 	@media screen and (min-width: 1440px) {

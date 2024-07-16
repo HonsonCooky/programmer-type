@@ -5,14 +5,18 @@ export class Navigation extends IContext {
     "ctrl+d": {
       action: () => {
         const textEditorElement = document.getElementById("text-editor");
-        textEditorElement.scrollBy({ top: 10 });
+        textEditorElement.scrollBy({ top: window.innerHeight / 10 });
       },
     },
     "ctrl+u": {
       action: () => {
         const textEditorElement = document.getElementById("text-editor");
-        textEditorElement.scrollBy({ top: -10 });
+        textEditorElement.scrollBy({ top: -(window.innerHeight / 10) });
       },
+    },
+    c: {
+      element: document.getElementById("cache-btn"),
+      action: "click",
     },
     d: {
       element: document.getElementById("duration"),
