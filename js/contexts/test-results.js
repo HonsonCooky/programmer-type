@@ -1,8 +1,15 @@
 import { IContext } from "./icontext.js";
 
 export class TestResults extends IContext {
+  /**@type {Element|null}*/
+  _resultsDiv;
+
   constructor() {
     super();
+    fetch("../../assets/templates/results-sheet.html")
+      .then((res) => res.text())
+      .then((htmlStr) => new DOMParser().parseFromString(htmlStr, "text/html").querySelector("#results"))
+      .then((resDiv) => (this._resultsDiv = resDiv));
   }
 
   closeResults() {
@@ -10,75 +17,71 @@ export class TestResults extends IContext {
   }
 
   /**
-   * @param {{
-   *   invalid: number,
-   *   correct: number,
-   *   backspaces: number|undefined,
-   *   timeStamp: number,
-   *   suite: { name: string; type: string; tests: string[]; },
-   * }[]} testValues */
-  resultsHTML(testValues) {
-    const wrapper = document.createElement("div");
-    wrapper.className = "results";
-
-    const div1 = document.createElement("div");
-    const totals = testValues.reduce(
-      (p, c) => {
+   * @param {{ timeStamp: number; index: number; correct: number; invalid: number; backspaces: number; }[]} ticks
+   * */
+  _sanitizeData(ticks) {
+    return ticks
+      .map(function(tick) {
         return {
-          time: c.timeStamp,
-          chars: p.chars + c.invalid + c.correct,
-          correct: p.correct + c.correct,
-          invalid: p.invalid + c.invalid,
+          ...tick,
+          timeStamp: Math.round(tick.timeStamp / 1000),
         };
-      },
-      {
-        time: 0,
-        chars: 0,
-        correct: 0,
-        invalid: 0,
-      },
-    );
-
-    totals.correctPercentage = Math.round((totals.correct / totals.chars) * 100);
-    totals.invalidPercentage = Math.round((totals.invalid / totals.chars) * 100);
-    totals.charsPerSecond = (totals.chars / (totals.time / 1000)).toFixed(2);
-
-    div1.innerHTML = `
-      <h3>Totals</h3>
-      <div><span class="title">Time:</span> <span class="value">${totals.time}</span></div>
-      <div><span class="title">Characters:</span> <span class="value">${totals.chars}</span></div>
-      <div><span class="title indent">- Correct:</span> <span class="value">${totals.correct}</span></div>
-      <div><span class="title indent">- Correct Percentage:</span> <span class="value">${totals.correctPercentage}%</span></div>
-      <div><span class="title indent">- Invalid:</span> <span class="value">${totals.invalid}</span></div>
-      <div><span class="title indent">- Invalid Percentage:</span> <span class="value">${totals.invalidPercentage}%</span></div>
-      <div><span class="title indent special">- Per Second:</span> <span class="value special">${totals.charsPerSecond}</span></div>
-    `;
-    wrapper.appendChild(div1);
-
-    const div2 = document.createElement("div");
-    const tests = testValues.map((t, i) => {
-      if (i === 0) return t;
-      return {
-        invalid: t.invalid,
-        correct: t.correct,
-        timeStamp: t.timeStamp - testValues[i - 1].timeStamp,
-        suite: t.suite,
-      };
-    });
-
-    div2.innerHTML = tests
-      .map((t, i) => {
-        const testId = `<h3>Test ${i}</h3>`;
-        const correct = `<div><span>Correct Characters:</span> <span>${t.correct}</span></div>`;
-        const invalid = `<div><span>Invalid Characters:</span> <span>${t.invalid}</span></div>`;
-        const timeTaken = `<div><span>Time (ms):</span> <span>${t.timeStamp}</span></div>`;
-        const suite = `<div><span>Type:</span> <span>${t.suite.name} - [${t.suite.type}]</span></div>`;
-        return testId + correct + invalid + timeTaken + suite;
       })
-      .join("");
-    wrapper.appendChild(div2);
+      .filter(function(tick, i, ticks) {
+        if (i < 1) return true;
+        const other = ticks[i - 1];
+        return other.timeStamp != tick.timeStamp;
+      });
+  }
 
-    return wrapper;
+  /**
+   * @param {{
+   * suite: { name: string; type: string; tests: string[]; }
+   * sanitizeData:{ timeStamp: number; index: number; correct: number; invalid: number; backspaces: number; }[]
+   * }} param0
+   */
+  _populateTempalate({ suite, sanitizeData }) {
+    if (!this._resultsDiv) return;
+
+    this._resultsDiv.querySelector("#result-suite-name").innerText = suite.name;
+    this._resultsDiv.querySelector("#result-suite-type").innerText = suite.type;
+  }
+
+  _generateGraphs(sanitizeData) {
+    if (!this._resultsDiv) return;
+  }
+
+  _generateErrorDiv(testValues) {
+    const errorDiv = document.createElement("div");
+    const errorMsg = document.createElement("div");
+    errorMsg.innerText = "I'm so sorry! I couldn't load a visual for your data.";
+    errorDiv.appendChild(errorMsg);
+
+    const errorData = document.createElement("div");
+    errorData.innerHTML = JSON.stringify(testValues, null, 2);
+    errorDiv.appendChild(errorData);
+
+    return errorDiv;
+  }
+
+  /**
+   * @param {{
+   * suite: { name: string; type: string; tests: string[]; }
+   * ticks:{ timeStamp: number; index: number; correct: number; invalid: number; backspaces: number; }[]
+   * }} testValues
+   * @return {HTMLElement}
+   */
+  generateResultSheet(testValues) {
+    const { suite, ticks } = testValues;
+    const sanitizeData = this._sanitizeData(ticks);
+
+    console.log(this._resultsDiv);
+    // Error Message
+    if (!this._resultsDiv) return this._generateErrorDiv({ suite, sanitizeData });
+
+    this._populateTempalate({ suite, sanitizeData });
+    this._generateGraphs(sanitizeData);
+    return this._resultsDiv;
   }
 
   /** @param {KeyboardEvent} ev */

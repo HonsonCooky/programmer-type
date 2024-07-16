@@ -27,7 +27,7 @@ export class TimeManager extends EventTarget {
     this.dispatchEvent(new Event("timerUpdate"));
   }
 
-  timeSpent() {
+  timeStamp() {
     return this.timeIntervals.reduce((p, c) => p + ((c.end ?? Date.now()) - c.start), 0);
   }
 
@@ -52,6 +52,7 @@ export class TimeManager extends EventTarget {
 
     if (!this.running) return;
 
+    this.dispatchEvent(new Event("timerTick"));
     this.currentTime += isNaN(this.selectedTime) ? 1 : -1;
     this.timerElement.innerText = this.currentTime;
 

@@ -6,7 +6,7 @@ export class SuiteManager extends EventTarget {
   suiteTypeHeader = document.getElementById("suite-value");
 
   // Constants
-  TESTS_ORIGIN = "../../tests";
+  TESTS_ORIGIN = "../../assets/test-suites";
 
   // Hardcoding these to avoid needing a database or GitHub API call.
   SUITES = [

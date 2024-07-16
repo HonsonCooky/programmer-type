@@ -73,23 +73,29 @@ export class TextEditor extends IContext {
     this.textEditorElement.innerHTML = "";
   }
 
-  /** @returns {{
-   * invalid: number,
+  /**
+   * @returns {{
+   * index: number
    * correct: number,
+   * invalid: number,
    * backspaces: number|undefined,
-   * }} */
-  analyseTest() {
-    // Nothing to analyze - likely because reset has been called twice
-    const { seq, backspaces } = this._currentEvaluator.results();
+   * }}
+   */
+  analyseTest(fromIndex = 0) {
+    const { index, seq, backspaces } = this._currentEvaluator.results();
     let invalid = 0;
     let correct = 0;
-    for (const i of seq) {
-      if (i.element.classList.contains("correct")) correct++;
-      if (i.element.classList.contains("invalid")) invalid++;
-      if (i.element.classList.length === 0) break;
+
+    for (let i = fromIndex; i < index; i++) {
+      const element = seq[i].element;
+      if (element.classList.contains("correct")) {
+        correct++;
+      } else if (element.classList.contains("invalid")) {
+        invalid++;
+      }
     }
 
-    return { invalid, correct, backspaces };
+    return { index, correct, invalid, backspaces };
   }
 
   loadingTest() {

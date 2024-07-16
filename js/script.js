@@ -148,22 +148,35 @@ export class Program {
    * @param {TestResults} param0.testResults
    */
   _testFinished({ suiteManager, timeManager, textEditor, testResults }) {
-    let testEvaluations = [];
+    /**
+     * @type {{ timeStamp: number, index: number, correct: number, invalid: number, backspaces: number }[]}
+     */
+    let tickEvals = [];
 
     const _evaluateResults = function() {
       this.curContext = testResults;
+      textEditor.loadingTest();
+
+      const resultsSheet = testResults.generateResultSheet({ suite: suiteManager.selectedSuite, ticks: tickEvals });
       textEditor.textEditorElement.innerHTML = "";
-      textEditor.textEditorElement.appendChild(testResults.resultsHTML([...testEvaluations]));
+      textEditor.textEditorElement.appendChild(resultsSheet);
       textEditor.resultsShowing();
-      testEvaluations = [];
+      tickEvals = [];
     }.bind(this);
 
-    const _saveResults = function(forceQuit) {
-      let { invalid, correct, backspaces } = textEditor.analyseTest();
-      if (forceQuit) invalid--;
-      const timeStamp = timeManager.timeSpent();
-      const suite = suiteManager.selectedSuite;
-      testEvaluations.push({ invalid, correct, timeStamp, suite, backspaces });
+    const _saveResults = function() {
+      const timeStamp = timeManager.timeStamp();
+
+      let lastTick = { timeStamp: 0, index: 0, invalid: 0, correct: 0, backspaces: 0 };
+      if (tickEvals.length > 0) lastTick = tickEvals[tickEvals.length - 1];
+
+      let textAnalysis = textEditor.analyseTest(lastTick.index);
+      textAnalysis.timeStamp = timeStamp;
+      tickEvals.push(textAnalysis);
+    };
+
+    const timerTick = function() {
+      _saveResults();
     };
 
     const testCompleted = function() {
@@ -172,16 +185,17 @@ export class Program {
     };
 
     const testFinished = function() {
-      _saveResults();
       textEditor.reset();
       timeManager.resetTimer();
       _evaluateResults();
     };
 
     const testForceFinished = function() {
+      _saveResults();
       timeManager.finish();
     };
 
+    timeManager.addEventListener("timerTick", timerTick);
     timeManager.addEventListener("timerFinished", testFinished);
     textEditor.addEventListener("testForceFinished", testForceFinished);
     textEditor.addEventListener("testCompleted", testCompleted);
