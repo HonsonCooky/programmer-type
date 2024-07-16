@@ -2,6 +2,7 @@ main {
 	display: flex;
 	flex: 1;
 	flex-direction: column;
+	justify-content: center;
 	align-items: center;
 	margin: auto;
 	padding: 0 var(--s-m);
@@ -10,6 +11,7 @@ main {
 	#info {
 		display: flex;
 		column-gap: var(--s-3xl);
+		flex: 1;
 		flex-direction: row;
 		justify-content: space-between;
 		align-items: center;
@@ -30,14 +32,18 @@ main {
 			color: var(--iris);
 		}
 
-		.action {
-			color: var(--iris);
+		.primed {
+			color: var(--gold);
+		}
+
+		.running {
+			color: var(--foam);
 		}
 	}
 
 	#text-editor {
 		display: flex;
-		flex: 1;
+		flex: 3;
 		flex-direction: column;
 		border-top: var(--border) solid var(--overlay);
 		border-bottom: var(--border) solid var(--overlay);
@@ -106,6 +112,7 @@ main {
 	}
 
 	#text-editor-instructions {
+		flex: 1;
 		padding: var(--s-xs) 0;
 		width: 100%;
 		color: var(--subtle);

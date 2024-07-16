@@ -44,17 +44,12 @@ export class Program {
 
     testResults.addEventListener(
       "resultsClosed",
-      function () {
+      function() {
         suiteManager.updateRandomTest();
         this.curContext = navigation;
         document.activeElement.blur();
       }.bind(this),
     );
-
-    testResults.addEventListener("resultKeyDown", function (ev) {
-      this.curContext = navigation;
-      navigation.keydown(ev.detail);
-    });
   }
 
   /**
@@ -68,7 +63,7 @@ export class Program {
   _keyboardInput({ textEditor, timeManager }) {
     window.addEventListener(
       "keydown",
-      function (ev) {
+      function(ev) {
         // Start the test if the user is typing into the text editor, and the timer hasn't started
         if (this.curContext === textEditor) {
           const timerReady = timeManager.primed && !timeManager.running;
@@ -90,7 +85,7 @@ export class Program {
    * @param {TimeManager} param0.timeManager
    */
   _durationUpdate({ durationManager, timeManager }) {
-    const callback = function () {
+    const callback = function() {
       timeManager.setTimer(durationManager.selectedDuration);
     };
 
@@ -106,15 +101,15 @@ export class Program {
    * @param {TextEditor} param0.textEditor
    */
   _suiteUpdate({ suiteManager, timeManager, textEditor }) {
-    const suiteUpdated = function () {
+    const suiteUpdated = function() {
       timeManager.resetTimer();
     };
 
-    const updatingTest = function () {
+    const updatingTest = function() {
       textEditor.loadingTest();
     };
 
-    const testUpdated = function () {
+    const testUpdated = function() {
       textEditor.loadTestSuite(suiteManager.selectedSuite, suiteManager.currentTest);
     };
 
@@ -134,7 +129,7 @@ export class Program {
    * @param {TextEditor} param0.textEditor
    */
   _infoHover({ suiteManager, infoManager, textEditor }) {
-    const reloadTest = function () {
+    const reloadTest = function() {
       textEditor.loadTestSuite(suiteManager.selectedSuite, suiteManager.currentTest);
     };
     infoManager.addEventListener("reloadTest", reloadTest);
@@ -147,24 +142,28 @@ export class Program {
    * @param {TextEditor} param0.textEditor
    * @param {TestResults} param0.testResults
    */
-  _testFinished({ suiteManager, timeManager, textEditor, testResults }) {
+  _testStates({ suiteManager, timeManager, textEditor, testResults }) {
     /**
      * @type {{ timeStamp: number, index: number, correct: number, invalid: number, backspaces: number }[]}
      */
     let tickEvals = [];
 
-    const _evaluateResults = function () {
+    const _evaluateResults = function() {
       this.curContext = testResults;
       textEditor.loadingTest();
 
       const resultsSheet = testResults.generateResultSheet({ suite: suiteManager.selectedSuite, ticks: tickEvals });
       textEditor.textEditorElement.innerHTML = "";
       textEditor.textEditorElement.appendChild(resultsSheet);
-      textEditor.resultsShowing();
+      textEditor.resultsShowing(testResults._delayTime);
       tickEvals = [];
     }.bind(this);
 
-    const _saveResults = function () {
+    const delayChange = function() {
+      textEditor.resultsShowing(testResults._delayTime);
+    };
+
+    const _saveResults = function() {
       const timeStamp = timeManager.timeStamp();
 
       let lastTick = { timeStamp: 0, index: 0, invalid: 0, correct: 0, backspaces: 0 };
@@ -175,22 +174,22 @@ export class Program {
       tickEvals.push(textAnalysis);
     };
 
-    const timerTick = function () {
+    const timerTick = function() {
       _saveResults();
     };
 
-    const testCompleted = function () {
+    const testCompleted = function() {
       _saveResults();
       suiteManager.updateRandomTest();
     };
 
-    const testFinished = function () {
+    const testFinished = function() {
       textEditor.reset();
       timeManager.resetTimer();
       _evaluateResults();
     };
 
-    const testForceFinished = function () {
+    const testForceFinished = function() {
       _saveResults();
       timeManager.finish();
     };
@@ -199,6 +198,7 @@ export class Program {
     timeManager.addEventListener("timerFinished", testFinished);
     textEditor.addEventListener("testForceFinished", testForceFinished);
     textEditor.addEventListener("testCompleted", testCompleted);
+    testResults.addEventListener("delayChange", delayChange);
   }
 
   setup() {
@@ -221,7 +221,7 @@ export class Program {
     this._durationUpdate({ durationManager, timeManager });
     this._suiteUpdate({ suiteManager, timeManager, textEditor });
     this._infoHover({ suiteManager, infoManager, textEditor });
-    this._testFinished({ suiteManager, timeManager, textEditor, testResults });
+    this._testStates({ suiteManager, timeManager, textEditor, testResults });
   }
 }
 

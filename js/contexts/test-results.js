@@ -3,6 +3,8 @@ import { IContext } from "./icontext.js";
 export class TestResults extends IContext {
   /**@type {Element|null}*/
   _resultsDiv;
+  _timerRunning = false;
+  _delayTime = 3;
 
   constructor() {
     super();
@@ -14,6 +16,23 @@ export class TestResults extends IContext {
 
   closeResults() {
     this.dispatchEvent(new Event("resultsClosed"));
+  }
+
+  _countDownDelay() {
+    this._delayTime--;
+    this.dispatchEvent(new Event("delayChange"));
+
+    if (this._delayTime <= 0) {
+      this._timerRunning = false;
+      return;
+    }
+    setTimeout(this._countDownDelay.bind(this), 1000);
+  }
+
+  _startDelayTimer() {
+    this._timerRunning = true;
+    this._delayTime = 3;
+    this._countDownDelay();
   }
 
   /**
@@ -72,6 +91,7 @@ export class TestResults extends IContext {
    * @return {HTMLElement}
    */
   generateResultSheet(testValues) {
+    this._startDelayTimer();
     const { suite, ticks } = testValues;
     const sanitizeData = this._sanitizeData(ticks);
 
@@ -88,11 +108,10 @@ export class TestResults extends IContext {
   keydown(ev) {
     const key = ev.key;
 
-    if (key === "Enter") {
+    if (key === "Enter" && this._delayTime === 0) {
       ev.preventDefault();
       this.closeResults();
       return;
     }
-    this.dispatchEvent(new CustomEvent("resultKeyDown", { detail: ev }));
   }
 }
