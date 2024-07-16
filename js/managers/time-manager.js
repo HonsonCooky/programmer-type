@@ -67,12 +67,12 @@ export class TimeManager extends EventTarget {
     this.dispatchEvent(new Event("timerPaused"));
   }
 
-  finish(quite = false) {
+  finish() {
     this.primed = false;
     this.running = false;
     this.currentTime = this.selectedTime;
     this.timeIntervals[this.timeIntervals.length - 1].end = Date.now();
     this.timerElement.innerText = this.currentTime;
-    if (!quite) this.dispatchEvent(new Event("timerFinished"));
+    this.dispatchEvent(new Event("timerFinished"));
   }
 }

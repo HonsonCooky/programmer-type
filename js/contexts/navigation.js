@@ -1,4 +1,6 @@
-export class Navigation {
+import { IContext } from "./icontext.js";
+
+export class Navigation extends IContext {
   keymap = {
     "ctrl+d": {
       action: () => {

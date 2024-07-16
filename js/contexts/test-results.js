@@ -1,9 +1,11 @@
-export class TestResults extends EventTarget {
+import { IContext } from "./icontext.js";
+
+export class TestResults extends IContext {
   constructor() {
     super();
   }
 
-  _closeResults() {
+  closeResults() {
     this.dispatchEvent(new Event("resultsClosed"));
   }
 
@@ -81,10 +83,13 @@ export class TestResults extends EventTarget {
 
   /** @param {KeyboardEvent} ev */
   keydown(ev) {
-    ev.preventDefault();
     const key = ev.key;
 
-    if (key === "Enter" || key === "Escape" || key === "q") return this._closeResults();
-    this.dispatchEvent(new CustomEvent("noResultKeyOveride", { detail: ev }));
+    if (key === "Enter") {
+      ev.preventDefault();
+      this.closeResults();
+      return;
+    }
+    this.dispatchEvent(new CustomEvent("resultKeyDown", { detail: ev }));
   }
 }

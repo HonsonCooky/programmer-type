@@ -3,6 +3,7 @@ export class SuiteManager extends EventTarget {
   suiteDropdownElement = document.getElementById("suite");
   suiteDropdownContentElements = Array.from(this.suiteDropdownElement.querySelector(".dropdown-content").children);
   suiteCurrentValueElement = this.suiteDropdownElement.querySelector(".current-value");
+  suiteTypeHeader = document.getElementById("suite-value");
 
   // Constants
   TESTS_ORIGIN = "../../tests";
@@ -37,10 +38,10 @@ export class SuiteManager extends EventTarget {
     // Init selected test suite.
     this.selectedSuiteName = this.suiteCurrentValueElement.innerText;
     this._findSelectedSuite();
+    this._updateUI();
 
     // Add event listners for each button.
     for (const suiteBtn of this.suiteDropdownContentElements) {
-      if (suiteBtn.innerText.includes(this.selectedSuiteName)) suiteBtn.classList.add("selected");
       suiteBtn.addEventListener("click", this._onSuiteClick.bind(this, suiteBtn));
     }
   }
@@ -64,6 +65,8 @@ export class SuiteManager extends EventTarget {
 
   _updateUI() {
     this.suiteCurrentValueElement.innerText = this.selectedSuiteName;
+    this.suiteTypeHeader.innerText = this.selectedSuite.type;
+    this.suiteTypeHeader.className = this.selectedSuite.type.toLowerCase();
     for (const suiteBtn of this.suiteDropdownContentElements) {
       if (suiteBtn.innerText.includes(this.selectedSuiteName)) suiteBtn.classList.add("selected");
       else suiteBtn.classList.remove("selected");

@@ -1,8 +1,9 @@
 import { ActionTestEvaluation } from "../evaluators/action-test-evaluation.js";
 import { CodeTestEvaluation } from "../evaluators/code-test-evaluation.js";
 import { IEvaluator } from "../evaluators/ievaluator.js";
+import { IContext } from "./icontext.js";
 
-export class TextEditor extends EventTarget {
+export class TextEditor extends IContext {
   textEditorElement = document.getElementById("text-editor");
   _fontSize = 1;
   _textEditorInstructionsElement = document.getElementById("text-editor-instructions");
@@ -23,7 +24,7 @@ export class TextEditor extends EventTarget {
     this._updateFontSize(0);
     this.textEditorElement.addEventListener(
       "click",
-      function () {
+      function() {
         this.textEditorElement.tabIndex = -1;
         this.textEditorElement.focus();
       }.bind(this),
@@ -63,17 +64,12 @@ export class TextEditor extends EventTarget {
   }
 
   resultsShowing() {
-    this._textEditorInstructionsElement.innerText = "[Enter | Esc | q] Done";
-  }
-
-  resultsHide() {
-    this._textEditorInstructionsElement.innerText = "[Enter] Start";
+    this._textEditorInstructionsElement.innerText = "[Enter] Close Results";
   }
 
   /**@param {boolean} noBlur */
-  reset(noBlur) {
+  reset() {
     this._quitPrimed = false;
-    if (!noBlur) this.textEditorElement.blur();
     this.textEditorElement.innerHTML = "";
   }
 
@@ -102,6 +98,7 @@ export class TextEditor extends EventTarget {
 
   loadTestSuite(suite, currentTest) {
     this.suite = suite;
+    this.blurTextEditor();
 
     // Load analysis sequence
     if (this.suite.type === "Code") this._currentEvaluator = this._codeEvaluator;
@@ -110,7 +107,7 @@ export class TextEditor extends EventTarget {
     this._currentEvaluator.load({ currentTest, textEditorElement: this.textEditorElement });
     this._currentEvaluator.addEventListener(
       "evaluationComplete",
-      function () {
+      function() {
         this.dispatchEvent(new Event("testCompleted"));
       }.bind(this),
     );

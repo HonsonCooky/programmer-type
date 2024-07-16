@@ -7,16 +7,35 @@ main {
 	padding: 0 var(--s-m);
 	width: 100%;
 
-	#timer {
+	#info {
+		display: flex;
+		column-gap: var(--s-3xl);
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
 		padding: var(--s-xs) 0;
 		width: 100%;
-		color: var(--subtle);
 		font-size: var(--fs-2);
-		text-align: center;
 
 		* {
-			color: inherit;
+			flex: 1;
 			font-size: inherit;
+		}
+
+		#suite-info {
+			text-align: end;
+		}
+
+		.value {
+			color: var(--subtle);
+		}
+
+		.code {
+			color: var(--foam);
+		}
+
+		.action {
+			color: var(--iris);
 		}
 	}
 
