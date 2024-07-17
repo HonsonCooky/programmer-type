@@ -20,10 +20,10 @@
 			<!-- Gameplay Settings -->
 			<div>
 				<div class="dropdown" id="duration">
-					<button>
+					<label>
 						<span>[D] Duration &#9013;</span>
 						<span class="current-value">60s</span>
-					</button>
+					</label>
 					<div class="dropdown-content">
 						<button id="duration-15">[0] 15s</button>
 						<button id="duration-30">[1] 30s</button>
@@ -34,10 +34,10 @@
 					</div>
 				</div>
 				<div class="dropdown" id="suite">
-					<button>
+					<label>
 						<span>[S] Test Suite &#9013;</span>
 						<span class="current-value">CSharp</span>
-					</button>
+					</label>
 					<div class="dropdown-content">
 						<button id="suite-csharp">[C] CSharp</button>
 						<button id="suite-fsharp">[F] FSharp</button>
@@ -50,10 +50,10 @@
 			<!-- App Settings -->
 			<div>
 				<div class="dropdown" id="theme">
-					<button>
+					<label>
 						<span>[T] Theme &#9013;</span>
 						<span class="current-value">System</span>
-					</button>
+					</label>
 					<div class="dropdown-content">
 						<button id="system-theme">[S] System</button>
 						<button id="light-theme">[L] Light</button>
@@ -61,7 +61,7 @@
 					</div>
 				</div>
 				<div class="dropdown" id="info">
-					<button>[I] Info &#x1f6c8;</button>
+					<label>[I] Info &#x1f6c8;</label>
 				</div>
 			</div>
 		</nav>
@@ -86,7 +86,7 @@
 		<div id="info-creator">HonsonCooky</div>
 		<div id="info-version">v1.0.0</div>
 		<div id="info-app">
-			<label id="cache" class="checkbox">
+			<label class="checkbox" id="cache">
 				<input id="cache-btn" type="checkbox" />
 				<label for="cache-btn">[C] Cache</label>
 			</label>

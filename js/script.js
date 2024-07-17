@@ -1,6 +1,8 @@
+import { Theme } from "./managers/theme.js";
+
 export class Program {
   constructor() { }
 }
 
-new ThemeManager();
+new Theme();
 const context = new Program();

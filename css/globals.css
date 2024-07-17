@@ -1,143 +1,141 @@
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@100..700&display=swap");
+
 html {
-	margin: 0;
-	background: var(--base);
+  margin: 0;
+  background: var(--base);
 }
 
 body {
-	display: flex;
-	position: relative;
-	flex-direction: column;
-	margin: 0;
-	background: var(--base);
-	height: 100dvh;
-	max-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  background: var(--base);
+  height: 100dvh;
+  max-height: 100dvh;
+  font-size: var(--fs-0);
 }
 
 * {
-	box-sizing: border-box;
-	outline: none;
-	border-radius: var(--border);
-	background-color: transparent;
-	color: var(--text);
-	font-size: var(--fs-0);
-	font-family: "M PLUS 1 Code", monospace;
+  box-sizing: border-box;
+  outline: none;
+  border-radius: var(--border);
+  color: var(--text);
+  font-weight: inherit;
+  font-size: inherit;
+  font-family: "M PLUS 1 Code", monospace;
 }
 
 button {
-	border: none;
-	padding: var(--s-3xs) var(--s-s);
+  border: none;
+  background-color: transparent;
+  padding: var(--s-3xs) var(--s-s);
 
-	&:hover {
-		background-color: var(--highlight-high) !important;
-	}
+  &:hover {
+    background-color: var(--overlay) !important;
+  }
 }
 
 code {
-	border: calc(var(--border) * 3);
-	background: var(--overlay);
-	padding: var(--border) var(--s-3xs);
+  background: var(--surface);
+  padding: 2px var(--s-3xs);
 }
 
 table {
-	border: var(--border) solid var(--muted);
+  border: var(--border) solid var(--crust);
 
-	caption {
-		h3 {
-			color: var(--subtle);
-			font-weight: 400;
-			font-size: var(--fs-0);
-			white-space: nowrap;
-		}
-	}
+  caption {
+    h3 {
+      font-weight: 400;
+      font-size: var(--fs-0);
+      white-space: nowrap;
+    }
+  }
 
-	th:first-child,
-	td:first-child {
-		width: 1%;
-	}
+  th:first-child,
+  td:first-child {
+    width: 1%;
+  }
 
-	th {
-		width: 30%;
-		color: var(--gold);
-		font-weight: 900;
-		text-align: start;
-	}
+  th {
+    width: 30%;
+    font-weight: 900;
+    text-align: start;
+  }
 
-	td {
-		font-weight: 400;
-		font-family: monospace;
-	}
+  td {
+    font-weight: 400;
+    font-family: monospace;
+  }
 
-	th,
-	td {
-		border: var(--border) solid var(--muted);
-		padding: var(--border) var(--s-s);
-	}
+  th,
+  td {
+    padding: var(--border) var(--s-s);
+  }
 }
 
 .checkbox {
-	display: flex;
-	column-gap: var(--s-2xs);
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
-	cursor: pointer;
+  display: flex;
+  column-gap: var(--s-2xs);
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 
-	* {
-		cursor: pointer;
-	}
+  * {
+    cursor: pointer;
+  }
 
-	label {
-		user-select: none;
-	}
+  label {
+    user-select: none;
+  }
 
-	>input {
-		margin: 0;
-		background-color: var(--muted);
-		padding: 0;
-		accent-color: var(--iris);
-	}
+  > input {
+    margin: 0;
+    background-color: var(--overlay);
+    padding: 0;
+    accent-color: var(--mauve);
+  }
 }
 
 /* DROPDOWN */
 .dropdown {
-	display: flex;
-	position: relative;
-	flex-direction: column;
-}
+  display: flex;
+  position: relative;
+  flex-direction: column;
 
-.dropdown>button {
-	display: flex;
-	column-gap: var(--s-s);
-	flex-direction: column;
-	justify-content: start;
-	align-items: center;
+  &:hover,
+  &:focus {
+    .dropdown-content {
+      display: flex;
+    }
+  }
 
-	.current-value {
-		color: var(--subtle);
-		text-decoration: underline;
-	}
-}
+  > label {
+    display: flex;
+    column-gap: var(--s-s);
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
 
-.dropdown-content {
-	display: none;
-	position: absolute;
-	top: 100%;
-	flex-direction: column;
-	z-index: 1;
-	border: var(--border) solid var(--highlight-high);
-	border-top: none;
-	background-color: var(--surface);
-	min-width: 100%;
+    .current-value {
+      color: var(--subtext);
+      text-decoration: underline;
+    }
+  }
 
-	>button {
-		width: 100%;
-		text-align: left;
-	}
-}
+  > .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    flex-direction: column;
+    z-index: 1;
+    border-top: none;
+    background-color: var(--overlay);
+    min-width: 100%;
 
-.dropdown:hover,
-.dropdown:focus {
-	.dropdown-content {
-		display: flex;
-	}
+    > button {
+      width: 100%;
+      text-align: left;
+    }
+  }
 }
