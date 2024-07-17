@@ -1,7 +1,11 @@
 import { IContext } from "./icontext.js";
 
+/**
+ * An `IContext` that manages keyboard inputs for the nav bar, footer, and info
+ * panel
+ */
 export class Navigation extends IContext {
-  keymap = {
+  keymaps = {
     "ctrl+d": {
       action: () => {
         const textEditorElement = document.getElementById("text-editor");
@@ -47,6 +51,9 @@ export class Navigation extends IContext {
     },
     i: {
       element: document.getElementById("info"),
+      g: {
+        action: () => (window.location.href = "https://github.com/HonsonCooky/programmer-type"),
+      },
     },
     s: {
       element: document.getElementById("suite"),
@@ -86,13 +93,13 @@ export class Navigation extends IContext {
       element: document.getElementById("text-editor"),
     },
   };
-  currentMap = this.keymap;
+  currentMap = this.keymaps;
   footerElement = document.getElementById("key-context");
 
   _reset() {
     document.activeElement.blur();
     this.footerElement.innerText = "*base*";
-    this.currentMap = this.keymap;
+    this.currentMap = this.keymaps;
   }
 
   /** @param {KeyboardEvent} ev */
@@ -104,7 +111,7 @@ export class Navigation extends IContext {
     }
 
     const insert = this.currentMap[key];
-    const baseCase = this.keymap[key];
+    const baseCase = this.keymaps[key];
 
     if ((!insert && !baseCase?.action) || key === "Escape") {
       this._reset();
@@ -121,7 +128,10 @@ export class Navigation extends IContext {
 
     this.currentMap = insert;
     const { element, action } = this.currentMap;
-    if (!element) return;
+    if (!element) {
+      if (action) action();
+      return;
+    }
 
     if (action) {
       ev.preventDefault();

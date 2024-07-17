@@ -5,9 +5,11 @@ import { IContext } from "./icontext.js";
 
 export class TextEditor extends IContext {
 	textEditorElement = document.getElementById("text-editor");
+	textEditorInstructionsElement = document.getElementById("text-editor-instructions");
+
 	_fontSize = 1;
-	_textEditorInstructionsElement = document.getElementById("text-editor-instructions");
 	_quitPrimed = false;
+
 	/**@type {IEvaluator}*/
 	_codeEvaluator = undefined;
 	/**@type {IEvaluator}*/
@@ -29,7 +31,7 @@ export class TextEditor extends IContext {
 				this.textEditorElement.focus();
 			}.bind(this),
 		);
-		this._textEditorInstructionsElement.innerText = "[Enter] Start";
+		this.textEditorInstructionsElement.innerText = "[Enter] Start";
 
 		this._maxHeightCalc();
 		window.addEventListener("resize", this._maxHeightCalc.bind(this));
@@ -57,17 +59,15 @@ export class TextEditor extends IContext {
 		this.textEditorElement.style.maxHeight = mainHeight / 2 + "px";
 	}
 
-	focusTextEditor() {
-		this._textEditorInstructionsElement.innerText = "[:q] Quit, [Ctrl +] Increase Font, [Ctrl -] Decrease Font";
-	}
+	focusTextEditor() { }
 
 	blurTextEditor() {
-		this._textEditorInstructionsElement.innerText = "[Enter] Start";
+		this.textEditorInstructionsElement.innerText = "[Enter] Start";
 	}
 
 	resultsShowing(delay) {
-		if (delay < 1) this._textEditorInstructionsElement.innerText = `[Enter] Close Results`;
-		else this._textEditorInstructionsElement.innerText = `Close Results in ${delay}s`;
+		if (delay < 1) this.textEditorInstructionsElement.innerText = `[Enter] Close Results`;
+		else this.textEditorInstructionsElement.innerText = `Close Results in ${delay}s`;
 	}
 
 	/**@param {boolean} noBlur */

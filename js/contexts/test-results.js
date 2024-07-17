@@ -1,10 +1,16 @@
 import { IContext } from "./icontext.js";
 
+/** @typedef {import("../managers/suite-manager.js").Suite} Suite
+/** @typedef {{ timeStamp: number; index: number; correct: number; invalid: number; backspaces: number; }} Tick */
+/** @typedef {Tick & { wpm: number; }} SanitizedTick */
+
 export class TestResults extends IContext {
+  AVG_CHAR_PER_WORD = 4.79;
+
   /**@type {Element|null}*/
   _resultsDiv;
-  _timerRunning = false;
   _delayTime = 3;
+  _delayTimerRunning = false;
 
   constructor() {
     super();
@@ -23,22 +29,23 @@ export class TestResults extends IContext {
     this.dispatchEvent(new Event("delayChange"));
 
     if (this._delayTime <= 0) {
-      this._timerRunning = false;
+      this._delayTimerRunning = false;
       return;
     }
     setTimeout(this._countDownDelay.bind(this), 1000);
   }
 
   _startDelayTimer() {
-    this._timerRunning = true;
+    this._delayTimerRunning = true;
     this._delayTime = 3;
     this._countDownDelay();
   }
 
   /**
-   * @param {{ timeStamp: number; index: number; correct: number; invalid: number; backspaces: number; }[]} ticks
+   * @param { Tick[] } ticks
+   * @returns { SanitizedTick[] }
    * */
-  _sanitizeData(ticks) {
+  _sanitizeTicks(ticks) {
     return ticks
       .map(function(tick) {
         return {
@@ -50,26 +57,32 @@ export class TestResults extends IContext {
         if (i < 1) return true;
         const other = ticks[i - 1];
         return other.timeStamp != tick.timeStamp;
+      })
+      .map(function(tick) {
+        const words = (tick.correct + tick.invalid) / this.AVG_CHAR_PER_WORD;
+        tick.wpm = (words / (1 / 60)).toFixed(2);
+        return tick;
       });
   }
 
-  /**
-   * @param {{
-   * suite: { name: string; type: string; tests: string[]; }
-   * sanitizeData:{ timeStamp: number; index: number; correct: number; invalid: number; backspaces: number; }[]
-   * }} param0
-   */
-  _populateTempalate({ suite, sanitizeData }) {
+  /** @param {{ suite: Suite; sanitizeTicks: SanitizedTick[] }} param0 */
+  _populateTempalate({ suite, sanitizeTicks }) {
     if (!this._resultsDiv) return;
 
     this._resultsDiv.querySelector("#result-suite-name").innerText = suite.name;
     this._resultsDiv.querySelector("#result-suite-type").innerText = suite.type;
   }
 
-  _generateGraphs(sanitizeData) {
+  /** @param {SanitizedTick[]} sanitizeTicks */
+  _generateGraphs(sanitizeTicks) {
     if (!this._resultsDiv) return;
   }
 
+  /**
+   * @param { Object } testValues
+   * @param { Suite } testValues.suite
+   * @param { SanitizedTick[] } testValues.sanitizeTicks
+   */
   _generateErrorDiv(testValues) {
     const errorDiv = document.createElement("div");
     const errorMsg = document.createElement("div");
@@ -84,23 +97,21 @@ export class TestResults extends IContext {
   }
 
   /**
-   * @param {{
-   * suite: { name: string; type: string; tests: string[]; }
-   * ticks:{ timeStamp: number; index: number; correct: number; invalid: number; backspaces: number; }[]
-   * }} testValues
+   * @param { Object } testValues
+   * @param { Suite } testValues.suite
+   * @param { Tick[] } testValues.ticks
    * @return {HTMLElement}
    */
   generateResultSheet(testValues) {
     this._startDelayTimer();
     const { suite, ticks } = testValues;
-    const sanitizeData = this._sanitizeData(ticks);
+    const sanitizeTicks = this._sanitizeTicks(ticks);
 
-    console.log(this._resultsDiv);
     // Error Message
-    if (!this._resultsDiv) return this._generateErrorDiv({ suite, sanitizeData });
+    if (!this._resultsDiv) return this._generateErrorDiv({ suite, sanitizeTicks });
 
-    this._populateTempalate({ suite, sanitizeData });
-    this._generateGraphs(sanitizeData);
+    this._populateTempalate({ suite, sanitizeTicks });
+    this._generateGraphs(sanitizeTicks);
     return this._resultsDiv;
   }
 

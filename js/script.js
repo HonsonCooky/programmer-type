@@ -27,6 +27,7 @@ export class Program {
       }
 
       this.curContext = textEditor;
+      textEditor.textEditorInstructionsElement.innerText = "[:q] Quit, [Ctrl +] Increase Font, [Ctrl -] Decrease Font";
       textEditor.focusTextEditor();
       if (!timeManager.running) timeManager.prime();
     });

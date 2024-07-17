@@ -1,16 +1,25 @@
+/** @typedef {{ name: string; type: string; tests: string[]; }} Suite */
+
 export class SuiteManager extends EventTarget {
   // Releated Elements
   suiteDropdownElement = document.getElementById("suite");
   suiteDropdownContentElements = Array.from(this.suiteDropdownElement.querySelector(".dropdown-content").children);
   suiteCurrentValueElement = this.suiteDropdownElement.querySelector(".current-value");
   suiteTypeHeader = document.getElementById("suite-value");
+
   cacheCheckbox = document.getElementById("cache-btn");
+
+  selectedSuiteName;
+  selectedSuite;
+
   _useLocalCache = true;
+  _randomIndex = 0;
 
   // Constants
   TESTS_ORIGIN = "../../assets/test-suites";
 
   // Hardcoding these to avoid needing a database or GitHub API call.
+  /** @type {Suite[]} */
   SUITES = [
     {
       name: "CSharp",
@@ -59,6 +68,7 @@ export class SuiteManager extends EventTarget {
       "click",
       function() {
         this._useLocalCache = this.cacheCheckbox.checked;
+        if (!this._useLocalCache) localStorage.clear();
         localStorage.setItem("should-cache", this._useLocalCache);
       }.bind(this),
     );
