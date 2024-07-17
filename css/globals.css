@@ -74,8 +74,28 @@ table {
 	}
 }
 
-.selected {
-	color: var(--rose);
+.checkbox {
+	display: flex;
+	column-gap: var(--s-2xs);
+	flex-direction: row;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+
+	* {
+		cursor: pointer;
+	}
+
+	label {
+		user-select: none;
+	}
+
+	>input {
+		margin: 0;
+		background-color: var(--muted);
+		padding: 0;
+		accent-color: var(--iris);
+	}
 }
 
 /* DROPDOWN */
