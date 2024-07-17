@@ -1,10 +1,11 @@
-import { IContext } from "./icontext.js";
-
 /** @typedef {import("../managers/suite-manager.js").Suite} Suite
 /** @typedef {{ timeStamp: number; index: number; correct: number; invalid: number; backspaces: number; }} Tick */
 /** @typedef {Tick & { wpm: number; }} SanitizedTick */
 
-export class TestResults extends IContext {
+/**
+ * A dedicated context for the results page.
+ */
+export class ResultsManager {
   AVG_CHAR_PER_WORD = 4.79;
 
   /**@type {Element|null}*/
@@ -47,18 +48,18 @@ export class TestResults extends IContext {
    * */
   _sanitizeTicks(ticks) {
     return ticks
-      .map(function(tick) {
+      .map(function (tick) {
         return {
           ...tick,
           timeStamp: Math.round(tick.timeStamp / 1000),
         };
       })
-      .filter(function(tick, i, ticks) {
+      .filter(function (tick, i, ticks) {
         if (i < 1) return true;
         const other = ticks[i - 1];
         return other.timeStamp != tick.timeStamp;
       })
-      .map(function(tick) {
+      .map(function (tick) {
         const words = (tick.correct + tick.invalid) / this.AVG_CHAR_PER_WORD;
         tick.wpm = (words / (1 / 60)).toFixed(2);
         return tick;

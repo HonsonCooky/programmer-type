@@ -5,27 +5,22 @@ import { TextEditor } from "./contexts/text-editor.js";
 import { ThemeManager } from "./managers/theme-manager.js";
 import { TimeManager } from "./managers/time-manager.js";
 import { InfoManager } from "./managers/info-manager.js";
-import { TestResults } from "./contexts/test-results.js";
+import { ResultsManager } from "./managers/results-manager.js";
 
 export class Program {
   /**
-   * Link together significant events that alter the state of the application.
-   * this.curContext will dictate
+   * If the text editor is focused, keyboard inputs are indications of taking a
+   * test. If the text editor is not focused, keyboard inputs are indicative of
+   * navigation attempts.
    *
    * @param {Object} param0
    * @param {SuiteManager} param0.suiteManager
    * @param {TimeManager} param0.timeManager
    * @param {Navigation} param0.navigation
    * @param {TextEditor} param0.textEditor
-   * @param {TestResults} param0.testResults
    */
-  _contextUpdate({ suiteManager, timeManager, navigation, textEditor, testResults }) {
+  _contextUpdate({ suiteManager, timeManager, navigation, textEditor }) {
     textEditor.textEditorElement.addEventListener("focusin", () => {
-      if (this.curContext === testResults) {
-        textEditor.blur();
-        return;
-      }
-
       this.curContext = textEditor;
       textEditor.textEditorInstructionsElement.innerText = "[:q] Quit, [Ctrl +] Increase Font, [Ctrl -] Decrease Font";
       textEditor.focusTextEditor();
@@ -33,29 +28,18 @@ export class Program {
     });
 
     textEditor.textEditorElement.addEventListener("focusout", () => {
-      if (this.curContext === testResults) {
-        testResults.closeResults();
-        return;
-      }
-
       this.curContext = navigation;
       textEditor.blurTextEditor();
       if (suiteManager.selectedSuite.type === "Code") timeManager.pause();
     });
-
-    testResults.addEventListener(
-      "resultsClosed",
-      function() {
-        suiteManager.updateRandomTest();
-        this.curContext = navigation;
-        document.activeElement.blur();
-      }.bind(this),
-    );
   }
 
   /**
-   * In this web app, users are either navigating the page, or typing a test.
-   * Keyboard events are sent to the relevant context based on the state of the application.
+   * The only `window.addEventListener("keydown")` instance in this program.
+   * Context is altered based on the state of `this.curContext`.
+   *
+   * Links the text editor to the time manager, where a keydown event will
+   * start the timer if applicable.
    *
    * @param {Object} param0
    * @param {TextEditor} param0.textEditor
@@ -64,13 +48,9 @@ export class Program {
   _keyboardInput({ textEditor, timeManager }) {
     window.addEventListener(
       "keydown",
-      function(ev) {
+      function (ev) {
         // Start the test if the user is typing into the text editor, and the timer hasn't started
-        if (this.curContext === textEditor) {
-          const timerReady = timeManager.primed && !timeManager.running;
-          const shouldStartTest = textEditor.shouldStartTest(ev);
-          if (timerReady && shouldStartTest) timeManager.run();
-        }
+        if (this.curContext === textEditor && timeManager.primed && textEditor.shouldStartTest(ev)) timeManager.run();
 
         // Send all key events to the current context
         this.curContext.keydown(ev);
@@ -79,14 +59,15 @@ export class Program {
   }
 
   /**
-   * When the user updates the duration of the test, update the time manager to reciprocate changes.
+   * When the user updates the duration of the test, update the time manager to
+   * reciprocate changes.
    *
    * @param {Object} param0
    * @param {DurationManager} param0.durationManager
    * @param {TimeManager} param0.timeManager
    */
   _durationUpdate({ durationManager, timeManager }) {
-    const callback = function() {
+    const callback = function () {
       timeManager.setTimer(durationManager.selectedDuration);
     };
 
@@ -94,7 +75,13 @@ export class Program {
   }
 
   /**
-   * When the user selects a new suite, the text editor UI should update based on the status of these events.
+   * When the user selects a new test suite:
+   * - the previous test is invalid, and the timer should reset.
+   * - the text editor UI should update it's data to reciprocate the loading
+   *   state.
+   *
+   * When a new test has been loaded, the text editor should update to
+   * reciprocate these changes.
    *
    * @param {Object} param0
    * @param {SuiteManager} param0.suiteManager
@@ -102,25 +89,21 @@ export class Program {
    * @param {TextEditor} param0.textEditor
    */
   _suiteUpdate({ suiteManager, timeManager, textEditor }) {
-    const suiteUpdated = function() {
+    const suiteUpdated = function () {
       timeManager.resetTimer();
-    };
-
-    const updatingTest = function() {
       textEditor.loadingTest();
     };
 
-    const testUpdated = function() {
+    const testUpdated = function () {
       textEditor.loadTestSuite(suiteManager.selectedSuite, suiteManager.currentTest);
     };
 
     suiteManager.addEventListener("suiteUpdated", suiteUpdated);
-    suiteManager.addEventListener("updatingTest", updatingTest);
     suiteManager.addEventListener("testUpdated", testUpdated);
 
     // Load initial test - avoid doing before linking.
     // This is a unique scenario, as we cannot easily pre-load this data.
-    suiteManager.updateRandomTest();
+    // suiteManager.updateRandomTest();
   }
 
   /**
@@ -130,7 +113,7 @@ export class Program {
    * @param {TextEditor} param0.textEditor
    */
   _infoHover({ suiteManager, infoManager, textEditor }) {
-    const reloadTest = function() {
+    const reloadTest = function () {
       textEditor.loadTestSuite(suiteManager.selectedSuite, suiteManager.currentTest);
     };
     infoManager.addEventListener("reloadTest", reloadTest);
@@ -149,7 +132,7 @@ export class Program {
      */
     let tickEvals = [];
 
-    const _evaluateResults = function() {
+    const _evaluateResults = function () {
       this.curContext = testResults;
       textEditor.loadingTest();
 
@@ -160,11 +143,11 @@ export class Program {
       tickEvals = [];
     }.bind(this);
 
-    const delayChange = function() {
+    const delayChange = function () {
       textEditor.resultsShowing(testResults._delayTime);
     };
 
-    const _saveResults = function() {
+    const _saveResults = function () {
       const timeStamp = timeManager.timeStamp();
 
       let lastTick = { timeStamp: 0, index: 0, invalid: 0, correct: 0, backspaces: 0 };
@@ -175,22 +158,22 @@ export class Program {
       tickEvals.push(textAnalysis);
     };
 
-    const timerTick = function() {
+    const timerTick = function () {
       _saveResults();
     };
 
-    const testCompleted = function() {
+    const testCompleted = function () {
       _saveResults();
       suiteManager.updateRandomTest();
     };
 
-    const testFinished = function() {
+    const testFinished = function () {
       textEditor.reset();
       timeManager.resetTimer();
       _evaluateResults();
     };
 
-    const testForceFinished = function() {
+    const testForceFinished = function () {
       _saveResults();
       timeManager.finish();
     };
@@ -204,20 +187,20 @@ export class Program {
 
   setup() {
     // Managers
-    const themeManager = new ThemeManager();
+    new ThemeManager();
     const durationManager = new DurationManager();
     const suiteManager = new SuiteManager();
     const infoManager = new InfoManager();
+    const resultsManager = new ResultsManager();
     const timeManager = new TimeManager();
 
     // Contexts
     const navigation = new Navigation();
     const textEditor = new TextEditor();
-    const testResults = new TestResults();
 
     // We could make these globally available, but by using them locally, we can see function dependencies.
     this.curContext = navigation;
-    this._contextUpdate({ suiteManager, timeManager, navigation, textEditor, testResults });
+    this._contextUpdate({ suiteManager, timeManager, navigation, textEditor });
     this._keyboardInput({ textEditor, timeManager });
     this._durationUpdate({ durationManager, timeManager });
     this._suiteUpdate({ suiteManager, timeManager, textEditor });

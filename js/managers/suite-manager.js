@@ -66,7 +66,7 @@ export class SuiteManager extends EventTarget {
 
     this.cacheCheckbox.addEventListener(
       "click",
-      function() {
+      function () {
         this._useLocalCache = this.cacheCheckbox.checked;
         if (!this._useLocalCache) localStorage.clear();
         localStorage.setItem("should-cache", this._useLocalCache);
@@ -78,8 +78,9 @@ export class SuiteManager extends EventTarget {
     this.selectedSuiteName = suiteBtn.innerText.replace(/\[.\]\s/g, "");
     this._findSelectedSuite();
     this._updateUI();
-    this.updateRandomTest();
     this.dispatchEvent(new Event("suiteUpdated"));
+
+    this.updateRandomTest();
   }
 
   _findSelectedSuite() {
@@ -115,7 +116,6 @@ export class SuiteManager extends EventTarget {
    * @returns {Promise<string|undefined>}
    */
   updateRandomTest() {
-    this.dispatchEvent(new Event("updatingTest"));
     if (!this.selectedSuite) {
       console.error("No selected suite", this.selectedSuite);
       return;
