@@ -1,6 +1,9 @@
-export class Theme extends EventTarget {
+import { IElementManager } from "./IManager.js";
+
+export class Theme extends IElementManager {
   #themeAttrTag = "theme";
   #isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  #labelValue = "System";
 
   // Elements
   #themeDropdown = document.getElementById("theme");
@@ -11,33 +14,34 @@ export class Theme extends EventTarget {
     super();
 
     // Set default theme
-    this.#updateUI("System");
+    this.render("System");
     this.#setTheme();
 
     // Setup theme switching buttons
     document.getElementById("system-theme").addEventListener("click", () => {
       this.#isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      this.#updateUI("System");
-      this.#setTheme();
+      this.#labelValue = "System";
+      this.render();
     });
 
     document.getElementById("light-theme").addEventListener("click", () => {
       this.#isDark = false;
-      this.#updateUI("Light");
-      this.#setTheme();
+      this.#labelValue = "Light";
+      this.render();
     });
 
     document.getElementById("dark-theme").addEventListener("click", () => {
       this.#isDark = true;
-      this.#updateUI("Dark");
-      this.#setTheme();
+      this.#labelValue = "Dark";
+      this.render();
     });
   }
 
-  #updateUI(theme) {
-    this.#themeDisplayValue.innerText = theme;
+  render() {
+    this.#setTheme();
+    this.#themeDisplayValue.innerText = this.#labelValue;
     Array.from(this.#themeOptions.children).forEach((child) => {
-      if (child.innerText.includes(theme)) child.classList.add("selected");
+      if (child.innerText.includes(this.#labelValue)) child.classList.add("selected");
       else child.classList.remove("selected");
     });
   }
