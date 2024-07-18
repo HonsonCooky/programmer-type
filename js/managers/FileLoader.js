@@ -1,5 +1,9 @@
 import { IElementManager } from "./IElementManager.js";
 
+/** @typedef {"copy"|"paste"} ATAction */
+/** @typedef {{keybind?: string; comments: string[]; action?: ATAction; content?: string[]}} ATLine */
+/** @typedef {ATLine[]} ATFile */
+
 export class FileLoader extends IElementManager {
   #testSuitePath = "../../assets/test-suites";
 
@@ -9,7 +13,9 @@ export class FileLoader extends IElementManager {
 
   /** @type {import("../singletons/SharedState.js").SuiteItem} */
   #suite;
+  /** @type {string|undefined} */
   #testURL;
+  /** @type {string|undefined} */
   #fileContents;
 
   #shoudCache = () => document.getElementById("cache-btn")?.checked ?? false;
@@ -66,14 +72,51 @@ export class FileLoader extends IElementManager {
    * Assuming the text file is for a coding test, then load each character into
    * lines, where each character is assumed to be an input.
    */
-  #loadCodeTest() {}
+  #loadCodeTest() {
+    // Get the lines.
+    const lines = this.#fileContents.split(/\r?\n/g);
+
+    // Get characters and indentation level.
+    const linesMapped = lines.map((line) => {
+      const indent = (line.match(/^(\s+)/) || [""])[0].length;
+      const chars = line.trim().split("");
+      return { indent, chars };
+    });
+
+    // Map each line to a DIV of SPANs, each span being a character.
+    const lineStrs = linesMapped.map(({ indent, chars }) => {
+      const cStrs = chars.map((c) => `<span>${c}</span>`);
+      const nlStr = `<span class="newline">\\n</span>`;
+      const divAttr = `class="line" style="margin-left:calc(var(--fs--2) * ${indent})"`;
+
+      // Little complicated, but we are just creating the DIV of SPANs with
+      // some styling for indentation. We also append a newline character.
+      return `<div ${divAttr}>${cStrs.join("")}${nlStr}</div>`;
+    });
+
+    // Wrap it all in a div with a class to help identify the type of test.
+    const codeDiv = `<div class="code-test">${lineStrs.join("")}</div>`;
+
+    // Overwrite the existing content.
+    this.#contentDisplayPane.innerHTML = codeDiv;
+  }
 
   /**
    * Assuming the text file is for an action test, then we are provided with
    * JSON instructions for the test. Interpret these instructions and generate
    * inputs for these.
    */
-  #loadActionTest() {}
+  #loadActionTest() {
+    /**@type {ATFile}*/
+    const instructions = JSON.parse(this.#fileContents);
+    const steps = instructions.map((i) => {
+      const { action, comments, content, keybind } = i;
+
+      // If the user requires come action.
+      if (action && content && keybind) {
+      }
+    });
+  }
 
   /**@param {import("./SharedState").SuiteItem} suite */
   async loadRandomTest(suite) {

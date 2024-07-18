@@ -1,8 +1,17 @@
 import { IContext } from "./IContext.js";
+import { ActionEvaluator } from "./TestEvaluators/ActionEvaluator.js";
+import { CodeEvaluator } from "./TestEvaluators/CodeEvaluator.js";
 
 export class TestContext extends IContext {
+  /**@type {IContext}*/
+  #codeEvaluator;
+  /**@type {IContext}*/
+  #actionEvaluator;
+
   constructor() {
     super();
+    this.#codeEvaluator = new CodeEvaluator();
+    this.#actionEvaluator = new ActionEvaluator();
   }
 
   /** Indicate that this IContext is now in control */
