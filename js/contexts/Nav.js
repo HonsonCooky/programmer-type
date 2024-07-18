@@ -9,6 +9,7 @@ import { IContext } from "./IContext.js";
  * Activated on actions that "stop" a test.
  */
 export class NavContext extends IContext {
+  /** The keyboard input context at the bottom right  */
   #displayValue = document.getElementById("key-context");
 
   /**@type {Duration}*/
@@ -45,35 +46,41 @@ export class NavContext extends IContext {
     window.addEventListener("mousedown", this.#resetKeyContext.bind(this));
   }
 
+  /**
+   * In the case a dropdown is being hovered, we should take this into account
+   * for the keyboard input.
+   * */
   #activeDropdowns() {
     return Array.from(document.querySelectorAll(".dropdown-content"))
       .filter((dc) => getComputedStyle(dc).display === "flex")
       .map((dc) => dc.parentElement);
   }
 
+  /** Reset all elements back to their initial state. */
   #resetKeyContext() {
     this.#displayValue.innerText = "*base*";
     this.#keySeq = "";
     this.#selectedElement = "";
-    document.activeElement.blur();
   }
 
-  /** Reset the duration and suite using their current values. */
   activate() {
     // Re-set the duration and suite
     PTShared.setDuration(this.#duration.getSeconds());
     PTShared.setSuite(this.#suite.getSuiteName());
+    this.#resetKeyContext();
   }
 
-  /** Exiting this context doesn't require any action. */
-  deactivate() {}
+  deactivate() {
+    this.#resetKeyContext();
+  }
 
-  /**
-   * On keydown event, evaluate what this key should do.
-   * @param {KeyboardEvent} ev
-   */
+  /** @param {KeyboardEvent} ev */
   keydown(ev) {
-    if (ev.key === "Escape") return this.#resetKeyContext();
+    if (ev.key === "Escape") {
+      this.#resetKeyContext();
+      document.activeElement.blur();
+      return;
+    }
 
     if (this.#keySeq === "") {
       const activeDropdowns = this.#activeDropdowns();
@@ -86,7 +93,11 @@ export class NavContext extends IContext {
     this.#keySeq += ev.key;
     this.#selectedElement = document.querySelector(`[id^="_${this.#keySeq}_"]`);
 
-    if (!this.#selectedElement) return this.#resetKeyContext();
+    if (!this.#selectedElement) {
+      this.#resetKeyContext();
+      document.activeElement.blur();
+      return;
+    }
 
     this.#displayValue.innerText = this.#keySeq.split("").join("-");
 
@@ -98,5 +109,6 @@ export class NavContext extends IContext {
 
     this.#selectedElement.click();
     this.#resetKeyContext();
+    document.activeElement.blur();
   }
 }

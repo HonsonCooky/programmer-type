@@ -21,21 +21,25 @@ export class Duration extends IElementManager {
 
     Array.from(this.#options.children).forEach((child) => {
       if (child.tagName != "BUTTON") return;
-      child.addEventListener("click", () => this.#updateDuration(child));
+      child.addEventListener("click", () => {
+        this.#labelValue = child.innerText.replace(/\[.*\]/, "").trim();
+        this.#seconds = Number.parseInt(this.#labelValue);
+        if (isNaN(this.#seconds)) this.#seconds = 0;
+        this.render();
+      });
     });
   }
 
-  #updateDuration(btn) {
-    this.#labelValue = btn.innerText.replace(/\[.*\]/, "").trim();
-    this.#seconds = Number.parseInt(this.#labelValue);
-    if (isNaN(this.#seconds)) this.#seconds = 0;
-    this.render();
-  }
-
+  /**
+   * Get the selected number of seconds for this test. Infinite time tests will
+   * return 0.
+   * @returns {number}
+   */
   getSeconds() {
     return this.#seconds;
   }
 
+  /**@override*/
   render() {
     // Update display value and selected item
     this.#displayValue.innerText = this.#labelValue;

@@ -20,19 +20,22 @@ export class Suite extends IElementManager {
 
     Array.from(this.#options.children).forEach((child) => {
       if (child.tagName != "BUTTON") return;
-      child.addEventListener("click", () => this.#updateSuite(child));
+      child.addEventListener("click", () => {
+        this.#labelValue = child.innerText.replace(/\[.*\]/, "").trim();
+        this.render();
+      });
     });
   }
 
-  #updateSuite(btn) {
-    this.#labelValue = btn.innerText.replace(/\[.*\]/, "").trim();
-    this.render();
-  }
-
+  /**
+   * Get the selected suite NAME for this test.
+   * @returns {string}
+   */
   getSuiteName() {
     return this.#labelValue;
   }
 
+  /**@override*/
   render() {
     // Update display value and selected item
     this.#displayValue.innerText = this.#labelValue;

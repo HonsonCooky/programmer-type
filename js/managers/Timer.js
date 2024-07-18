@@ -16,6 +16,13 @@ export class Timer extends IElementManager {
     this.#countUp = false;
   }
 
+  /**
+   * Ready the timer with the number of seconds for the next test. Without
+   * being primed, the timer will not run. Thus, we have a system that can wait
+   * for the users first input before starting.
+   *
+   * @param {number} seconds
+   */
   prime(seconds) {
     this.#time = seconds;
     this.#countUp = seconds === 0;
@@ -23,6 +30,7 @@ export class Timer extends IElementManager {
     this.dispatchEvent(new Event("primed"));
   }
 
+  /** Start the timer. This requires the timer to be primed first. */
   run() {
     if (this.#intervalId) return;
 
@@ -38,6 +46,7 @@ export class Timer extends IElementManager {
     this.dispatchEvent(new Event("started"));
   }
 
+  /** Stop the timer without removing it's "primed" state. */
   pause() {
     if (!this.#intervalId) return;
 
@@ -48,6 +57,10 @@ export class Timer extends IElementManager {
     this.dispatchEvent(new Event("paused"));
   }
 
+  /**
+   * Stop the timer. Removing it's "primed" state, and resetting the timer back
+   * to initial state.
+   */
   stop() {
     if (!this.#intervalId) return;
 
@@ -60,6 +73,7 @@ export class Timer extends IElementManager {
     this.dispatchEvent(new Event("stopped"));
   }
 
+  /**@override*/
   render() {
     this.#displayValue.innerText = this.#time;
   }

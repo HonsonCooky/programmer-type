@@ -34,22 +34,35 @@ export class SharedState {
     },
   ];
 
-  /** @param {number} duration */
+  /**
+   * Set the duration of the next test.
+   * @param {number} duration
+   */
   setDuration(duration) {
     this.#timer.prime(duration);
   }
 
-  /** @returns {SuiteItem|undefined} */
+  /**
+   * Get the currently selected suite.
+   * @returns {SuiteItem|undefined}
+   */
   getSuite() {
     return this.#currentSuite;
   }
 
-  /**@param {string} suiteName */
+  /**
+   * Set the suite based on it's name.
+   * @param {string} suiteName
+   */
   setSuite(suiteName) {
     this.#currentSuite = this.#suites.find((s) => s.name === suiteName);
     this.loadNextTest();
   }
 
+  /**
+   * Ready the program for a random test from the currently selected suite.
+   * Random tests attempt to not be the currently selected test.
+   */
   loadNextTest() {
     if (!this.#currentSuite) {
       console.error("No suite loaded");
@@ -59,6 +72,12 @@ export class SharedState {
     this.#fileLoader.loadRandomTest(this.#currentSuite);
   }
 
+  /**
+   * Determine if the content on screen is designed for a test, or is it
+   * showing a loading screen, results page or info page.
+   *
+   * @returns {boolean}
+   */
   isTestReady() {
     return !!document.getElementById("content")?.querySelector(".line");
   }

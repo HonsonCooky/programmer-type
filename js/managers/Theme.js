@@ -37,6 +37,12 @@ export class Theme extends IElementManager {
     });
   }
 
+  /** Translate the boolean `this.#isDark` to a string for CSS attribute. */
+  #getCssValue() {
+    return this.#isDark ? "dark" : "light";
+  }
+
+  /**@override*/
   render() {
     // Set the theme for CSS
     document.documentElement.setAttribute(this.#themeAttrTag, this.#getCssValue());
@@ -50,9 +56,5 @@ export class Theme extends IElementManager {
     });
 
     this.dispatchEvent("update");
-  }
-
-  #getCssValue() {
-    return this.#isDark ? "dark" : "light";
   }
 }
