@@ -12,6 +12,7 @@ body {
   background: var(--base);
   height: 100dvh;
   max-height: 100dvh;
+  color: var(--text);
   font-size: var(--fs-0);
 }
 
@@ -19,10 +20,13 @@ body {
   box-sizing: border-box;
   outline: none;
   border-radius: var(--border);
-  color: var(--text);
+  color: inherit;
   font-weight: inherit;
   font-size: inherit;
   font-family: "M PLUS 1 Code", monospace;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 button {
@@ -31,7 +35,7 @@ button {
   padding: var(--s-3xs) var(--s-s);
 
   &:hover {
-    background-color: var(--overlay) !important;
+    background-color: var(--crust) !important;
   }
 }
 
@@ -73,6 +77,11 @@ table {
   }
 }
 
+.selected {
+  color: var(--flamingo);
+}
+
+/* CHECKBOX */
 .checkbox {
   display: flex;
   column-gap: var(--s-2xs);
@@ -87,11 +96,12 @@ table {
 
   label {
     user-select: none;
+    white-space: nowrap;
   }
 
-  > input {
+  >input {
     margin: 0;
-    background-color: var(--overlay);
+    background-color: var(--surface);
     padding: 0;
     accent-color: var(--mauve);
   }
@@ -102,20 +112,26 @@ table {
   display: flex;
   position: relative;
   flex-direction: column;
+  border-radius: var(--border) var(--border) 0 0;
+  padding: var(--s-3xs) var(--s-s);
+  height: 100%;
 
   &:hover,
   &:focus {
+    background-color: var(--crust);
+
     .dropdown-content {
       display: flex;
     }
   }
 
-  > label {
+  >label {
     display: flex;
     column-gap: var(--s-s);
     flex-direction: column;
     justify-content: start;
     align-items: center;
+    height: 100%;
 
     .current-value {
       color: var(--subtext);
@@ -123,19 +139,34 @@ table {
     }
   }
 
-  > .dropdown-content {
+  >.dropdown-content {
     display: none;
     position: absolute;
     top: 100%;
     flex-direction: column;
     z-index: 1;
+    border: var(--border) solid var(--surface);
     border-top: none;
-    background-color: var(--overlay);
-    min-width: 100%;
+    border-radius: 0 0 var(--border) var(--border);
+    background-color: var(--base);
+    width: 100%;
 
-    > button {
+    >button {
+      border-radius: 0;
       width: 100%;
       text-align: left;
+      white-space: nowrap;
+    }
+
+    >label {
+      border-radius: 0;
+      padding: var(--s-xs) 0;
+      width: 100%;
+      text-align: center;
+
+      span {
+        vertical-align: top;
+      }
     }
   }
 }

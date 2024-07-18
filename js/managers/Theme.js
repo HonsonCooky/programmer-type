@@ -1,23 +1,23 @@
-import { IElementManager } from "./IManager.js";
+import { IElementManager } from "./IElementManager.js";
 
 export class Theme extends IElementManager {
+  // Elements
+  #dropdown = document.getElementById("theme");
+  #options = this.#dropdown.querySelector(".dropdown-content");
+  #displayValue = this.#dropdown.querySelector(".current-value");
+
+  // HTML values
   #themeAttrTag = "theme";
   #isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  #labelValue = "System";
-
-  // Elements
-  #themeDropdown = document.getElementById("theme");
-  #themeOptions = this.#themeDropdown.querySelector(".dropdown-content");
-  #themeDisplayValue = this.#themeDropdown.querySelector(".current-value");
+  #labelValue = this.#displayValue.innerText;
 
   constructor() {
     super();
 
     // Set default theme
-    this.render("System");
-    this.#setTheme();
+    this.render();
 
-    // Setup theme switching buttons
+    // Setup theme switching buttons (only three, no need for a loop)
     document.getElementById("system-theme").addEventListener("click", () => {
       this.#isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       this.#labelValue = "System";
@@ -38,20 +38,21 @@ export class Theme extends IElementManager {
   }
 
   render() {
-    this.#setTheme();
-    this.#themeDisplayValue.innerText = this.#labelValue;
-    Array.from(this.#themeOptions.children).forEach((child) => {
+    // Set the theme for CSS
+    document.documentElement.setAttribute(this.#themeAttrTag, this.#getCssValue());
+
+    // Update display value and selected item
+    this.#displayValue.innerText = this.#labelValue;
+    Array.from(this.#options.children).forEach((child) => {
+      if (child.tagName != "BUTTON") return;
       if (child.innerText.includes(this.#labelValue)) child.classList.add("selected");
       else child.classList.remove("selected");
     });
+
+    this.dispatchEvent("update");
   }
 
-  #getThemeValue() {
+  #getCssValue() {
     return this.#isDark ? "dark" : "light";
-  }
-
-  #setTheme() {
-    document.documentElement.setAttribute(this.#themeAttrTag, this.#getThemeValue());
-    this.dispatchEvent(new Event("themeUpdated"));
   }
 }

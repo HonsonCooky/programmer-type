@@ -1,5 +1,25 @@
 footer {
-  @media screen and (min-width: 1440px) {
-    padding: var(--s-3xs) calc(((100dvw - 1440px) / 2) + var(--s-m));
-  }
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: var(--s-s) var(--s-m);
+
+	>* {
+		flex: 1;
+	}
+
+	#info-version {
+		text-align: center;
+	}
+
+	#info-app {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	@media screen and (min-width: 1440px) {
+		padding: var(--s-s) calc(((100dvw - 1440px) / 2) + var(--s-m));
+	}
 }
