@@ -2,7 +2,7 @@ import { IElementManager } from "./IElementManager.js";
 
 export class Theme extends IElementManager {
   // Elements
-  #dropdown = document.getElementById("theme");
+  #dropdown = document.getElementById("_t_theme");
   #options = this.#dropdown.querySelector(".dropdown-content");
   #displayValue = this.#dropdown.querySelector(".current-value");
 
@@ -18,19 +18,19 @@ export class Theme extends IElementManager {
     this.render();
 
     // Setup theme switching buttons (only three, no need for a loop)
-    document.getElementById("system-theme").addEventListener("click", () => {
+    document.getElementById("_ts_system-theme").addEventListener("click", () => {
       this.#isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
       this.#labelValue = "System";
       this.render();
     });
 
-    document.getElementById("light-theme").addEventListener("click", () => {
+    document.getElementById("_tl_light-theme").addEventListener("click", () => {
       this.#isDark = false;
       this.#labelValue = "Light";
       this.render();
     });
 
-    document.getElementById("dark-theme").addEventListener("click", () => {
+    document.getElementById("_td_dark-theme").addEventListener("click", () => {
       this.#isDark = true;
       this.#labelValue = "Dark";
       this.render();

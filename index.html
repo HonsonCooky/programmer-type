@@ -19,51 +19,49 @@
 		<nav>
 			<!-- Gameplay Settings -->
 			<div>
-				<div class="dropdown" id="duration">
+				<div class="dropdown" id="_d_duration">
 					<label>
 						<span>[D] Duration &#9013;</span>
 						<span class="current-value">60s</span>
 					</label>
 					<div class="dropdown-content">
-						<button id="duration-15">[0] 15s</button>
-						<button id="duration-30">[1] 30s</button>
-						<button id="duration-60">[2] 60s</button>
-						<button id="duration-90">[3] 90s</button>
-						<button id="duration-120">[4] 120s</button>
-						<button id="duration-infinite">[5] Infinite</button>
+						<button id="_d0_duration-15">[0] 15s</button>
+						<button id="_d1_duration-30">[1] 30s</button>
+						<button id="_d2_duration-60">[2] 60s</button>
+						<button id="_d3_duration-90">[3] 90s</button>
+						<button id="_d4_duration-120">[4] 120s</button>
+						<button id="_d5_duration-infinite">[5] Infinite</button>
 					</div>
 				</div>
-				<div class="dropdown" id="suite">
+				<div class="dropdown" id="_s_suite">
 					<label>
 						<span>[S] Test Suite &#9013;</span>
 						<span class="current-value">CSharp</span>
 					</label>
 					<div class="dropdown-content">
-						<button id="suite-csharp">[C] CSharp</button>
-						<button id="suite-fsharp">[F] FSharp</button>
-						<button id="suite-vim">[V] Vim</button>
-						<button id="suite-typescript">[T] TypeScript</button>
+						<button id="_sc_suite-csharp">[C] CSharp</button>
+						<button id="_sf_suite-fsharp">[F] FSharp</button>
+						<button id="_sv_suite-vim">[V] Vim</button>
+						<button id="_st_suite-typescript">[T] TypeScript</button>
 					</div>
 				</div>
 			</div>
 
 			<!-- App Settings -->
 			<div>
-				<div class="dropdown" id="theme">
+				<div class="dropdown" id="_t_theme">
 					<label>
 						<span>[T] Theme &#9013;</span>
 						<span class="current-value">System</span>
 					</label>
 					<div class="dropdown-content">
 						<label><i>Catppuccin</i></label>
-						<button id="system-theme">[S] System</button>
-						<button id="light-theme">[L] Light</button>
-						<button id="dark-theme">[D] Dark</button>
+						<button id="_ts_system-theme">[S] System</button>
+						<button id="_tl_light-theme">[L] Light</button>
+						<button id="_td_dark-theme">[D] Dark</button>
 					</div>
 				</div>
-				<div class="dropdown" id="info">
-					<label>[I] Info &#x1f6c8;</label>
-				</div>
+				<button class="dropdown" id="_i_info">[I] Info &#x1f6c8;</button>
 			</div>
 		</nav>
 	</header>
@@ -87,7 +85,7 @@
 		<div id="info-creator">HonsonCooky</div>
 		<div id="info-version">v1.0.0</div>
 		<div id="info-app">
-			<label class="checkbox" id="cache">
+			<label class="checkbox" id="_c_cache">
 				<input id="cache-btn" type="checkbox" />
 				<label for="cache-btn">[C] Cache</label>
 			</label>

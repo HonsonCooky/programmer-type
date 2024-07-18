@@ -6,7 +6,7 @@ import { IElementManager } from "./IElementManager.js";
 
 export class Suite extends IElementManager {
   // Elements
-  #dropdown = document.getElementById("suite");
+  #dropdown = document.getElementById("_s_suite");
   #options = this.#dropdown.querySelector(".dropdown-content");
   #displayValue = this.#dropdown.querySelector(".current-value");
 

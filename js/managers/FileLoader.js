@@ -57,6 +57,8 @@ export class FileLoader extends IElementManager {
     this.renderLoading();
     this.#testUrl = this.#getRandomTestUrl();
     this.#fileContents = await this.#getFileContents();
+    if (!this.#fileContents) return this.render();
+
     if (this.#suite.type === "Code") this.#loadCodeTest();
     else this.#loadActionTest();
     this.render();
@@ -70,7 +72,9 @@ export class FileLoader extends IElementManager {
     this.#typeDisplayValue.innerText = this.#suite.type;
     if (!this.#fileContents) {
       this.#contentDisplayPane.innerHTML = `<div class="screen"><span class="fail">Failed to load test</span></div>`;
+      return this.dispatchEvent("failed");
     }
+
     this.dispatchEvent("update");
   }
 }

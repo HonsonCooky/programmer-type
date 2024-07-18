@@ -6,7 +6,7 @@ import { IElementManager } from "./IElementManager.js";
 
 export class Duration extends IElementManager {
   // Elements
-  #dropdown = document.getElementById("duration");
+  #dropdown = document.getElementById("_d_duration");
   #options = this.#dropdown.querySelector(".dropdown-content");
   #displayValue = this.#dropdown.querySelector(".current-value");
 

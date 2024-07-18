@@ -58,4 +58,8 @@ export class SharedState {
 
     this.#fileLoader.loadRandomTest(this.#currentSuite);
   }
+
+  isTestReady() {
+    return !!document.getElementById("content")?.querySelector(".line");
+  }
 }

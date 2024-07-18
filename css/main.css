@@ -47,6 +47,10 @@ main {
 			align-items: center;
 			height: 100%;
 		}
+
+		.fail {
+			color: var(--red);
+		}
 	}
 
 	#content-context {

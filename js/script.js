@@ -28,6 +28,8 @@ export class Program {
     });
 
     this.#currentContext.activate();
+
+    window.addEventListener("keydown", (ev) => this.#currentContext.keydown(ev));
   }
 }
 
