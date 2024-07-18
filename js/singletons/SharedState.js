@@ -47,10 +47,10 @@ export class SharedState {
   /**@param {string} suiteName */
   setSuite(suiteName) {
     this.#currentSuite = this.#suites.find((s) => s.name === suiteName);
-    this.loadTest();
+    this.loadNextTest();
   }
 
-  loadTest() {
+  loadNextTest() {
     if (!this.#currentSuite) {
       console.error("No suite loaded");
       return;

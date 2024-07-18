@@ -4,8 +4,8 @@ export class FileLoader extends IElementManager {
   #testSuitePath = "../../assets/test-suites";
 
   // Elements
-  #contentsPanel = document.getElementById("content");
-  #suiteValue = document.getElementById("suite-value");
+  #typeDisplayValue = document.getElementById("suite-value");
+  #contentDisplayPane = document.getElementById("content");
 
   /** @type {import("../singletons/SharedState.js").SuiteItem} */
   #suite;
@@ -14,7 +14,10 @@ export class FileLoader extends IElementManager {
 
   #shoudCache = () => document.getElementById("cache-btn")?.checked ?? false;
 
-  #loadRandomTestUrl() {
+  /**
+   * Given a suite is selected,
+   */
+  #getRandomTestUrl() {
     if (!this.#suite) {
       console.error("No suite loaded");
       return;
@@ -34,18 +37,17 @@ export class FileLoader extends IElementManager {
     return newUrl;
   }
 
-  async #fetchFileContents() {
+  async #getFileContents() {
     const local = localStorage.getItem(this.#testUrl);
     if (local) return local;
 
     const remote = await fetch(this.#testUrl).then((res) => res.text());
+    if (!remote) return undefined;
     if (this.#shoudCache()) localStorage.setItem(this.#testUrl, remote);
     return remote;
   }
 
-  #loadCodeTest() {
-    console.log(this.#fileContents);
-  }
+  #loadCodeTest() {}
 
   #loadActionTest() {}
 
@@ -53,20 +55,22 @@ export class FileLoader extends IElementManager {
   async loadRandomTest(suite) {
     this.#suite = suite;
     this.renderLoading();
-    this.#testUrl = this.#loadRandomTestUrl();
-    this.#fileContents = await this.#fetchFileContents();
+    this.#testUrl = this.#getRandomTestUrl();
+    this.#fileContents = await this.#getFileContents();
     if (this.#suite.type === "Code") this.#loadCodeTest();
     else this.#loadActionTest();
     this.render();
   }
 
   renderLoading() {
-    this.#suiteValue.innerText = `Loading ${this.#suite.type}`;
-    this.#contentsPanel.innerHTML = `<div class="loading">Loading...</div>`;
+    this.#contentDisplayPane.innerHTML = `<div class="screen">Loading...</div>`;
   }
 
   render() {
-    this.#suiteValue.innerText = this.#suite.type;
+    this.#typeDisplayValue.innerText = this.#suite.type;
+    if (!this.#fileContents) {
+      this.#contentDisplayPane.innerHTML = `<div class="screen"><span class="fail">Failed to load test</span></div>`;
+    }
     this.dispatchEvent("update");
   }
 }
