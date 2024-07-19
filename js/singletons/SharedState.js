@@ -39,6 +39,7 @@ export class SharedState {
     },
   ];
 
+
   /**
    * Set the duration of the next test.
    * @param {number} duration
@@ -100,7 +101,7 @@ export class SharedState {
    * Determine if the content on screen is designed for a test, or is it
    * showing a loading screen, results page or info page.
    */
-  isTestReady() {
+  #isTestReady() {
     return !!this.#contentDisplayPane.querySelector(".line");
   }
 }

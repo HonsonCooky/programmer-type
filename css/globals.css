@@ -10,8 +10,7 @@ body {
   flex-direction: column;
   margin: 0;
   background: var(--base);
-  height: 0;
-  max-height: 100dvh;
+  height: 100dvh;
   color: var(--text);
   font-size: var(--fs-0);
 }

@@ -4,19 +4,21 @@ footer {
   align-items: center;
   padding: var(--s-s) var(--s-m);
 
-  > * {
+  >* {
     flex: 1;
-  }
-
-  #info-version {
-    text-align: center;
+    display: flex;
+    flex-direction: row;
+    column-gap: var(--s-xl);
+    align-items: center;
   }
 
   #info-app {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: end;
+
+    >*:last-child {
+      text-align: right;
+      min-width: calc(var(--fs-0) * 6);
+    }
   }
 
   @media screen and (min-width: 1440px) {
