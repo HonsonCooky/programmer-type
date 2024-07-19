@@ -6,6 +6,8 @@ import { Timer } from "../managers/Timer.js";
 
 export class SharedState {
   // Elements
+  #contentDisplayPane = document.getElementById("_enter_content");
+  #contextDisplayText = document.getElementById("content-context");
 
   // HTML values
   #fileLoader = new FileLoader();
@@ -47,7 +49,6 @@ export class SharedState {
 
   /**
    * Get the currently selected suite.
-   * @returns {SuiteItem|undefined}
    */
   getSuite() {
     return this.#currentSuite;
@@ -75,13 +76,31 @@ export class SharedState {
     this.#fileLoader.loadRandomTest(this.#currentSuite);
   }
 
+  /** Get a reference to the Content Pane. */
+  getContentPane() {
+    return this.#contentDisplayPane;
+  }
+
+  /**
+   * Set the contents inside the main element.
+   *
+   * @param {string|Element} element
+   * @param {string} context
+   */
+  setContentPane(element, context) {
+    if (typeof element === "string") {
+      this.#contentDisplayPane.innerHTML = element;
+    } else {
+      this.#contentDisplayPane.innerHTML = "";
+      this.#contentDisplayPane.appendChild(element);
+    }
+  }
+
   /**
    * Determine if the content on screen is designed for a test, or is it
    * showing a loading screen, results page or info page.
-   *
-   * @returns {boolean}
    */
   isTestReady() {
-    return !!document.getElementById("content")?.querySelector(".line");
+    return !!this.#contentDisplayPane.querySelector(".line");
   }
 }

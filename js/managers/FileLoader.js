@@ -1,3 +1,4 @@
+import { PTShared } from "../script.js";
 import { IElementManager } from "./IElementManager.js";
 
 /** @typedef {"copy"|"paste"} ATAction */
@@ -9,7 +10,6 @@ export class FileLoader extends IElementManager {
 
   // Elements
   #typeDisplayValue = document.getElementById("suite-value");
-  #contentDisplayPane = document.getElementById("content");
 
   /** @type {import("../singletons/SharedState.js").SuiteItem} */
   #suite;
@@ -22,7 +22,8 @@ export class FileLoader extends IElementManager {
 
   /** Render a loading screen to indicate we are attempting to load the test. */
   #renderLoading() {
-    this.#contentDisplayPane.innerHTML = `<div class="screen">Loading Test...</div>`;
+    const loadingContent = `<div class="screen">Loading Test...</div>`;
+    PTShared.setContentPane(loadingContent, "");
   }
 
   /**
@@ -98,7 +99,7 @@ export class FileLoader extends IElementManager {
     const codeDiv = `<div class="code-test">${lineStrs.join("")}</div>`;
 
     // Overwrite the existing content.
-    this.#contentDisplayPane.innerHTML = codeDiv;
+    PTShared.setContentPane(codeDiv, "[Enter] Start");
   }
 
   /**
@@ -135,7 +136,8 @@ export class FileLoader extends IElementManager {
   render() {
     this.#typeDisplayValue.innerText = this.#suite.type;
     if (!this.#fileContents) {
-      this.#contentDisplayPane.innerHTML = `<div class="screen"><span class="fail">Failed to load test</span></div>`;
+      const failedContent = `<div class="screen"><span class="fail">Failed to load test</span></div>`;
+      PTShared.setContentPane(failedContent, "");
       return this.dispatchEvent("failed");
     }
 
