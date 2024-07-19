@@ -5,6 +5,9 @@ import { Timer } from "../managers/Timer.js";
 /** @typedef {SuiteItem[]} SuiteList */
 
 export class SharedState {
+  // Elements
+
+  // HTML values
   #fileLoader = new FileLoader();
   #timer = new Timer();
 

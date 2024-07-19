@@ -1,60 +1,60 @@
 header {
-	display: flex;
-	row-gap: var(--s-s);
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	padding: var(--s-s) var(--s-m);
+  display: flex;
+  row-gap: var(--s-s);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--s-s) var(--s-m);
 
-	hgroup {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
+  hgroup {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-		h1 {
-			margin: 0;
-			color: var(--flamingo);
-			font-weight: 300;
-			font-size: var(--fs-5);
-		}
+    h1 {
+      margin: 0;
+      color: var(--flamingo);
+      font-weight: 300;
+      font-size: var(--fs-5);
+    }
 
-		h2 {
-			margin: 0;
-			font-weight: bold;
-			font-size: var(--fs-2);
-		}
-	}
+    h2 {
+      margin: 0;
+      font-weight: bold;
+      font-size: var(--fs-2);
+    }
+  }
 
-	nav {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: center;
-		width: 100%;
+  nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 
-		>div {
-			display: flex;
-			row-gap: var(--s-m);
-			flex-direction: row;
-			flex-wrap: wrap;
-			justify-content: center;
+    > div {
+      display: flex;
+      row-gap: var(--s-m);
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
 
-			&:first-of-type {
-				.dropdown-content {
-					left: 0;
-				}
-			}
+      &:first-of-type {
+        .dropdown-content {
+          left: 0;
+        }
+      }
 
-			&:last-of-type {
-				.dropdown-content {
-					right: 0;
-				}
-			}
-		}
-	}
+      &:last-of-type {
+        .dropdown-content {
+          right: 0;
+        }
+      }
+    }
+  }
 
-	@media screen and (min-width: 1440px) {
-		padding: var(--s-s) calc(((100dvw - 1440px) / 2) + var(--s-m));
-	}
+  @media screen and (min-width: 1440px) {
+    padding: var(--s-s) calc(((100dvw - 1440px) / 2) + var(--s-m));
+  }
 }

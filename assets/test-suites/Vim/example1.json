@@ -1,70 +1,59 @@
 [
-	{
-		"comments": [
-			"Title: Application Jumping - Copy Paste",
-			"Before starting test (on keypress), open Vim / Neovim."
-		]
-	},
-	{
-		"keybind": "ggVG",
-		"comments": [
-			"yank buffer: Copy the entire buffer to the clipboard."
-		],
-		"action": "copy",
-		"content": [
-			"S8ogjPokwvJMTLr3McrT7rFM",
-			"ed5YcFGDEyZK2AFiSc8qTrNx",
-			"qAniMUFmd0l9Vyc48ZDt24Cw",
-			"RaJsXAvgXlahVGl8jPSGENpl",
-			"JMaPBX1pTtlz7YuZOIac7QAM",
-			"TKNAomMMqyLjUgxjqeFNxNfS",
-			"zEvIsRf68SCTcQdI9VMH4FuF",
-			"KXaTchijCtfmdO7IWiX7jz7S",
-			"ZvCFK8uMI2R827eiNDVqXKZv",
-			"tsNwSvR17VyQDyoZBj2q4QQU"
-		]
-	},
-	{
-		"comments": [
-			"Jump to Vim / Neovim.",
-			"Paste the copied text.",
-			"Copy the first 5 lines to clipboard : ggV4jy.",
-			"Jump to browser."
-		]
-	},
-	{
-		"keybind": "p",
-		"comments": [
-			"paste: Paste the first 5 lines into programmer-type."
-		],
-		"action": "paste",
-		"content": [
-			"S8ogjPokwvJMTLr3McrT7rFM",
-			"ed5YcFGDEyZK2AFiSc8qTrNx",
-			"qAniMUFmd0l9Vyc48ZDt24Cw",
-			"RaJsXAvgXlahVGl8jPSGENpl",
-			"JMaPBX1pTtlz7YuZOIac7QAM"
-		]
-	},
-	{
-		"keybind": "p",
-		"comments": [
-			"cleanup: Go To Vim / Neovim.",
-			"Delete all content : ggVGd.",
-			"Paste the result here."
-		],
-		"action": "paste",
-		"content": [
-			"S8ogjPokwvJMTLr3McrT7rFM",
-			"ed5YcFGDEyZK2AFiSc8qTrNx",
-			"qAniMUFmd0l9Vyc48ZDt24Cw",
-			"RaJsXAvgXlahVGl8jPSGENpl",
-			"JMaPBX1pTtlz7YuZOIac7QAM",
-			"TKNAomMMqyLjUgxjqeFNxNfS",
-			"zEvIsRf68SCTcQdI9VMH4FuF",
-			"KXaTchijCtfmdO7IWiX7jz7S",
-			"ZvCFK8uMI2R827eiNDVqXKZv",
-			"tsNwSvR17VyQDyoZBj2q4QQU"
-		]
-	}
+  {
+    "comments": ["Title: Application Jumping - Copy Paste", "Before starting test (on keypress), open Vim / Neovim."]
+  },
+  {
+    "keybind": "ggVG",
+    "comments": ["yank buffer: Copy the entire buffer to the clipboard."],
+    "action": "copy",
+    "content": [
+      "S8ogjPokwvJMTLr3McrT7rFM",
+      "ed5YcFGDEyZK2AFiSc8qTrNx",
+      "qAniMUFmd0l9Vyc48ZDt24Cw",
+      "RaJsXAvgXlahVGl8jPSGENpl",
+      "JMaPBX1pTtlz7YuZOIac7QAM",
+      "TKNAomMMqyLjUgxjqeFNxNfS",
+      "zEvIsRf68SCTcQdI9VMH4FuF",
+      "KXaTchijCtfmdO7IWiX7jz7S",
+      "ZvCFK8uMI2R827eiNDVqXKZv",
+      "tsNwSvR17VyQDyoZBj2q4QQU"
+    ]
+  },
+  {
+    "comments": [
+      "Jump to Vim / Neovim.",
+      "Paste the copied text.",
+      "Copy the first 5 lines to clipboard : ggV4jy.",
+      "Jump to browser."
+    ]
+  },
+  {
+    "keybind": "p",
+    "comments": ["paste: Paste the first 5 lines into programmer-type."],
+    "action": "paste",
+    "content": [
+      "S8ogjPokwvJMTLr3McrT7rFM",
+      "ed5YcFGDEyZK2AFiSc8qTrNx",
+      "qAniMUFmd0l9Vyc48ZDt24Cw",
+      "RaJsXAvgXlahVGl8jPSGENpl",
+      "JMaPBX1pTtlz7YuZOIac7QAM"
+    ]
+  },
+  {
+    "keybind": "p",
+    "comments": ["cleanup: Go To Vim / Neovim.", "Delete all content : ggVGd.", "Paste the result here."],
+    "action": "paste",
+    "content": [
+      "S8ogjPokwvJMTLr3McrT7rFM",
+      "ed5YcFGDEyZK2AFiSc8qTrNx",
+      "qAniMUFmd0l9Vyc48ZDt24Cw",
+      "RaJsXAvgXlahVGl8jPSGENpl",
+      "JMaPBX1pTtlz7YuZOIac7QAM",
+      "TKNAomMMqyLjUgxjqeFNxNfS",
+      "zEvIsRf68SCTcQdI9VMH4FuF",
+      "KXaTchijCtfmdO7IWiX7jz7S",
+      "ZvCFK8uMI2R827eiNDVqXKZv",
+      "tsNwSvR17VyQDyoZBj2q4QQU"
+    ]
+  }
 ]
