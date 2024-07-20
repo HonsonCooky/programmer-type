@@ -2,6 +2,8 @@ import { IContext } from "./IContext.js";
 import { ActionEvaluator } from "./TestEvaluators/ActionEvaluator.js";
 import { CodeEvaluator } from "./TestEvaluators/CodeEvaluator.js";
 
+/** @typedef {import("../managers/FileLoader.js").SuiteItem["type"]} SuiteType*/
+
 export class TestContext extends IContext {
   /**@type {IContext}*/
   #codeEvaluator;
@@ -12,6 +14,11 @@ export class TestContext extends IContext {
     super();
     this.#codeEvaluator = new CodeEvaluator();
     this.#actionEvaluator = new ActionEvaluator();
+  }
+
+  /** @returns {SuiteType|undefined} */
+  #getTestType() {
+    return document.getElementById("suite-value")?.innerText;
   }
 
   /** Indicate that this IContext is now in control */

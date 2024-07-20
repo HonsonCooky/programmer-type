@@ -39,7 +39,6 @@ export class SharedState {
     },
   ];
 
-
   /**
    * Set the duration of the next test.
    * @param {number} duration
@@ -52,7 +51,7 @@ export class SharedState {
    * Get the currently selected suite.
    */
   getSuite() {
-    return this.#currentSuite;
+    return Object.freeze(this.#currentSuite);
   }
 
   /**
@@ -74,12 +73,7 @@ export class SharedState {
       return;
     }
 
-    this.#fileLoader.loadRandomTest(this.#currentSuite);
-  }
-
-  /** Get a reference to the Content Pane. */
-  getContentPane() {
-    return this.#contentDisplayPane;
+    this.#fileLoader.loadRandomTest(Object.freeze(this.#currentSuite));
   }
 
   /**
@@ -89,19 +83,14 @@ export class SharedState {
    * @param {string} context
    */
   setContentPane(element, context) {
+    if (!element) return;
+
     if (typeof element === "string") {
       this.#contentDisplayPane.innerHTML = element;
     } else {
       this.#contentDisplayPane.innerHTML = "";
       this.#contentDisplayPane.appendChild(element);
     }
-  }
-
-  /**
-   * Determine if the content on screen is designed for a test, or is it
-   * showing a loading screen, results page or info page.
-   */
-  #isTestReady() {
-    return !!this.#contentDisplayPane.querySelector(".line");
+    this.#contextDisplayText.innerText = context;
   }
 }

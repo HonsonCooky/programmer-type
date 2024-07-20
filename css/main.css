@@ -1,70 +1,71 @@
 main {
-	display: flex;
-	flex: 1;
-	flex-direction: column;
-	justify-content: space-evenly;
-	padding: var(--s-s) var(--s-m);
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding: var(--s-s) var(--s-m);
 
-	#content-info {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		column-gap: var(--s-3xl);
-		color: var(--subtext);
-		font-size: var(--fs-3);
+  #content-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: var(--s-3xl);
+    color: var(--subtext);
+    font-size: var(--fs-3);
 
-		>div:first-of-type {
-			text-align: end;
-		}
+    > div:first-of-type {
+      text-align: end;
+    }
 
-		.value {
-			color: var(--peach);
-		}
-	}
+    .value {
+      color: var(--peach);
+    }
+  }
 
-	#_enter_content {
-		border-top: var(--border) solid var(--surface);
-		border-bottom: var(--border) solid var(--surface);
-		width: 100%;
-		max-height: 50dvh;
-		overflow-y: auto;
-		scroll-snap-type-y: mandatory;
-		padding: var(--s-s) var(--s-m);
+  #_enter_content {
+    border-top: var(--border) solid var(--surface);
+    border-bottom: var(--border) solid var(--surface);
+    width: 100%;
+    height: 50dvh;
+    overflow-y: auto;
+    scroll-snap-type-y: mandatory;
+    margin: var(--s-s) 0;
+    padding: var(--s-s) var(--s-m);
 
-		&::-webkit-scrollbar {
-			display: none;
-		}
+    .line {
+      scroll-margin-top: var(--fs-0);
+      word-wrap: break-word;
+      filter: blur(2px);
+      scroll-margin-top: var(--s-m);
+    }
 
-		.line {
-			word-wrap: break-word;
-			filter: blur(2px);
-			scroll-margin-top: var(--s-m);
-		}
+    .screen {
+      display: flex;
+      flex: 1;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
 
-		.screen {
-			display: flex;
-			flex: 1;
-			justify-content: center;
-			align-items: center;
-			height: 100%;
-		}
+    .fail {
+      color: var(--red);
+    }
 
-		.fail {
-			color: var(--red);
-		}
+    &:focus {
+      .line {
+        filter: none;
+      }
+    }
+  }
 
-		&:focus {
-			.line {
-				filter: none;
-			}
-		}
-	}
+  #content-context {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    min-height: var(--fs-0);
+    color: var(--subtext);
+  }
 
-	#content-context {
-		min-height: var(--fs-0);
-		color: var(--subtext);
-	}
-
-	@media screen and (min-width: 1440px) {
-		padding: var(--s-s) calc(((100dvw - 1440px) / 2) + var(--s-m));
-	}
+  @media screen and (min-width: 1440px) {
+    padding: var(--s-s) calc(((100dvw - 1440px) / 2) + var(--s-m));
+  }
 }

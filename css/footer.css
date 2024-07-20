@@ -1,23 +1,24 @@
 footer {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   padding: var(--s-s) var(--s-m);
 
-  >* {
-    flex: 1;
+  > * {
     display: flex;
-    flex-direction: row;
     column-gap: var(--s-xl);
+    flex: 1;
+    flex-direction: row;
     align-items: center;
   }
 
   #info-app {
     justify-content: end;
 
-    >*:last-child {
-      text-align: right;
+    > *:last-child {
       min-width: calc(var(--fs-0) * 6);
+      text-align: right;
     }
   }
 

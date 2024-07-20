@@ -4,6 +4,7 @@ import { IElementManager } from "./IElementManager.js";
 /** @typedef {"copy"|"paste"} ATAction */
 /** @typedef {{keybind?: string; comments: string[]; action?: ATAction; content?: string[]}} ATLine */
 /** @typedef {ATLine[]} ATFile */
+/** @typedef {import("../singletons/SharedState.js").SuiteItem} SuiteItem*/
 
 export class FileLoader extends IElementManager {
   #testSuitePath = "../../assets/test-suites";
@@ -11,12 +12,12 @@ export class FileLoader extends IElementManager {
   // Elements
   #typeDisplayValue = document.getElementById("suite-value");
 
-  /** @type {import("../singletons/SharedState.js").SuiteItem} */
-  #suite;
   /** @type {string|undefined} */
   #testURL;
   /** @type {string|undefined} */
   #fileContents;
+  /** @type {(SuiteItem)["type"]|undefined} */
+  #fileType;
 
   #shoudCache = () => document.getElementById("cache-btn")?.checked ?? false;
 
@@ -30,10 +31,11 @@ export class FileLoader extends IElementManager {
    * Given a suite is selected, get a random test from the suite and return a
    * URL to that file.
    *
+   * @param {Readonly<SuiteItem|undefined>} suite
    * @returns {string}
    */
-  #getRandomTestURL() {
-    if (!this.#suite) {
+  #getRandomTestURL(suite) {
+    if (!suite) {
       console.error("No suite loaded");
       return;
     }
@@ -43,10 +45,10 @@ export class FileLoader extends IElementManager {
 
     // Try get a new random test, retry 5 times max.
     for (let i = 0; i < 5; i++) {
-      const randIndex = Math.floor(Math.random() * this.#suite.tests.length);
-      const randTest = this.#suite.tests[randIndex];
-      newURL = `${this.#testSuitePath}/${this.#suite.name}/${randTest}`;
-      if (this.#suite.tests.length < 2 || newURL != prevURL) break;
+      const randIndex = Math.floor(Math.random() * suite.tests.length);
+      const randTest = suite.tests[randIndex];
+      newURL = `${this.#testSuitePath}/${suite.name}/${randTest}`;
+      if (suite.tests.length < 2 || newURL != prevURL) break;
     }
 
     return newURL;
@@ -74,6 +76,8 @@ export class FileLoader extends IElementManager {
    * lines, where each character is assumed to be an input.
    */
   #loadCodeTest() {
+    this.#fileType = "Code";
+
     // Get the lines.
     const lines = this.#fileContents.split(/\r?\n/g);
 
@@ -108,33 +112,38 @@ export class FileLoader extends IElementManager {
    * inputs for these.
    */
   #loadActionTest() {
+    this.#fileType = "Action";
+
     /**@type {ATFile}*/
     const instructions = JSON.parse(this.#fileContents);
     const steps = instructions.map((i) => {
       const { action, comments, content, keybind } = i;
 
+      const commentStrs = comments.map((c) => `<span></span>`);
+
       // If the user requires come action.
       if (action && content && keybind) {
+      } else {
+        console.log("comment");
       }
     });
   }
 
-  /**@param {import("./SharedState").SuiteItem} suite */
+  /** @param {Readonly<SuiteItem>} suite */
   async loadRandomTest(suite) {
-    this.#suite = suite;
     this.#renderLoading();
-    this.#testURL = this.#getRandomTestURL();
+    this.#testURL = this.#getRandomTestURL(suite);
     this.#fileContents = await this.#getFileContents();
     if (!this.#fileContents) return this.render();
 
-    if (this.#suite.type === "Code") this.#loadCodeTest();
+    if (suite.type === "Code") this.#loadCodeTest();
     else this.#loadActionTest();
     this.render();
   }
 
   /**@override*/
   render() {
-    this.#typeDisplayValue.innerText = this.#suite.type;
+    this.#typeDisplayValue.innerText = this.#fileType;
     if (!this.#fileContents) {
       const failedContent = `<div class="screen"><span class="fail">Failed to load test</span></div>`;
       PTShared.setContentPane(failedContent, "");
