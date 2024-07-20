@@ -12,7 +12,7 @@ main {
     color: var(--subtext);
     font-size: var(--fs-3);
 
-    > div:first-of-type {
+    >div:first-of-type {
       text-align: end;
     }
 
@@ -35,7 +35,20 @@ main {
       scroll-margin-top: var(--fs-0);
       word-wrap: break-word;
       filter: blur(2px);
+      min-height: var(--fs-0);
       scroll-margin-top: var(--s-m);
+
+      .current {
+        text-decoration: underline;
+      }
+
+      .correct {
+        color: var(--green);
+      }
+
+      .incorrect {
+        color: var(--red);
+      }
     }
 
     .screen {

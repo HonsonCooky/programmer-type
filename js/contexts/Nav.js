@@ -18,7 +18,7 @@ export class NavContext extends IContext {
   #suite;
 
   // Selected Element
-  #keySeq = "";
+  #keySeq = [];
   /** @type {HTMLElement|null} */
   #selectedElement;
 
@@ -30,6 +30,9 @@ export class NavContext extends IContext {
 
     this.#duration = new Duration();
     this.#suite = new Suite();
+
+    PTShared.setDuration(this.#duration.getSeconds());
+    PTShared.setSuite(this.#suite.getSuiteName());
 
     this.#duration.addEventListener(
       "update",
@@ -59,22 +62,40 @@ export class NavContext extends IContext {
   /** Reset all elements back to their initial state. */
   #resetKeyContext() {
     this.#displayValue.innerText = "*base*";
-    this.#keySeq = "";
+    this.#keySeq = [];
     this.#selectedElement = "";
   }
 
+  /**@override*/
   activate() {
-    // Re-set the duration and suite
-    PTShared.setDuration(this.#duration.getSeconds());
-    PTShared.setSuite(this.#suite.getSuiteName());
+    PTShared.setContextText("[Enter] Start");
     this.#resetKeyContext();
   }
 
+  /**@override*/
   deactivate() {
     this.#resetKeyContext();
   }
 
-  /** @param {KeyboardEvent} ev */
+  /**@override*/
+  contentFocused() {
+    if (PTShared.isContentTestReady()) {
+      setTimeout(() => {
+        this.#resetKeyContext();
+        this.dispatchEvent("release");
+      }, 0);
+    }
+  }
+
+  /**@override*/
+  contentUnfocused() {
+    this.#resetKeyContext();
+  }
+
+  /**
+   * @override
+   * @param {KeyboardEvent} ev
+   */
   keydown(ev) {
     if (ev.key === "Escape") {
       this.#resetKeyContext();
@@ -82,16 +103,26 @@ export class NavContext extends IContext {
       return;
     }
 
-    if (this.#keySeq === "") {
+    if (ev.ctrlKey) {
+      if (ev.key === "+") {
+        ev.preventDefault();
+        return PTShared.contentFontIncrease();
+      }
+      if (ev.key === "-") {
+        ev.preventDefault();
+        return PTShared.contentFontDecrease();
+      }
+    }
+
+    if (this.#keySeq.length === 0) {
       const activeDropdowns = this.#activeDropdowns();
       const activeElement = activeDropdowns[0] ?? document.activeElement ?? document.body;
       const activeKeyMatches = activeElement.id.match(/_(.*?)_/);
-      const activeKey = activeKeyMatches ? activeKeyMatches[1] : "";
-      this.#keySeq = activeKey;
+      this.#keySeq = activeKeyMatches ? [activeKeyMatches[1]] : [];
     }
 
-    this.#keySeq += ev.key;
-    this.#selectedElement = document.querySelector(`[id^="_${this.#keySeq}_"]`);
+    this.#keySeq.push(ev.key.toLowerCase());
+    this.#selectedElement = document.querySelector(`[id^="_${this.#keySeq.join("")}_"]`);
 
     if (!this.#selectedElement) {
       this.#resetKeyContext();
@@ -99,11 +130,15 @@ export class NavContext extends IContext {
       return;
     }
 
-    this.#displayValue.innerText = this.#keySeq.split("").join("-");
+    this.#displayValue.innerText = this.#keySeq.join("-");
 
     if (this.#selectedElement.tagName === "DIV") {
       this.#selectedElement.tabIndex = -1;
       this.#selectedElement.focus();
+
+      if (ev.key === "Enter") {
+      }
+
       return;
     }
 

@@ -5,15 +5,14 @@ export class Timer extends IElementManager {
   #displayValue = document.getElementById("timer-value");
 
   // In Memory Contents
-  #time;
-  #intervalId;
-  #countUp;
+  #duration = 60;
+  #time = 0;
+  #intervalId = null;
+  #countUp = false;
 
-  constructor() {
-    super();
-    this.#time = 0;
-    this.#intervalId = null;
-    this.#countUp = false;
+  /** Prime the timer with the last know duration. */
+  reset() {
+    this.prime(this.#duration);
   }
 
   /**
@@ -24,6 +23,7 @@ export class Timer extends IElementManager {
    * @param {number} seconds
    */
   prime(seconds) {
+    this.#duration = seconds;
     this.#time = seconds;
     this.#countUp = seconds === 0;
     this.render();
@@ -44,6 +44,11 @@ export class Timer extends IElementManager {
     }, 1000);
 
     this.dispatchEvent(new Event("started"));
+  }
+
+  /** Detect if the timer is running */
+  running() {
+    return !!this.#intervalId;
   }
 
   /** Stop the timer without removing it's "primed" state. */

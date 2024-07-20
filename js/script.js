@@ -27,6 +27,9 @@ export class Program {
       this.#currentContext.activate();
     });
 
+    PTShared.getContentPane().addEventListener("focusin", () => this.#currentContext.contentFocused());
+    PTShared.getContentPane().addEventListener("focusout", () => this.#currentContext.contentUnfocused());
+
     this.#currentContext.activate();
 
     window.addEventListener("keydown", (ev) => this.#currentContext.keydown(ev));

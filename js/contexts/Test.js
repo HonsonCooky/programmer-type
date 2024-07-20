@@ -1,3 +1,4 @@
+import { PTShared } from "../script.js";
 import { IContext } from "./IContext.js";
 import { ActionEvaluator } from "./TestEvaluators/ActionEvaluator.js";
 import { CodeEvaluator } from "./TestEvaluators/CodeEvaluator.js";
@@ -5,15 +6,22 @@ import { CodeEvaluator } from "./TestEvaluators/CodeEvaluator.js";
 /** @typedef {import("../managers/FileLoader.js").SuiteItem["type"]} SuiteType*/
 
 export class TestContext extends IContext {
+  #quitPrimed = false;
+
   /**@type {IContext}*/
   #codeEvaluator;
   /**@type {IContext}*/
   #actionEvaluator;
+  /**@type {IContext}*/
+  #currentEvaluator;
 
   constructor() {
     super();
     this.#codeEvaluator = new CodeEvaluator();
     this.#actionEvaluator = new ActionEvaluator();
+
+    this.#codeEvaluator.addEventListener("finish", PTShared.loadNextTest);
+    this.#actionEvaluator.addEventListener("finish", PTShared.loadNextTest);
   }
 
   /** @returns {SuiteType|undefined} */
@@ -21,18 +29,55 @@ export class TestContext extends IContext {
     return document.getElementById("suite-value")?.innerText;
   }
 
-  /** Indicate that this IContext is now in control */
+  /**
+   * Determines if some keydown event is a modifier. If so, it doesn't need to
+   * be evaluated.
+   *
+   * @param {KeyboardEvent} ev
+   * @returns {boolean}
+   */
+  #isModifierKey(ev) {
+    return ["shift", "control", "alt", "meta"].includes(ev.key.toLowerCase());
+  }
+
+  /**@override*/
   activate() {
-    throw Error("Unimplemeneted 'activate' method");
+    PTShared.setContextText("[:q] QUIT");
+
+    const suite = PTShared.getSuite();
+    if (suite.type === "Code") this.#currentEvaluator = this.#codeEvaluator;
+    else this.#currentEvaluator = this.#actionEvaluator;
+
+    this.#currentEvaluator.activate();
   }
 
-  /** Indicate that this IContext has recieved an event worthy of switching control */
+  /**@override*/
   deactivate() {
-    throw Error("Unimplemeneted 'deactivate' method");
+    this.#currentEvaluator.deactivate();
   }
 
-  /** @param {KeyboardEvent} ev */
+  /**@override*/
+  contentFocused() {
+    this.#currentEvaluator.contentFocused();
+  }
+
+  /**@override*/
+  contentUnfocused() {
+    this.#currentEvaluator.contentUnfocused();
+    this.dispatchEvent("release");
+  }
+
+  /**
+   * @override
+   * @param {KeyboardEvent} ev
+   */
   keydown(ev) {
-    throw Error("Unimplemeneted 'keydown' method");
+    if (!this.#currentEvaluator) {
+      console.error("Can't evaluate test without an evaluator");
+      return;
+    }
+
+    if (this.#isModifierKey(ev)) return;
+    this.#currentEvaluator.keydown(ev);
   }
 }
