@@ -3,8 +3,6 @@ import { IContext } from "./IContext.js";
 import { ActionEvaluator } from "./TestEvaluators/ActionEvaluator.js";
 import { CodeEvaluator } from "./TestEvaluators/CodeEvaluator.js";
 
-/** @typedef {import("../managers/FileLoader.js").SuiteItem["type"]} SuiteType*/
-
 export class TestContext extends IContext {
   #quitPrimed = false;
 
@@ -20,13 +18,13 @@ export class TestContext extends IContext {
     this.#codeEvaluator = new CodeEvaluator();
     this.#actionEvaluator = new ActionEvaluator();
 
-    this.#codeEvaluator.addEventListener("finish", PTShared.loadNextTest);
-    this.#actionEvaluator.addEventListener("finish", PTShared.loadNextTest);
-  }
+    const newTest = function () {
+      this.#currentEvaluator.reset();
+      PTShared.loadNextTest().then(() => this.#currentEvaluator.activate());
+    }.bind(this);
 
-  /** @returns {SuiteType|undefined} */
-  #getTestType() {
-    return document.getElementById("suite-value")?.innerText;
+    this.#codeEvaluator.addEventListener("end", newTest);
+    this.#actionEvaluator.addEventListener("end", newTest);
   }
 
   /**
@@ -57,14 +55,9 @@ export class TestContext extends IContext {
   }
 
   /**@override*/
-  contentFocused() {
-    this.#currentEvaluator.contentFocused();
-  }
-
-  /**@override*/
-  contentUnfocused() {
-    this.#currentEvaluator.contentUnfocused();
-    this.dispatchEvent("release");
+  reset() {
+    this.#codeEvaluator.reset();
+    this.#actionEvaluator.reset();
   }
 
   /**
@@ -78,6 +71,8 @@ export class TestContext extends IContext {
     }
 
     if (this.#isModifierKey(ev)) return;
+    if (this.#quitPrimed && ev.key.toLowerCase() === "q") return this.dispatchEvent("finish");
+    if (ev.key === ":") this.#quitPrimed = true;
     this.#currentEvaluator.keydown(ev);
   }
 }

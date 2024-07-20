@@ -46,6 +46,8 @@ export class SharedState {
       this.#contentDisplayPane.focus();
     });
     this.contentFontIncrease();
+
+    this.#timer.addEventListener("stopped", () => {});
   }
 
   /**
@@ -96,7 +98,7 @@ export class SharedState {
       return;
     }
 
-    this.#fileLoader.loadRandomTest();
+    return this.#fileLoader.loadRandomTest();
   }
 
   /** Get a reference to the shared content pane. */

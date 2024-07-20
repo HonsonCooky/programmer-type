@@ -17,14 +17,9 @@ export class IContext extends EventTarget {
     throw Error("Unimplemeneted 'deactivate' method");
   }
 
-  /** Indicate that the main content has been focused */
-  contentFocused() {
-    throw Error("Unimplemeneted 'contentFocused' method");
-  }
-
-  /** Indicate that the main content has been unfocused */
-  contentUnfocused() {
-    throw Error("Unimplemeneted 'contentUnfocused' method");
+  /** Indicate that this IContext has recieved an event worthy of resetting it's state */
+  reset() {
+    throw Error("Unimplemeneted 'reset' method");
   }
 
   /** @param {KeyboardEvent} ev */

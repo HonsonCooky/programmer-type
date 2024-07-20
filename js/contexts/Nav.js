@@ -78,19 +78,7 @@ export class NavContext extends IContext {
   }
 
   /**@override*/
-  contentFocused() {
-    if (PTShared.isContentTestReady()) {
-      setTimeout(() => {
-        this.#resetKeyContext();
-        this.dispatchEvent("release");
-      }, 0);
-    }
-  }
-
-  /**@override*/
-  contentUnfocused() {
-    this.#resetKeyContext();
-  }
+  reset() {}
 
   /**
    * @override
@@ -137,6 +125,7 @@ export class NavContext extends IContext {
       this.#selectedElement.focus();
 
       if (ev.key === "Enter") {
+        this.dispatchEvent("release");
       }
 
       return;
