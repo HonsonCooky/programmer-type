@@ -41,6 +41,17 @@ export class Content extends IElementManager {
       return;
     }
 
+    if (document.activeElement === this.#contentDisplayPane) {
+      if (key === "j") {
+        this.#contentDisplayPane.scrollBy({ top: 50 });
+        return;
+      }
+      if (key === "k") {
+        this.#contentDisplayPane.scrollBy({ top: -50 });
+        return;
+      }
+    }
+
     // Alter Font Size
     if (ev.ctrlKey) {
       if (key === "+") {
@@ -83,6 +94,8 @@ export class Content extends IElementManager {
       this.#selectedElement.click();
       this.#resetNav();
     }
+
+    this.render();
   }
 
   /**
