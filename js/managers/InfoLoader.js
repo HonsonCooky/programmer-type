@@ -1,3 +1,29 @@
 import { IElementManager } from "./IElementManager.js";
 
-export class InfoLoader extends IElementManager {}
+export class InfoLoader extends IElementManager {
+  #dropdown = document.getElementById("_i_info");
+  /**@type {string|null}*/
+  #infoHTML;
+
+  constructor() {
+    super();
+    fetch("../../assets/templates/info-message.html")
+      .then((res) => res.text())
+      .then((txt) => (this.#infoHTML = txt));
+
+    this.#dropdown.addEventListener("focus", this.render.bind(this));
+    this.#dropdown.addEventListener("click", this.render.bind(this));
+  }
+
+  getInfoHtml() {
+    if (!this.#infoHTML) return `<div class="error">Unable to load info just yet, try again in a second</div>`;
+    return this.#infoHTML;
+  }
+
+  /**
+   * @override
+   */
+  render() {
+    this.dispatchEvent(new Event("update"));
+  }
+}

@@ -1,36 +1,46 @@
-import { IContext } from "./contexts/IContext.js";
-import { NavContext } from "./contexts/Nav.js";
-import { TestContext } from "./contexts/Test.js";
-import { SharedState } from "./singletons/SharedState.js";
-
-export const PTShared = new SharedState();
+import { Content } from "./managers/Content.js";
+import { Duration } from "./managers/Duration.js";
+import { InfoLoader } from "./managers/InfoLoader.js";
+import { Suite } from "./managers/Suite.js";
+import { Theme } from "./managers/Theme.js";
 
 export class Program {
-  /** @type {IContext} */
-  #currentContext;
+  // Element Managers
+  #content = new Content();
+  #duration = new Duration();
+  #suite = new Suite();
+  #infoLoader = new InfoLoader();
+
+  /**@type {SuiteList} */
+  #suites = [
+    {
+      name: "CSharp",
+      type: "Code",
+      tests: ["example1.cs", "example2.cs"],
+    },
+    {
+      name: "FSharp",
+      type: "Code",
+      tests: ["example1.fs", "example2.fs"],
+    },
+    {
+      name: "Vim",
+      type: "Action",
+      tests: ["example1.json"],
+    },
+    {
+      name: "TypeScript",
+      type: "Code",
+      tests: ["example1.ts", "example2.ts"],
+    },
+  ];
 
   constructor() {
-    const navContext = new NavContext();
-    const testContext = new TestContext();
+    window.addEventListener("keydown", this.#content.keydown.bind(this.#content));
 
-    this.#currentContext = navContext;
-
-    navContext.addEventListener("release", () => {
-      this.#currentContext.deactivate();
-      this.#currentContext = testContext;
-      this.#currentContext.activate();
-    });
-
-    testContext.addEventListener("release", () => {
-      this.#currentContext.deactivate();
-      this.#currentContext = navContext;
-      this.#currentContext.activate();
-    });
-
-    this.#currentContext.activate();
-
-    window.addEventListener("keydown", (ev) => this.#currentContext.keydown(ev));
+    this.#infoLoader.addEventListener("update", () => this.#content.setContent(this.#infoLoader.getInfoHtml()));
   }
 }
 
-new Program();
+new Theme();
+export const PTProgram = new Program();

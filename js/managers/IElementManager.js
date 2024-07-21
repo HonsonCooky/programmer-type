@@ -15,12 +15,4 @@ export class IElementManager extends EventTarget {
   render() {
     throw Error("Unimplemeneted 'render' method");
   }
-
-  /**
-   * @param {string} str
-   * @param {any} info
-   */
-  dispatchEvent(str, info) {
-    super.dispatchEvent(new CustomEvent(str, { detail: info }));
-  }
 }

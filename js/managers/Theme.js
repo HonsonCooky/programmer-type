@@ -55,6 +55,7 @@ export class Theme extends IElementManager {
       else child.classList.remove("selected");
     });
 
-    this.dispatchEvent("update");
+    // Currently, completely unnecessary, but builtin just incase it's needed.
+    this.dispatchEvent(new Event("update"));
   }
 }

@@ -33,7 +33,7 @@ header {
     align-items: center;
     width: 100%;
 
-    > div {
+    >div {
       display: flex;
       row-gap: var(--s-m);
       flex-direction: row;

@@ -1,8 +1,6 @@
 import { IElementManager } from "./IElementManager.js";
 
-/**
- * @typedef {{ seconds:number }} DurationEvent
- */
+/** @typedef {{ seconds: number }} DurationEvent **/
 
 export class Duration extends IElementManager {
   // Elements
@@ -12,19 +10,15 @@ export class Duration extends IElementManager {
 
   //HTML values
   #labelValue = this.#displayValue.innerText;
-  #seconds = 60;
 
   constructor() {
     super();
-
     this.render();
 
     Array.from(this.#options.children).forEach((child) => {
       if (child.tagName != "BUTTON") return;
       child.addEventListener("click", () => {
         this.#labelValue = child.innerText.replace(/\[.*\]/, "").trim();
-        this.#seconds = Number.parseInt(this.#labelValue);
-        if (isNaN(this.#seconds)) this.#seconds = 0;
         this.render();
       });
     });
@@ -36,10 +30,14 @@ export class Duration extends IElementManager {
    * @returns {number}
    */
   getSeconds() {
-    return this.#seconds;
+    const seconds = Number.parseInt(this.#labelValue);
+    if (isNaN(seconds)) return 0;
+    return seconds;
   }
 
-  /**@override*/
+  /**
+   * @override
+   */
   render() {
     // Update display value and selected item
     this.#displayValue.innerText = this.#labelValue;
@@ -49,6 +47,6 @@ export class Duration extends IElementManager {
       else child.classList.remove("selected");
     });
 
-    this.dispatchEvent("update", { seconds: this.#seconds });
+    this.dispatchEvent(new CustomEvent("update", { detail: { seconds: this.getSeconds() } }));
   }
 }

@@ -5,11 +5,11 @@ import { IElementManager } from "./IElementManager.js";
 /** @typedef {{keybind?: string; comments: string[]; action?: ATAction; content?: string[]}} ATLine */
 /** @typedef {ATLine[]} ATFile */
 
-export class FileLoader extends IElementManager {
+export class TestLoader extends IElementManager {
   #testSuitePath = "../../assets/test-suites";
 
   // Elements
-  #typeDisplayValue = document.getElementById("suite-value");
+  #displayValue = document.getElementById("suite-value");
 
   /** @type {string|undefined} */
   #testURL;
@@ -155,7 +155,7 @@ export class FileLoader extends IElementManager {
     }
 
     const suite = PTShared.getSuite();
-    this.#typeDisplayValue.innerText = suite.type;
+    this.#displayValue.innerText = suite.type;
     if (suite.type === "Code") this.#loadCodeTest();
     else this.#loadActionTest();
     this.dispatchEvent("update");

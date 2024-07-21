@@ -1,8 +1,4 @@
-import { PTShared } from "../../script.js";
-import { IContext } from "../IContext.js";
-
-export class IEvaluator extends IContext {
-  _ready = false;
+export class IEvaluator extends EventTarget {
   /**@type {Element[]}*/
   _tokens = [];
   _tokenIndex = 0;
@@ -17,25 +13,23 @@ export class IEvaluator extends IContext {
 
   /** Indicate that this IContext is now in control */
   activate() {
-    if (this._tokens.length === 0) this._loadTokens();
-    this._ready = true;
+    if (this._tokens.length === 0) {
+      this._loadTokens();
+      this._tokenIndex = 0;
+    }
   }
 
   /** Indicate that this IContext has recieved an event worthy of switching control */
-  deactivate() {
-    this._ready = false;
-  }
+  deactivate() {}
 
   /** Indicate that this IContext has recieved an event worthy of resetting it's state */
   reset() {
-    this._ready = false;
     this._tokens = [];
     this._tokenIndex = 0;
   }
 
   keydown(ev) {
-    if (!this._ready) return;
-    PTShared.runTimer();
+    if (this._tokens.length === 0) return;
     ev.preventDefault();
     this._evaluateKey(ev);
   }

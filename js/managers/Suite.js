@@ -1,9 +1,5 @@
 import { IElementManager } from "./IElementManager.js";
 
-/**
- * @typedef {{ suiteName:string }} SuiteEvent
- */
-
 export class Suite extends IElementManager {
   // Elements
   #dropdown = document.getElementById("_s_suite");
@@ -35,7 +31,10 @@ export class Suite extends IElementManager {
     return this.#labelValue;
   }
 
-  /**@override*/
+  /**
+   * @typedef {{ suiteName:string }} SuiteEvent
+   * @override
+   */
   render() {
     // Update display value and selected item
     this.#displayValue.innerText = this.#labelValue;
@@ -45,6 +44,6 @@ export class Suite extends IElementManager {
       else child.classList.remove("selected");
     });
 
-    this.dispatchEvent("update", { suiteName: this.#labelValue });
+    this.dispatchEvent(new CustomEvent("update", { suiteName: this.#labelValue }));
   }
 }
