@@ -15,6 +15,11 @@ export class Timer extends IElementManager {
     this.prime(this.#duration);
   }
 
+  /** Get the current time value */
+  getTime() {
+    return this.#time;
+  }
+
   /**
    * Ready the timer with the number of seconds for the next test. Without
    * being primed, the timer will not run. Thus, we have a system that can wait
@@ -23,11 +28,11 @@ export class Timer extends IElementManager {
    * @param {number} seconds
    */
   prime(seconds) {
+    if (this.#intervalId) this.stop();
     this.#duration = seconds;
     this.#time = seconds;
     this.#countUp = seconds === 0;
     this.render();
-    this.dispatchEvent(new Event("primed"));
   }
 
   /** Start the timer. This requires the timer to be primed first. */
@@ -42,8 +47,6 @@ export class Timer extends IElementManager {
         setTimeout(() => this.dispatchEvent(new Event("tick")), 0);
       }
     }, 1000);
-
-    this.dispatchEvent(new Event("started"));
   }
 
   /** Detect if the timer is running */
@@ -59,7 +62,6 @@ export class Timer extends IElementManager {
     this.#intervalId = null;
 
     this.render();
-    this.dispatchEvent(new Event("paused"));
   }
 
   /**

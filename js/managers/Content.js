@@ -1,6 +1,7 @@
 import { IElementManager } from "./IElementManager.js";
 import { ActionEvaluator } from "../evaluators/ActionEvaluator.js";
 import { CodeEvaluator } from "../evaluators/CodeEvaluator.js";
+import { IEvaluator } from "../evaluators/IEvaluator.js";
 
 export class Content extends IElementManager {
   // Elements
@@ -14,20 +15,40 @@ export class Content extends IElementManager {
   #fontSize = 1;
   #actionEvaluator = new ActionEvaluator();
   #codeEvaluator = new CodeEvaluator();
+  /**@type {IEvaluator|undefined}*/
+  #currentEvaluator;
 
   constructor() {
     super();
     this.render();
+
+    // Setup the content context panel information
+    this.setContentContext("[Enter] Focus, [r] Reload Test");
+
+    this.#contentDisplayPane.addEventListener("focusin", () => {
+      // Is a test.
+      if (this.#isTestKeyInput()) {
+        this.setContentContext("[:q] Quit");
+        return;
+      }
+
+      // Is not a test, therefore, informative page.
+      this.setContentContext("[Escape] Unfocus, [j] Scroll Down, [k] Scroll Up");
+    });
+
+    this.#contentDisplayPane.addEventListener("focusout", () => {
+      this.setContentContext("[Enter] Focus, [r] Reload Test");
+    });
   }
 
   #resetNav() {
     this.#keySeq = [];
     document.activeElement.blur();
+    this.render();
   }
 
   #resetTest() {
-    this.#actionEvaluator.reset();
-    this.#codeEvaluator.reset();
+    if (this.#currentEvaluator) this.#currentEvaluator.reset();
   }
 
   /**@param {KeyboardEvent} ev */
@@ -50,6 +71,8 @@ export class Content extends IElementManager {
         this.#contentDisplayPane.scrollBy({ top: -50 });
         return;
       }
+
+      return;
     }
 
     // Alter Font Size
@@ -108,12 +131,12 @@ export class Content extends IElementManager {
       .map((dc) => dc.parentElement);
   }
 
-  #testKeyInput() {
+  #isTestKeyInput() {
     return document.activeElement === this.#contentDisplayPane && !!document.querySelector("test");
   }
 
   /**@param {KeyboardEvent} ev */
-  #testKeyEvaluation(ev) {}
+  #testKeyEvaluation(ev) { }
 
   /**@param {string|Element} element */
   setContent(element) {
@@ -130,11 +153,23 @@ export class Content extends IElementManager {
     this.#contextDisplayText.innerText = str;
   }
 
+  /**
+   * Record the current stats about the test.
+   * @param {number} time
+   */
+  async record(time) { }
+
+  /** Reset the nav and evaluators */
+  reset() {
+    this.#resetNav();
+    this.#resetTest();
+  }
+
   /**@param {KeyboardEvent} ev */
   keydown(ev) {
     const key = ev.key.toLowerCase();
     if (["alt", "control", "meta", "shift"].includes(key)) return;
-    if (this.#testKeyInput()) return this.#testKeyEvaluation(ev);
+    if (this.#isTestKeyInput()) return this.#testKeyEvaluation(ev);
     this.#navKeyEvaluation(ev);
   }
 

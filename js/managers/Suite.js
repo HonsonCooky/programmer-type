@@ -31,10 +31,7 @@ export class Suite extends IElementManager {
     return this.#labelValue;
   }
 
-  /**
-   * @typedef {{ suiteName:string }} SuiteEvent
-   * @override
-   */
+  /** @override */
   render() {
     // Update display value and selected item
     this.#displayValue.innerText = this.#labelValue;
@@ -44,6 +41,6 @@ export class Suite extends IElementManager {
       else child.classList.remove("selected");
     });
 
-    this.dispatchEvent(new CustomEvent("update", { suiteName: this.#labelValue }));
+    this.dispatchEvent(new Event("update"));
   }
 }

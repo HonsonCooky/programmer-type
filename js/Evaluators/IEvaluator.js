@@ -19,9 +19,6 @@ export class IEvaluator extends EventTarget {
     }
   }
 
-  /** Indicate that this IContext has recieved an event worthy of switching control */
-  deactivate() {}
-
   /** Indicate that this IContext has recieved an event worthy of resetting it's state */
   reset() {
     this._tokens = [];

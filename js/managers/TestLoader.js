@@ -10,6 +10,8 @@ export class TestLoader extends IElementManager {
   // Elements
   #displayValue = document.getElementById("suite-value");
 
+  /**@type {import("../script.js").SuiteItem|undefined}*/
+  #currentSuite;
   /** @type {string|undefined} */
   #testURL;
   /** @type {string|undefined} */
@@ -29,11 +31,10 @@ export class TestLoader extends IElementManager {
    * Given a suite is selected, get a random test from the suite and return a
    * URL to that file.
    *
-   * @param {Readonly<SuiteItem|undefined>} suite
    * @returns {string}
    */
-  #getRandomTestURL(suite) {
-    if (!suite) {
+  #getRandomTestURL() {
+    if (!this.#currentSuite) {
       console.error("No suite loaded");
       return;
     }
@@ -43,10 +44,10 @@ export class TestLoader extends IElementManager {
 
     // Try get a new random test, retry 5 times max.
     for (let i = 0; i < 5; i++) {
-      const randIndex = Math.floor(Math.random() * suite.tests.length);
-      const randTest = suite.tests[randIndex];
-      newURL = `${this.#testSuitePath}/${suite.name}/${randTest}`;
-      if (suite.tests.length < 2 || newURL != prevURL) break;
+      const randIndex = Math.floor(Math.random() * this.#currentSuite.tests.length);
+      const randTest = this.#currentSuite.tests[randIndex];
+      newURL = `${this.#testSuitePath}/${this.#currentSuite.name}/${randTest}`;
+      if (this.#currentSuite.tests.length < 2 || newURL != prevURL) break;
     }
 
     return newURL;
@@ -131,11 +132,14 @@ export class TestLoader extends IElementManager {
     this.#testHTML = `<div class="test action">${stepBlocks.join("")}</div>`;
   }
 
-  /** Load a test from the current suite */
-  async loadRandomTest() {
-    const suite = PTShared.getSuite();
+  /**
+   * Load a test from the given suite.
+   * @param {import("../script.js").SuiteItem} suite
+   */
+  async loadRandomTest(suite) {
     this.#renderLoading();
-    this.#testURL = this.#getRandomTestURL(suite);
+    this.#currentSuite = suite;
+    this.#testURL = this.#getRandomTestURL();
     this.#fileContents = await this.#getFileContents();
     if (!this.#fileContents) return this.render();
     this.render();
@@ -152,9 +156,8 @@ export class TestLoader extends IElementManager {
       return this.dispatchEvent("failed");
     }
 
-    const suite = PTShared.getSuite();
-    this.#displayValue.innerText = suite.type;
-    if (suite.type === "Code") this.#loadCodeTest();
+    this.#displayValue.innerText = this.#currentSuite.type;
+    if (this.#currentSuite.type === "Code") this.#loadCodeTest();
     else this.#loadActionTest();
     this.dispatchEvent(new Event("update"));
   }
