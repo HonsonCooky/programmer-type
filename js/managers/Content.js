@@ -1,6 +1,6 @@
 import { IElementManager } from "./IElementManager.js";
-import { ActionEvaluator } from "../Evaluators/ActionEvaluator.js";
-import { CodeEvaluator } from "../Evaluators/CodeEvaluator.js";
+import { ActionEvaluator } from "../evaluators/ActionEvaluator.js";
+import { CodeEvaluator } from "../evaluators/CodeEvaluator.js";
 
 export class Content extends IElementManager {
   // Elements

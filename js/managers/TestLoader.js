@@ -1,4 +1,3 @@
-import { PTShared } from "../script.js";
 import { IElementManager } from "./IElementManager.js";
 
 /** @typedef {"copy"|"paste"} ATAction */
@@ -15,13 +14,15 @@ export class TestLoader extends IElementManager {
   #testURL;
   /** @type {string|undefined} */
   #fileContents;
+  /**@type {string|undefined}*/
+  #testHTML;
 
   #shoudCache = () => document.getElementById("cache-btn")?.checked ?? false;
 
   /** Render a loading screen to indicate we are attempting to load the test. */
   #renderLoading() {
-    const loadingContent = `<div class="screen">Loading Test...</div>`;
-    PTShared.setContentPane(loadingContent, "");
+    this.#testHTML = `<div class="screen">Loading Test...</div>`;
+    this.dispatchEvent("update");
   }
 
   /**
@@ -95,10 +96,7 @@ export class TestLoader extends IElementManager {
     });
 
     // Wrap it all in a div with a class to help identify the type of test.
-    const codeDiv = `<div class="test code">${lineStrs.join("")}</div>`;
-
-    // Overwrite the existing content.
-    PTShared.setContentPane(codeDiv, "[Enter] Start");
+    this.#testHTML = `<div class="test code">${lineStrs.join("")}</div>`;
   }
 
   /**
@@ -130,10 +128,7 @@ export class TestLoader extends IElementManager {
     });
 
     // Wrap it all in a div with a class to help identify the type of test.
-    const actionDiv = `<div class="test action">${stepBlocks.join("")}</div>`;
-
-    // Overwrite the existing content.
-    PTShared.setContentPane(actionDiv, "[Enter] Start");
+    this.#testHTML = `<div class="test action">${stepBlocks.join("")}</div>`;
   }
 
   /** Load a test from the current suite */
@@ -146,11 +141,14 @@ export class TestLoader extends IElementManager {
     this.render();
   }
 
+  getTestHTML() {
+    return this.#testHTML;
+  }
+
   /**@override*/
   render() {
     if (!this.#fileContents) {
-      const failedContent = `<div class="screen"><span class="fail">Failed to load test</span></div>`;
-      PTShared.setContentPane(failedContent, "");
+      this.#testHTML = `<div class="screen"><span class="fail">Failed to load test</span></div>`;
       return this.dispatchEvent("failed");
     }
 
@@ -158,6 +156,6 @@ export class TestLoader extends IElementManager {
     this.#displayValue.innerText = suite.type;
     if (suite.type === "Code") this.#loadCodeTest();
     else this.#loadActionTest();
-    this.dispatchEvent("update");
+    this.dispatchEvent(new Event("update"));
   }
 }

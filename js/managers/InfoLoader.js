@@ -15,7 +15,7 @@ export class InfoLoader extends IElementManager {
     this.#dropdown.addEventListener("click", this.render.bind(this));
   }
 
-  getInfoHtml() {
+  getInfoHTML() {
     if (!this.#infoHTML) return `<div class="error">Unable to load info just yet, try again in a second</div>`;
     return this.#infoHTML;
   }
