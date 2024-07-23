@@ -45,13 +45,13 @@ export class Program {
 
   constructor() {
     // Timer updates dictate moments of the test.
-    this.#timer.addEventListener("started", () => { });
     this.#timer.addEventListener("tick", () => {
       // A second has passed
       this.#content.record(this.#timer.getTime());
     });
     this.#timer.addEventListener("stopped", () => {
       // A test has ended
+      this.#timer.reset();
       this.#content.reset();
     });
 
