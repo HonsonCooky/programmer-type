@@ -56,7 +56,9 @@ export class Program {
     });
 
     // On duration update, set timer to replicate
-    this.#duration.addEventListener("update", () => this.#timer.prime(this.#duration.getSeconds()));
+    this.#duration.addEventListener("update", () =>
+      this.#timer.prime(this.#duration.getSeconds()),
+    );
     // On suite update, set test to replicate
     this.#suite.addEventListener("update", () => {
       this.#timer.prime(this.#duration.getSeconds());
@@ -66,12 +68,21 @@ export class Program {
     });
 
     // On update loader update, render it's update to the main content pane on the screen
-    this.#infoLoader.addEventListener("update", () => this.#content.setContent(this.#infoLoader.getInfoHTML()));
-    this.#resLoader.addEventListener("update", () => this.#content.setContent(this.#resLoader.getResultsHTML()));
-    this.#testLoader.addEventListener("update", () => this.#content.setContent(this.#testLoader.getTestHTML()));
+    this.#infoLoader.addEventListener("update", () =>
+      this.#content.setContent(this.#infoLoader.getInfoHTML()),
+    );
+    this.#resLoader.addEventListener("update", () =>
+      this.#content.setContent(this.#resLoader.getResultsHTML()),
+    );
+    this.#testLoader.addEventListener("update", () =>
+      this.#content.setContent(this.#testLoader.getTestHTML()),
+    );
 
     // Send keyboard events to the content manager
-    window.addEventListener("keydown", this.#content.keydown.bind(this.#content));
+    window.addEventListener(
+      "keydown",
+      this.#content.keydown.bind(this.#content),
+    );
 
     // Start
   }

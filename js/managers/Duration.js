@@ -43,10 +43,13 @@ export class Duration extends IElementManager {
     this.#displayValue.innerText = this.#labelValue;
     Array.from(this.#options.children).forEach((child) => {
       if (child.tagName != "BUTTON") return;
-      if (child.innerText.includes(this.#labelValue)) child.classList.add("selected");
+      if (child.innerText.includes(this.#labelValue))
+        child.classList.add("selected");
       else child.classList.remove("selected");
     });
 
-    this.dispatchEvent(new CustomEvent("update", { detail: { seconds: this.getSeconds() } }));
+    this.dispatchEvent(
+      new CustomEvent("update", { detail: { seconds: this.getSeconds() } }),
+    );
   }
 }

@@ -1,6 +1,9 @@
 [
   {
-    "comments": ["Title: Application Jumping - Copy Paste", "Before starting test (on keypress), open Vim / Neovim."]
+    "comments": [
+      "Title: Application Jumping - Copy Paste",
+      "Before starting test (on keypress), open Vim / Neovim."
+    ]
   },
   {
     "keybind": "ggVG",
@@ -41,7 +44,11 @@
   },
   {
     "keybind": "p",
-    "comments": ["cleanup: Go To Vim / Neovim.", "Delete all content : ggVGd.", "Paste the result here."],
+    "comments": [
+      "cleanup: Go To Vim / Neovim.",
+      "Delete all content : ggVGd.",
+      "Paste the result here."
+    ],
     "action": "paste",
     "content": [
       "S8ogjPokwvJMTLr3McrT7rFM",

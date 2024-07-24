@@ -10,7 +10,11 @@ async function fetchEmployee(id: number): Promise<Employee> {
   // Simulate API call
   return new Promise((resolve) => {
     setTimeout(() => {
-      const employee: Employee = { id: id, name: "John Doe", department: "Engineering" };
+      const employee: Employee = {
+        id: id,
+        name: "John Doe",
+        department: "Engineering",
+      };
       resolve(employee);
     }, 2000);
   });

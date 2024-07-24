@@ -18,11 +18,15 @@ export class Theme extends IElementManager {
     this.render();
 
     // Setup theme switching buttons (only three, no need for a loop)
-    document.getElementById("_ts_system-theme").addEventListener("click", () => {
-      this.#isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      this.#labelValue = "System";
-      this.render();
-    });
+    document
+      .getElementById("_ts_system-theme")
+      .addEventListener("click", () => {
+        this.#isDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
+        this.#labelValue = "System";
+        this.render();
+      });
 
     document.getElementById("_tl_light-theme").addEventListener("click", () => {
       this.#isDark = false;
@@ -45,13 +49,17 @@ export class Theme extends IElementManager {
   /**@override*/
   render() {
     // Set the theme for CSS
-    document.documentElement.setAttribute(this.#themeAttrTag, this.#getCssValue());
+    document.documentElement.setAttribute(
+      this.#themeAttrTag,
+      this.#getCssValue(),
+    );
 
     // Update display value and selected item
     this.#displayValue.innerText = this.#labelValue;
     Array.from(this.#options.children).forEach((child) => {
       if (child.tagName != "BUTTON") return;
-      if (child.innerText.includes(this.#labelValue)) child.classList.add("selected");
+      if (child.innerText.includes(this.#labelValue))
+        child.classList.add("selected");
       else child.classList.remove("selected");
     });
 

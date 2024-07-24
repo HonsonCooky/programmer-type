@@ -33,7 +33,9 @@ export class Content extends IElementManager {
       }
 
       // Is not a test, therefore, informative page.
-      this.setContentContext("[Escape] Unfocus, [j] Scroll Down, [k] Scroll Up");
+      this.setContentContext(
+        "[Escape] Unfocus, [j] Scroll Down, [k] Scroll Up",
+      );
     });
 
     this.#contentDisplayPane.addEventListener("focusout", () => {
@@ -94,14 +96,17 @@ export class Content extends IElementManager {
     // Hovered Dropdowns in base case
     if (this.#keySeq.length === 0) {
       const activeDropdowns = this.#activeDropdowns();
-      const activeElement = activeDropdowns[0] ?? document.activeElement ?? document.body;
+      const activeElement =
+        activeDropdowns[0] ?? document.activeElement ?? document.body;
       const activeKeyMatches = activeElement.id.match(/_(.*?)_/);
       this.#keySeq = activeKeyMatches ? [activeKeyMatches[1]] : [];
     }
 
     // Find element whos ID matches this key sequenence
     this.#keySeq.push(ev.key.toLowerCase());
-    this.#selectedElement = document.querySelector(`[id^="_${this.#keySeq.join("")}_"]`);
+    this.#selectedElement = document.querySelector(
+      `[id^="_${this.#keySeq.join("")}_"]`,
+    );
 
     // Reset if invalid
     if (!this.#selectedElement) {
@@ -132,11 +137,14 @@ export class Content extends IElementManager {
   }
 
   #isTestKeyInput() {
-    return document.activeElement === this.#contentDisplayPane && !!document.querySelector("test");
+    return (
+      document.activeElement === this.#contentDisplayPane &&
+      !!document.querySelector("test")
+    );
   }
 
   /**@param {KeyboardEvent} ev */
-  #testKeyEvaluation(ev) { }
+  #testKeyEvaluation(ev) {}
 
   /**@param {string|Element} element */
   setContent(element) {
@@ -157,7 +165,7 @@ export class Content extends IElementManager {
    * Record the current stats about the test.
    * @param {number} time
    */
-  async record(time) { }
+  async record(time) {}
 
   /** Reset the nav and evaluators */
   reset() {
@@ -175,7 +183,8 @@ export class Content extends IElementManager {
 
   /**@override*/
   render() {
-    this.#displayValue.innerText = this.#keySeq.length > 0 ? this.#keySeq.join("-") : "*base*";
+    this.#displayValue.innerText =
+      this.#keySeq.length > 0 ? this.#keySeq.join("-") : "*base*";
     this.#contentDisplayPane.style.fontSize = `var(--fs-${this.#fontSize})`;
   }
 }

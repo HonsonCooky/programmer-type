@@ -44,7 +44,9 @@ export class TestLoader extends IElementManager {
 
     // Try get a new random test, retry 5 times max.
     for (let i = 0; i < 5; i++) {
-      const randIndex = Math.floor(Math.random() * this.#currentSuite.tests.length);
+      const randIndex = Math.floor(
+        Math.random() * this.#currentSuite.tests.length,
+      );
       const randTest = this.#currentSuite.tests[randIndex];
       newURL = `${this.#testSuitePath}/${this.#currentSuite.name}/${randTest}`;
       if (this.#currentSuite.tests.length < 2 || newURL != prevURL) break;

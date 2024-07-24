@@ -102,7 +102,7 @@ table {
     white-space: nowrap;
   }
 
-  >input {
+  > input {
     margin: 0;
     background-color: var(--surface);
     padding: 0;
@@ -128,7 +128,7 @@ table {
     }
   }
 
-  >label {
+  > label {
     display: flex;
     column-gap: var(--s-s);
     flex-direction: column;
@@ -142,7 +142,7 @@ table {
     }
   }
 
-  >.dropdown-content {
+  > .dropdown-content {
     display: none;
     position: absolute;
     top: 100%;
@@ -154,14 +154,14 @@ table {
     background-color: var(--base);
     width: 100%;
 
-    >button {
+    > button {
       border-radius: 0;
       width: 100%;
       text-align: left;
       white-space: nowrap;
     }
 
-    >label {
+    > label {
       border-radius: 0;
       padding: var(--s-xs) 0;
       width: 100%;
