@@ -2,6 +2,7 @@ import { IElementManager } from "./IElementManager.js";
 import { ActionEvaluator } from "../evaluators/ActionEvaluator.js";
 import { CodeEvaluator } from "../evaluators/CodeEvaluator.js";
 import { IEvaluator } from "../evaluators/IEvaluator.js";
+import { TestLoader } from "./TestLoader.js";
 
 export class Content extends IElementManager {
   // Elements
@@ -17,6 +18,8 @@ export class Content extends IElementManager {
   #codeEvaluator = new CodeEvaluator();
   /**@type {IEvaluator|undefined}*/
   #currentEvaluator;
+  /**@type {{correct: number; incorrect: number; index: number; time: number;}[]} */
+  #testRecords = [];
 
   constructor() {
     super();
@@ -25,22 +28,31 @@ export class Content extends IElementManager {
     // Setup the content context panel information
     this.setContentContext("[Enter] Focus, [r] Reload Test");
 
-    this.#contentDisplayPane.addEventListener("focusin", () => {
-      // Is a test.
-      if (this.#isTestKeyInput()) {
-        this.setContentContext("[:q] Quit");
-        return;
-      }
+    // Behaviours that update the context
+    this.#contentDisplayPane.addEventListener("click", () => {
+      this.#contentDisplayPane.tabIndex = -1;
+      this.#contentDisplayPane.focus();
+    });
 
-      // Is not a test, therefore, informative page.
-      this.setContentContext(
-        "[Escape] Unfocus, [j] Scroll Down, [k] Scroll Up",
-      );
+    this.#contentDisplayPane.addEventListener("focusin", () => {
+      if (this.#isContentTest()) return this.setContentContext("[:q] Quit");
+      this.setContentContext("[Escape] Unfocus, [j] Scroll Down, [k] Scroll Up");
     });
 
     this.#contentDisplayPane.addEventListener("focusout", () => {
       this.setContentContext("[Enter] Focus, [r] Reload Test");
     });
+
+    // Propogate evaluator events
+    this.#actionEvaluator.addEventListener("start", this.#propogateEvent.bind(this));
+    this.#codeEvaluator.addEventListener("start", this.#propogateEvent.bind(this));
+
+    this.#actionEvaluator.addEventListener("quit", this.#propogateEvent.bind(this));
+    this.#codeEvaluator.addEventListener("quit", this.#propogateEvent.bind(this));
+  }
+
+  #propogateEvent(ev) {
+    this.dispatchEvent(new Event(ev.type, ev));
   }
 
   #resetNav() {
@@ -51,11 +63,25 @@ export class Content extends IElementManager {
 
   #resetTest() {
     if (this.#currentEvaluator) this.#currentEvaluator.reset();
+    this.render();
   }
 
   /**@param {KeyboardEvent} ev */
   #navKeyEvaluation(ev) {
     const key = ev.key;
+
+    if (document.activeElement === this.#contentDisplayPane) {
+      if (key === "j") {
+        this.#contentDisplayPane.scrollBy({ top: 50 });
+      }
+      if (key === "k") {
+        this.#contentDisplayPane.scrollBy({ top: -50 });
+      }
+      if (key === "Escape") {
+        this.#resetNav();
+      }
+      return;
+    }
 
     // Escape navigation context
     if (key === "Escape") {
@@ -64,16 +90,9 @@ export class Content extends IElementManager {
       return;
     }
 
-    if (document.activeElement === this.#contentDisplayPane) {
-      if (key === "j") {
-        this.#contentDisplayPane.scrollBy({ top: 50 });
-        return;
-      }
-      if (key === "k") {
-        this.#contentDisplayPane.scrollBy({ top: -50 });
-        return;
-      }
-
+    if (key === "r") {
+      ev.preventDefault();
+      this.dispatchEvent(new Event("reload"));
       return;
     }
 
@@ -96,17 +115,14 @@ export class Content extends IElementManager {
     // Hovered Dropdowns in base case
     if (this.#keySeq.length === 0) {
       const activeDropdowns = this.#activeDropdowns();
-      const activeElement =
-        activeDropdowns[0] ?? document.activeElement ?? document.body;
+      const activeElement = activeDropdowns[0] ?? document.activeElement ?? document.body;
       const activeKeyMatches = activeElement.id.match(/_(.*?)_/);
       this.#keySeq = activeKeyMatches ? [activeKeyMatches[1]] : [];
     }
 
     // Find element whos ID matches this key sequenence
     this.#keySeq.push(ev.key.toLowerCase());
-    this.#selectedElement = document.querySelector(
-      `[id^="_${this.#keySeq.join("")}_"]`,
-    );
+    this.#selectedElement = document.querySelector(`[id^="_${this.#keySeq.join("")}_"]`);
 
     // Reset if invalid
     if (!this.#selectedElement) {
@@ -119,8 +135,8 @@ export class Content extends IElementManager {
       this.#selectedElement.tabIndex = -1;
       this.#selectedElement.focus();
     } else {
-      this.#selectedElement.click();
       this.#resetNav();
+      this.#selectedElement.click();
     }
 
     this.render();
@@ -136,15 +152,14 @@ export class Content extends IElementManager {
       .map((dc) => dc.parentElement);
   }
 
-  #isTestKeyInput() {
-    return (
-      document.activeElement === this.#contentDisplayPane &&
-      !!document.querySelector("test")
-    );
+  #isContentTest() {
+    return document.activeElement === this.#contentDisplayPane && !!this.#contentDisplayPane.querySelector(".test");
   }
 
   /**@param {KeyboardEvent} ev */
-  #testKeyEvaluation(ev) {}
+  #testKeyEvaluation(ev) {
+    this.#currentEvaluator.keydown(ev);
+  }
 
   /**@param {string|Element} element */
   setContent(element) {
@@ -153,6 +168,18 @@ export class Content extends IElementManager {
     } else {
       this.#contentDisplayPane.innerHTML = "";
       this.#contentDisplayPane.appendChild(element);
+    }
+
+    const testElement = this.#contentDisplayPane.querySelector(".test");
+    if (!!testElement) {
+      const testType = Array.from(testElement.classList).filter((c) => c != "test")[0];
+      if (testType === "action") this.#currentEvaluator = this.#actionEvaluator;
+      if (testType === "code") this.#currentEvaluator = this.#codeEvaluator;
+      this.#contentDisplayPane.blur();
+      this.#currentEvaluator.activate();
+    } else {
+      this.#contentDisplayPane.tabIndex = -1;
+      this.#contentDisplayPane.focus();
     }
   }
 
@@ -165,26 +192,33 @@ export class Content extends IElementManager {
    * Record the current stats about the test.
    * @param {number} time
    */
-  async record(time) {}
+  record(time) {
+    const evalRecord = this.#currentEvaluator.getRecord();
+    this.#testRecords.push({ ...evalRecord, time });
+  }
 
-  /** Reset the nav and evaluators */
+  getTestRecords() {
+    return [...this.#testRecords];
+  }
+
   reset() {
     this.#resetNav();
     this.#resetTest();
+    this.#testRecords = [];
+    this.render();
   }
 
   /**@param {KeyboardEvent} ev */
   keydown(ev) {
     const key = ev.key.toLowerCase();
     if (["alt", "control", "meta", "shift"].includes(key)) return;
-    if (this.#isTestKeyInput()) return this.#testKeyEvaluation(ev);
+    if (this.#isContentTest()) return this.#testKeyEvaluation(ev);
     this.#navKeyEvaluation(ev);
   }
 
   /**@override*/
   render() {
-    this.#displayValue.innerText =
-      this.#keySeq.length > 0 ? this.#keySeq.join("-") : "*base*";
+    this.#displayValue.innerText = this.#keySeq.length > 0 ? this.#keySeq.join("-") : "*base*";
     this.#contentDisplayPane.style.fontSize = `var(--fs-${this.#fontSize})`;
   }
 }

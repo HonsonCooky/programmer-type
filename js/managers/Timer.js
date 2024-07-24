@@ -43,8 +43,8 @@ export class Timer extends IElementManager {
       if (!this.#countUp && this.#time <= 0) this.stop();
       else {
         this.#countUp ? this.#time++ : this.#time--;
+        this.dispatchEvent(new CustomEvent("tick", { detail: this.#time }));
         this.render();
-        setTimeout(() => this.dispatchEvent(new Event("tick")), 0);
       }
     }, 1000);
   }

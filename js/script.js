@@ -43,48 +43,50 @@ export class Program {
     },
   ];
 
+  #getCurrentSuite() {
+    const curSuiteName = this.#suite.getSuiteName();
+    return this.#suites.find((s) => s.name === curSuiteName);
+  }
+
+  /** Set the timer and content back to set values */
+  #reset() {
+    const seconds = this.#duration.getSeconds();
+    this.#timer.prime(seconds);
+    const suite = this.#getCurrentSuite();
+    this.#testLoader.loadRandomTest(suite);
+    this.#content.reset();
+  }
+
   constructor() {
-    // Timer updates dictate moments of the test.
-    this.#timer.addEventListener("tick", () => {
-      // A second has passed
-      this.#content.record(this.#timer.getTime());
-    });
-    this.#timer.addEventListener("stopped", () => {
-      // A test has ended
-      this.#timer.reset();
-      this.#content.reset();
-    });
-
-    // On duration update, set timer to replicate
-    this.#duration.addEventListener("update", () =>
-      this.#timer.prime(this.#duration.getSeconds()),
-    );
-    // On suite update, set test to replicate
-    this.#suite.addEventListener("update", () => {
-      this.#timer.prime(this.#duration.getSeconds());
-      const suiteName = this.#suite.getSuiteName();
-      const suite = this.#suites.filter((suite) => suite.name === suiteName);
-      this.#testLoader.loadRandomTest(suite[0]);
-    });
-
-    // On update loader update, render it's update to the main content pane on the screen
-    this.#infoLoader.addEventListener("update", () =>
-      this.#content.setContent(this.#infoLoader.getInfoHTML()),
-    );
-    this.#resLoader.addEventListener("update", () =>
-      this.#content.setContent(this.#resLoader.getResultsHTML()),
-    );
-    this.#testLoader.addEventListener("update", () =>
-      this.#content.setContent(this.#testLoader.getTestHTML()),
-    );
-
     // Send keyboard events to the content manager
-    window.addEventListener(
-      "keydown",
-      this.#content.keydown.bind(this.#content),
-    );
+    window.addEventListener("keydown", this.#content.keydown.bind(this.#content));
 
-    // Start
+    // Setup nav bar update listeners
+    this.#duration.addEventListener("update", this.#reset.bind(this));
+    this.#suite.addEventListener("update", this.#reset.bind(this));
+
+    // Setup main content update listeners
+    this.#infoLoader.addEventListener("update", () => this.#content.setContent(this.#infoLoader.getInfoHTML()));
+    this.#resLoader.addEventListener("update", () => this.#content.setContent(this.#resLoader.getResultsHTML()));
+    this.#testLoader.addEventListener("update", () => this.#content.setContent(this.#testLoader.getTestHTML()));
+
+    this.#content.addEventListener("start", () => this.#timer.run());
+    this.#content.addEventListener("quit", () => this.#timer.stop());
+    this.#content.addEventListener("reload", () => {
+      const suite = this.#getCurrentSuite();
+      this.#testLoader.loadRandomTest(suite);
+    });
+
+    // Timer dictates significant events
+    this.#timer.addEventListener("tick", (ev) => this.#content.record(ev.detail));
+    this.#timer.addEventListener("stopped", () => {
+      const testResults = this.#content.getTestRecords();
+      this.#reset();
+      this.#resLoader.loadResults(testResults);
+    });
+
+    // Init all values
+    this.#reset();
   }
 }
 

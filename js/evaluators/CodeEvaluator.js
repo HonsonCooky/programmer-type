@@ -8,8 +8,7 @@ export class CodeEvaluator extends IEvaluator {
    * Call backspace from here to the last registered whitespace character.
    */
   #controlBackspace() {
-    const lastWhitespace =
-      this.#lastWhitespace[this.#lastWhitespace.length - 1] ?? 0;
+    const lastWhitespace = this.#lastWhitespace[this.#lastWhitespace.length - 1] ?? 0;
     const diff = Math.max(this._tokenIndex - lastWhitespace, 0);
     for (let i = 0; i < diff; i++) this.#backspace();
   }
@@ -63,8 +62,7 @@ export class CodeEvaluator extends IEvaluator {
     const curChar = curCharElement.innerText;
     let key = ev.key;
     if (key === "Enter") key = "\\n";
-    if (curChar === " " || curChar === "\\n")
-      this.#lastWhitespace.push(this._tokenIndex);
+    if (curChar === " " || curChar === "\\n") this.#lastWhitespace.push(this._tokenIndex);
 
     if (key === curChar) curCharElement.className = "correct";
     else curCharElement.className = "incorrect";
