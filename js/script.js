@@ -1,9 +1,9 @@
+import { InfoLoader } from "./loaders/InfoLoader.js";
+import { ResultsLoader } from "./loaders/ResultsLoader.js";
+import { TestLoader } from "./loaders/TestLoader.js";
 import { Content } from "./managers/Content.js";
 import { Duration } from "./managers/Duration.js";
-import { InfoLoader } from "./managers/InfoLoader.js";
-import { ResultsLoader } from "./managers/ResultsLoader.js";
 import { Suite } from "./managers/Suite.js";
-import { TestLoader } from "./managers/TestLoader.js";
 import { Theme } from "./managers/Theme.js";
 import { Timer } from "./managers/Timer.js";
 
@@ -43,50 +43,60 @@ export class Program {
     },
   ];
 
-  #getCurrentSuite() {
-    const curSuiteName = this.#suite.getSuiteName();
-    return this.#suites.find((s) => s.name === curSuiteName);
-  }
-
-  /** Set the timer and content back to set values */
-  #reset() {
+  #loadTimer() {
     const seconds = this.#duration.getSeconds();
     this.#timer.prime(seconds);
-    const suite = this.#getCurrentSuite();
-    this.#testLoader.loadRandomTest(suite);
+  }
+
+  #loadRandomTest() {
+    const suiteName = this.#suite.getSuiteName();
+    const suite = this.#suites.find((s) => s.name === suiteName);
+    this.#testLoader.load(suite);
+  }
+
+  #setup() {
+    this.#loadTimer();
+    this.#loadRandomTest();
     this.#content.reset();
   }
 
+  #reset() {
+    const testResults = this.#content.getTestRecords();
+    if (testResults.length > 0) this.#resLoader.load(testResults);
+    this.#setup();
+  }
+
   constructor() {
+    // Navbar Update - Run setup to stop everything and load a new test.
+    this.#duration.addEventListener("update", this.#setup.bind(this));
+    this.#suite.addEventListener("update", this.#setup.bind(this));
+
+    // Content Loader Updates - Set the main content on update.
+    this.#infoLoader.addEventListener("update", () => {
+      this.#timer.stop({ silent: true });
+      this.#content.setContent(this.#infoLoader.getHTML());
+    });
+    this.#resLoader.addEventListener("update", () => this.#content.setContent(this.#resLoader.getHTML()));
+    this.#testLoader.addEventListener("update", () => this.#content.setContent(this.#testLoader.getHTML()));
+
+    // Content Manager Updates - Start, Stop and Pause the timer, and load another random test.
+    this.#content.addEventListener("run", () => this.#timer.run());
+    this.#content.addEventListener("pause", () => this.#timer.pause());
+    this.#content.addEventListener("quit", () => this.#timer.stop());
+    this.#content.addEventListener("reload", this.#loadRandomTest.bind(this));
+
+    // Timer Events - Dictate major events. Timer stop indicates the end of a test (regardless of how).
+    this.#timer.addEventListener("tick", (ev) => this.#content.record(ev.detail));
+    this.#timer.addEventListener("stopped", (ev) => {
+      if (ev.detail?.silent) this.#setup();
+      else this.#reset();
+    });
+
     // Send keyboard events to the content manager
     window.addEventListener("keydown", this.#content.keydown.bind(this.#content));
 
-    // Setup nav bar update listeners
-    this.#duration.addEventListener("update", this.#reset.bind(this));
-    this.#suite.addEventListener("update", this.#reset.bind(this));
-
-    // Setup main content update listeners
-    this.#infoLoader.addEventListener("update", () => this.#content.setContent(this.#infoLoader.getInfoHTML()));
-    this.#resLoader.addEventListener("update", () => this.#content.setContent(this.#resLoader.getResultsHTML()));
-    this.#testLoader.addEventListener("update", () => this.#content.setContent(this.#testLoader.getTestHTML()));
-
-    this.#content.addEventListener("start", () => this.#timer.run());
-    this.#content.addEventListener("quit", () => this.#timer.stop());
-    this.#content.addEventListener("reload", () => {
-      const suite = this.#getCurrentSuite();
-      this.#testLoader.loadRandomTest(suite);
-    });
-
-    // Timer dictates significant events
-    this.#timer.addEventListener("tick", (ev) => this.#content.record(ev.detail));
-    this.#timer.addEventListener("stopped", () => {
-      const testResults = this.#content.getTestRecords();
-      this.#reset();
-      this.#resLoader.loadResults(testResults);
-    });
-
     // Init all values
-    this.#reset();
+    this.#setup();
   }
 }
 

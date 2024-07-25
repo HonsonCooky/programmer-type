@@ -1,3 +1,11 @@
+/**
+ * `IEvaluator` interfaces are used to evaluate inputs for tests. Different
+ * test types have different actions upon user input. Some simply ensure that
+ * characters match up, some will inflict some action upon certain character
+ * entries. The Evaluator will determine what to do with the input, and also
+ * load the HTML contents to be evaluated for the test. Furthermore, they will
+ * update the UI to indicate these changes.
+ */
 export class IEvaluator extends EventTarget {
   #quitPrimed = false;
   #lastRecord = 0;
@@ -6,26 +14,31 @@ export class IEvaluator extends EventTarget {
   _tokens = [];
   _tokenIndex = 0;
 
-  _loadTokens() {
-    throw Error("Unimplemeneted '_loadTokens' method");
-  }
-
+  /** This is the only thing unique to each Evaluator */
   _evaluateKey() {
     throw Error("Unimplemeneted '_evaluateKey' method");
   }
 
-  /** Indicate that this IContext is now in control */
-  activate() {
-    if (this._tokens.length === 0) {
-      this._loadTokens();
-      this._tokenIndex = 0;
-    }
+  /** Ensure the expected input is indicated. */
+  #highlightNextToken() {
+    const nextCharElement = this._tokens[this._tokenIndex];
+    if (!nextCharElement) return this.dispatchEvent(new Event("reload"));
+    nextCharElement.className = "selected";
+    nextCharElement.scrollIntoView();
   }
 
-  /** Indicate that this IContext has recieved an event worthy of resetting it's state */
-  reset() {
-    this._tokens = [];
+  /**Load HTML elements into the _tokens array, such that they can be evaluated later.*/
+  loadTokens() {
     this._tokenIndex = 0;
+    this._tokens = Array.from(document.querySelector(".test").children)
+      .map((line) => Array.from(line.children))
+      .flat();
+
+    this._tokens.forEach((t) => {
+      t.classList.remove("selected");
+      t.classList.remove("correct");
+      t.classList.remove("incorrect");
+    });
   }
 
   /** @returns {{correct: number, incorrect: number, index: number}}*/
@@ -63,7 +76,8 @@ export class IEvaluator extends EventTarget {
     else this.#quitPrimed = false;
 
     // Evaluate key input
-    if (this._tokenIndex === 0) this.dispatchEvent(new Event("start"));
-    this._evaluateKey(ev);
+    this.dispatchEvent(new Event("run"));
+    this._evaluateKey(ev); // Implementation specific
+    this.#highlightNextToken();
   }
 }

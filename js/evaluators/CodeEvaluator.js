@@ -26,26 +26,6 @@ export class CodeEvaluator extends IEvaluator {
     const nextCharElement = this._tokens[this._tokenIndex];
     const nextChar = nextCharElement.innerText;
     if (nextChar === " " || nextChar === "\\n") this.#lastWhitespace.pop();
-    this.#highlightNextToken();
-  }
-
-  /**
-   * Ensure the expected character is indicated.
-   */
-  #highlightNextToken() {
-    const nextCharElement = this._tokens[this._tokenIndex];
-    if (!nextCharElement) return this.dispatchEvent("end");
-    nextCharElement.className = "selected";
-    nextCharElement.scrollIntoView();
-  }
-
-  /**
-   * @override
-   */
-  _loadTokens() {
-    this._tokens = Array.from(document.querySelector(".test").children)
-      .map((line) => Array.from(line.children))
-      .flat();
   }
 
   /**
@@ -66,8 +46,6 @@ export class CodeEvaluator extends IEvaluator {
 
     if (key === curChar) curCharElement.className = "correct";
     else curCharElement.className = "incorrect";
-
     this._tokenIndex++;
-    this.#highlightNextToken();
   }
 }

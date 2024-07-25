@@ -68,7 +68,7 @@ export class Timer extends IElementManager {
    * Stop the timer. Removing it's "primed" state, and resetting the timer back
    * to initial state.
    */
-  stop() {
+  stop(options) {
     if (!this.#intervalId) return;
 
     clearInterval(this.#intervalId);
@@ -77,7 +77,7 @@ export class Timer extends IElementManager {
     this.#countUp = false;
 
     this.render();
-    this.dispatchEvent(new Event("stopped"));
+    this.dispatchEvent(new CustomEvent("stopped", { detail: options }));
   }
 
   /**@override*/

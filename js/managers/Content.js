@@ -2,7 +2,6 @@ import { IElementManager } from "./IElementManager.js";
 import { ActionEvaluator } from "../evaluators/ActionEvaluator.js";
 import { CodeEvaluator } from "../evaluators/CodeEvaluator.js";
 import { IEvaluator } from "../evaluators/IEvaluator.js";
-import { TestLoader } from "./TestLoader.js";
 
 export class Content extends IElementManager {
   // Elements
@@ -43,16 +42,12 @@ export class Content extends IElementManager {
       this.setContentContext("[Enter] Focus, [r] Reload Test");
     });
 
-    // Propogate evaluator events
-    this.#actionEvaluator.addEventListener("start", this.#propogateEvent.bind(this));
-    this.#codeEvaluator.addEventListener("start", this.#propogateEvent.bind(this));
-
-    this.#actionEvaluator.addEventListener("quit", this.#propogateEvent.bind(this));
-    this.#codeEvaluator.addEventListener("quit", this.#propogateEvent.bind(this));
-  }
-
-  #propogateEvent(ev) {
-    this.dispatchEvent(new Event(ev.type, ev));
+    this.#actionEvaluator.addEventListener("run", (ev) => this.dispatchEvent(new Event(ev.type, ev)));
+    this.#codeEvaluator.addEventListener("run", (ev) => this.dispatchEvent(new Event(ev.type, ev)));
+    this.#actionEvaluator.addEventListener("reload", (ev) => this.dispatchEvent(new Event(ev.type, ev)));
+    this.#codeEvaluator.addEventListener("reload", (ev) => this.dispatchEvent(new Event(ev.type, ev)));
+    this.#actionEvaluator.addEventListener("quit", (ev) => this.dispatchEvent(new Event(ev.type, ev)));
+    this.#codeEvaluator.addEventListener("quit", (ev) => this.dispatchEvent(new Event(ev.type, ev)));
   }
 
   #resetNav() {
@@ -62,7 +57,7 @@ export class Content extends IElementManager {
   }
 
   #resetTest() {
-    if (this.#currentEvaluator) this.#currentEvaluator.reset();
+    if (this.#currentEvaluator) this.#currentEvaluator.loadTokens();
     this.render();
   }
 
@@ -145,7 +140,7 @@ export class Content extends IElementManager {
   /**
    * In the case a dropdown is being hovered, we should take this into account
    * for the keyboard input.
-   * */
+   */
   #activeDropdowns() {
     return Array.from(document.querySelectorAll(".dropdown-content"))
       .filter((dc) => getComputedStyle(dc).display === "flex")
@@ -175,8 +170,7 @@ export class Content extends IElementManager {
       const testType = Array.from(testElement.classList).filter((c) => c != "test")[0];
       if (testType === "action") this.#currentEvaluator = this.#actionEvaluator;
       if (testType === "code") this.#currentEvaluator = this.#codeEvaluator;
-      this.#contentDisplayPane.blur();
-      this.#currentEvaluator.activate();
+      this.#currentEvaluator.loadTokens();
     } else {
       this.#contentDisplayPane.tabIndex = -1;
       this.#contentDisplayPane.focus();

@@ -1,10 +1,10 @@
-import { IElementManager } from "./IElementManager.js";
+import { IContentLoader } from "./IContentLoader.js";
 
 /** @typedef {"copy"|"paste"} ATAction */
 /** @typedef {{keybind?: string; comments: string[]; action?: ATAction; content?: string[]}} ATLine */
 /** @typedef {ATLine[]} ATFile */
 
-export class TestLoader extends IElementManager {
+export class TestLoader extends IContentLoader {
   #testSuitePath = "../../assets/test-suites";
 
   // Elements
@@ -16,14 +16,11 @@ export class TestLoader extends IElementManager {
   #testURL;
   /** @type {string|undefined} */
   #fileContents;
-  /**@type {string|undefined}*/
-  #testHTML;
 
   #shoudCache = () => document.getElementById("cache-btn")?.checked ?? false;
 
   /** Render a loading screen to indicate we are attempting to load the test. */
   #renderLoading() {
-    this.#testHTML = `<div class="screen">Loading Test...</div>`;
     this.dispatchEvent(new Event("update"));
   }
 
@@ -97,7 +94,7 @@ export class TestLoader extends IElementManager {
     });
 
     // Wrap it all in a div with a class to help identify the type of test.
-    this.#testHTML = `<div class="test code">${lineStrs.join("")}</div>`;
+    this._HTML = `<div class="test code">${lineStrs.join("")}</div>`;
   }
 
   /**
@@ -129,36 +126,27 @@ export class TestLoader extends IElementManager {
     });
 
     // Wrap it all in a div with a class to help identify the type of test.
-    this.#testHTML = `<div class="test action">${stepBlocks.join("")}</div>`;
+    this._HTML = `<div class="test action">${stepBlocks.join("")}</div>`;
   }
 
   /**
-   * Load a test from the given suite.
-   * @param {import("../script.js").SuiteItem} suite
+   * @override
+   * @param {import("../script.js").SuiteItem|undefined} suite
    */
-  async loadRandomTest(suite) {
-    this.#renderLoading();
+  load(suite) {
+    suite = suite ?? this.#currentSuite;
+    this.#currentSuite = suite;
+
+    this._HTML = `<div class="screen">Loading Test...</div>`;
     this.#currentSuite = suite;
     this.#testURL = this.#getRandomTestURL();
-    this.#fileContents = await this.#getFileContents();
-    if (!this.#fileContents) return this.render();
-    this.render();
-  }
-
-  getTestHTML() {
-    return this.#testHTML;
-  }
-
-  /**@override*/
-  render() {
-    if (!this.#fileContents) {
-      this.#testHTML = `<div class="screen"><span class="fail">Failed to load test</span></div>`;
-      return this.dispatchEvent("failed");
-    }
-
-    this.#displayValue.innerText = this.#currentSuite.type;
-    if (this.#currentSuite.type === "Code") this.#loadCodeTest();
-    else this.#loadActionTest();
-    this.dispatchEvent(new Event("update"));
+    this.#getFileContents()
+      .then((fileContents) => {
+        this.#fileContents = fileContents;
+        if (this.#currentSuite.type === "Action") this.#loadActionTest();
+        if (this.#currentSuite.type === "Code") this.#loadCodeTest();
+        this.dispatchEvent(new Event("update"));
+      })
+      .catch(() => (this._HTML = `<div class="error screen">!!! Failed to load test !!!</div>`));
   }
 }
