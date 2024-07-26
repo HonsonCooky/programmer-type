@@ -44,8 +44,8 @@ export class Content extends IElementManager {
 
     this.#actionEvaluator.addEventListener("run", (ev) => this.dispatchEvent(new Event(ev.type, ev)));
     this.#codeEvaluator.addEventListener("run", (ev) => this.dispatchEvent(new Event(ev.type, ev)));
-    this.#actionEvaluator.addEventListener("reload", (ev) => this.dispatchEvent(new Event(ev.type, ev)));
-    this.#codeEvaluator.addEventListener("reload", (ev) => this.dispatchEvent(new Event(ev.type, ev)));
+    this.#actionEvaluator.addEventListener("next", (ev) => this.dispatchEvent(new Event(ev.type, ev)));
+    this.#codeEvaluator.addEventListener("next", (ev) => this.dispatchEvent(new Event(ev.type, ev)));
     this.#actionEvaluator.addEventListener("quit", (ev) => this.dispatchEvent(new Event(ev.type, ev)));
     this.#codeEvaluator.addEventListener("quit", (ev) => this.dispatchEvent(new Event(ev.type, ev)));
   }
@@ -87,7 +87,7 @@ export class Content extends IElementManager {
 
     if (key === "r") {
       ev.preventDefault();
-      this.dispatchEvent(new Event("reload"));
+      this.dispatchEvent(new Event("next"));
       return;
     }
 
@@ -172,6 +172,7 @@ export class Content extends IElementManager {
       if (testType === "code") this.#currentEvaluator = this.#codeEvaluator;
       this.#currentEvaluator.loadTokens();
     } else {
+      this.dispatchEvent(new Event("interrupt"));
       this.#contentDisplayPane.tabIndex = -1;
       this.#contentDisplayPane.focus();
     }

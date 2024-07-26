@@ -7,7 +7,7 @@
  * update the UI to indicate these changes.
  */
 export class IEvaluator extends EventTarget {
-  #quitPrimed = false;
+  #commandPrimed = false;
   #lastRecord = 0;
 
   /**@type {Element[]}*/
@@ -22,18 +22,25 @@ export class IEvaluator extends EventTarget {
   /** Ensure the expected input is indicated. */
   #highlightNextToken() {
     const nextCharElement = this._tokens[this._tokenIndex];
-    if (!nextCharElement) return this.dispatchEvent(new Event("reload"));
+    if (!nextCharElement) return this.dispatchEvent(new Event("next"));
     nextCharElement.className = "selected";
     nextCharElement.scrollIntoView();
   }
 
   /**Load HTML elements into the _tokens array, such that they can be evaluated later.*/
   loadTokens() {
+    if (!document.querySelector(".test")) {
+      this._tokens = [];
+      this._tokenIndex = 0;
+      return;
+    }
+
     this._tokenIndex = 0;
     this._tokens = Array.from(document.querySelector(".test").children)
       .map((line) => Array.from(line.children))
       .flat();
 
+    this._tokens[0]?.scrollIntoView();
     this._tokens.forEach((t) => {
       t.classList.remove("selected");
       t.classList.remove("correct");
@@ -67,13 +74,22 @@ export class IEvaluator extends EventTarget {
     if (this._tokens.length === 0) return;
     ev.preventDefault();
 
-    // Quit mechanics
-    if (this.#quitPrimed && ev.key === "q") {
-      this.dispatchEvent(new Event("quit"));
-      return;
+    // Command Mechanics
+    if (this.#commandPrimed) {
+      if (ev.key === "q") {
+        this.dispatchEvent(new Event("quit"));
+        return;
+      }
+      if (ev.key === "~") {
+        this._tokens.slice(0, -2).forEach((e) => e.classList.add("correct"));
+        this._tokenIndex = this._tokens.length - 2;
+        this.#highlightNextToken();
+        return;
+      }
     }
-    if (ev.key === ":") this.#quitPrimed = true;
-    else this.#quitPrimed = false;
+
+    if (ev.key === ":") this.#commandPrimed = true;
+    else this.#commandPrimed = false;
 
     // Evaluate key input
     this.dispatchEvent(new Event("run"));

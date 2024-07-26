@@ -31,11 +31,6 @@ export class TestLoader extends IContentLoader {
    * @returns {string}
    */
   #getRandomTestURL() {
-    if (!this.#currentSuite) {
-      console.error("No suite loaded");
-      return;
-    }
-
     const prevURL = this.#testURL;
     let newURL = prevURL;
 
@@ -134,11 +129,14 @@ export class TestLoader extends IContentLoader {
    * @param {import("../script.js").SuiteItem|undefined} suite
    */
   load(suite) {
-    suite = suite ?? this.#currentSuite;
-    this.#currentSuite = suite;
-
     this._HTML = `<div class="screen">Loading Test...</div>`;
-    this.#currentSuite = suite;
+    this.#currentSuite = suite ?? this.#currentSuite;
+
+    if (!this.#currentSuite) {
+      console.error("No Suite");
+      return;
+    }
+
     this.#testURL = this.#getRandomTestURL();
     this.#getFileContents()
       .then((fileContents) => {

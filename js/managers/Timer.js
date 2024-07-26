@@ -73,7 +73,7 @@ export class Timer extends IElementManager {
 
     clearInterval(this.#intervalId);
     this.#intervalId = null;
-    this.#time = 0;
+    this.#time = this.#duration;
     this.#countUp = false;
 
     this.render();

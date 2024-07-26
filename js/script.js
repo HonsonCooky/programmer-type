@@ -43,39 +43,37 @@ export class Program {
     },
   ];
 
-  #loadTimer() {
+  #initTimer() {
     const seconds = this.#duration.getSeconds();
     this.#timer.prime(seconds);
   }
 
-  #loadRandomTest() {
+  #initRandomTest() {
     const suiteName = this.#suite.getSuiteName();
     const suite = this.#suites.find((s) => s.name === suiteName);
     this.#testLoader.load(suite);
   }
 
-  #setup() {
-    this.#loadTimer();
-    this.#loadRandomTest();
+  #initSetup() {
+    this.#initTimer();
+    this.#initRandomTest();
     this.#content.reset();
   }
 
-  #reset() {
-    const testResults = this.#content.getTestRecords();
-    if (testResults.length > 0) this.#resLoader.load(testResults);
-    this.#setup();
+  #navUpdate(duration, suite) {
+    if (this.#timer.running()) return this.#timer.stop({ interrupted: true });
+    if (duration) this.#initTimer();
+    if (suite) this.#initRandomTest();
+    this.#content.reset();
   }
 
   constructor() {
     // Navbar Update - Run setup to stop everything and load a new test.
-    this.#duration.addEventListener("update", this.#setup.bind(this));
-    this.#suite.addEventListener("update", this.#setup.bind(this));
+    this.#duration.addEventListener("update", () => this.#navUpdate(true, false));
+    this.#suite.addEventListener("update", () => this.#navUpdate(false, true));
 
     // Content Loader Updates - Set the main content on update.
-    this.#infoLoader.addEventListener("update", () => {
-      this.#timer.stop({ silent: true });
-      this.#content.setContent(this.#infoLoader.getHTML());
-    });
+    this.#infoLoader.addEventListener("update", () => this.#content.setContent(this.#infoLoader.getHTML()));
     this.#resLoader.addEventListener("update", () => this.#content.setContent(this.#resLoader.getHTML()));
     this.#testLoader.addEventListener("update", () => this.#content.setContent(this.#testLoader.getHTML()));
 
@@ -83,20 +81,23 @@ export class Program {
     this.#content.addEventListener("run", () => this.#timer.run());
     this.#content.addEventListener("pause", () => this.#timer.pause());
     this.#content.addEventListener("quit", () => this.#timer.stop());
-    this.#content.addEventListener("reload", this.#loadRandomTest.bind(this));
+    this.#content.addEventListener("interrupt", () => this.#navUpdate());
+    this.#content.addEventListener("next", () => this.#testLoader.load());
 
     // Timer Events - Dictate major events. Timer stop indicates the end of a test (regardless of how).
     this.#timer.addEventListener("tick", (ev) => this.#content.record(ev.detail));
     this.#timer.addEventListener("stopped", (ev) => {
-      if (ev.detail?.silent) this.#setup();
-      else this.#reset();
+      if (ev.detail?.interrupted) return this.#initSetup();
+      const testResults = this.#content.getTestRecords();
+      this.#initSetup();
+      this.#resLoader.load(testResults);
     });
 
     // Send keyboard events to the content manager
     window.addEventListener("keydown", this.#content.keydown.bind(this.#content));
 
     // Init all values
-    this.#setup();
+    this.#initSetup();
   }
 }
 
