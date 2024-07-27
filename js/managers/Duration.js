@@ -1,27 +1,24 @@
-import { IElementManager } from "./IElementManager.js";
-
-/** @typedef {{ seconds: number }} DurationEvent **/
-
-export class Duration extends IElementManager {
+export class Duration extends EventTarget {
   // Elements
   #dropdown = document.getElementById("_d_duration");
   #options = this.#dropdown.querySelector(".dropdown-content");
   #displayValue = this.#dropdown.querySelector(".current-value");
 
-  //HTML values
-  #labelValue = this.#displayValue.innerText;
-
   constructor() {
     super();
-    this.render();
 
-    Array.from(this.#options.children).forEach((child) => {
+    const durations = Array.from(this.#options.children);
+
+    durations.forEach((child) => {
       if (child.tagName != "BUTTON") return;
-      child.addEventListener("click", () => {
-        this.#labelValue = child.innerText.replace(/\[.*\]/, "").trim();
-        this.render();
-      });
+      child.addEventListener("click", () => this.#selectDuration(child));
     });
+
+    const middleIndex = Math.max(Math.floor(durations.length / 2), 0);
+    this.#selectDuration(durations[middleIndex]);
+
+    // Ensure post construction event listeners can trigger
+    this.init = () => this.#selectDuration(durations[middleIndex]);
   }
 
   /**
@@ -29,27 +26,23 @@ export class Duration extends IElementManager {
    * return 0.
    * @returns {number}
    */
-  getSeconds() {
-    const seconds = Number.parseInt(this.#labelValue);
+  #getDuration(durationLabel) {
+    const seconds = Number.parseInt(durationLabel);
     if (isNaN(seconds)) return 0;
     return seconds;
   }
 
   /**
-   * @override
+   * Render the NavBar elements to replicate the selected duration.
    */
-  render() {
-    // Update display value and selected item
-    this.#displayValue.innerText = this.#labelValue;
+  #selectDuration(child) {
+    const durationLabel = child.innerText.replace(/\[.*\]/, "").trim();
+    this.#displayValue.innerText = durationLabel;
     Array.from(this.#options.children).forEach((child) => {
       if (child.tagName != "BUTTON") return;
-      if (child.innerText.includes(this.#labelValue))
-        child.classList.add("selected");
+      if (child.innerText.includes(durationLabel)) child.classList.add("selected");
       else child.classList.remove("selected");
     });
-
-    this.dispatchEvent(
-      new CustomEvent("update", { detail: { seconds: this.getSeconds() } }),
-    );
+    this.dispatchEvent(new CustomEvent("updated", { detail: { duration: this.#getDuration(durationLabel) } }));
   }
 }

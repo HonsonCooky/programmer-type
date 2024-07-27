@@ -1,103 +1,53 @@
-import { InfoLoader } from "./loaders/InfoLoader.js";
-import { ResultsLoader } from "./loaders/ResultsLoader.js";
-import { TestLoader } from "./loaders/TestLoader.js";
+import { KeyEvaluator } from "./evaluators/KeyEvaluator.js";
 import { Content } from "./managers/Content.js";
 import { Duration } from "./managers/Duration.js";
 import { Suite } from "./managers/Suite.js";
 import { Theme } from "./managers/Theme.js";
 import { Timer } from "./managers/Timer.js";
 
-/** @typedef {{name: string; type:"Code"|"Action"; tests: string[]}} SuiteItem */
-
 export class Program {
-  // Element Managers
-  #content = new Content();
+  // Time managers
   #duration = new Duration();
-  #suite = new Suite();
   #timer = new Timer();
-  #infoLoader = new InfoLoader();
-  #resLoader = new ResultsLoader();
-  #testLoader = new TestLoader();
 
-  /**@type {SuiteItem[]} */
-  #suites = [
-    {
-      name: "CSharp",
-      type: "Code",
-      tests: ["example1.cs", "example2.cs"],
-    },
-    {
-      name: "FSharp",
-      type: "Code",
-      tests: ["example1.fs", "example2.fs"],
-    },
-    {
-      name: "Vim",
-      type: "Action",
-      tests: ["example1.json"],
-    },
-    {
-      name: "TypeScript",
-      type: "Code",
-      tests: ["example1.ts", "example2.ts"],
-    },
-  ];
+  // Test managers
+  #suite = new Suite();
+  #content = new Content();
 
-  #initTimer() {
-    const seconds = this.#duration.getSeconds();
-    this.#timer.prime(seconds);
-  }
-
-  #initRandomTest() {
-    const suiteName = this.#suite.getSuiteName();
-    const suite = this.#suites.find((s) => s.name === suiteName);
-    this.#testLoader.load(suite);
-  }
-
-  #setup() {
-    this.#initTimer();
-    this.#initRandomTest();
-    this.#content.reset();
-  }
-
-  #reset() {
-    this.#initTimer();
-    this.#content.reset();
-  }
+  // Non-Mouse Evaluations
+  #keyEvaluator = new KeyEvaluator();
 
   constructor() {
-    // Navbar Update - Run setup to stop everything and load a new test.
-    this.#duration.addEventListener("update", () => this.#reset());
-    this.#suite.addEventListener("update", () => this.#setup());
-
-    // Content Loader Updates - Set the main content on update.
-    this.#infoLoader.addEventListener("update", () => this.#content.setContent(this.#infoLoader.getHTML()));
-    this.#resLoader.addEventListener("update", () => this.#content.setContent(this.#resLoader.getHTML()));
-    this.#testLoader.addEventListener("update", () => this.#content.setContent(this.#testLoader.getHTML()));
-
-    // Content Manager Updates - Start, Stop and Pause the timer, and load another random test.
-    this.#content.addEventListener("run", () => this.#timer.run());
-    this.#content.addEventListener("pause", () => this.#timer.pause());
-    this.#content.addEventListener("quit", () => this.#timer.stop());
-    this.#content.addEventListener("interrupt", () => this.#timer.stop({ interrupted: true }));
-    this.#content.addEventListener("next", () => this.#testLoader.load());
-
-    // Timer Events - Dictate major events. Timer stop indicates the end of a test (regardless of how).
-    this.#timer.addEventListener("tick", (ev) => this.#content.record(ev.detail));
-    this.#timer.addEventListener("stopped", (ev) => {
-      if (ev.detail?.interrupted) return this.#reset();
-      const testResults = this.#content.getTestRecords();
-      this.#setup();
-      this.#resLoader.load(testResults);
+    // NavBar - Duration Update -> Set Timer
+    this.#duration.addEventListener("updated", (ev) => {
+      const { duration } = ev.detail ?? {};
+      if (duration === undefined) throw Error(`Missing duration update event information`);
+      this.#timer.prime(ev.detail.duration); // This will interrupt a running timer.
     });
 
-    // Send keyboard events to the content manager
-    window.addEventListener("keydown", this.#content.keydown.bind(this.#content));
+    // NavBar - Suite Update -> Set Test Content
+    this.#suite.addEventListener("updated", (ev) => {
+      const { name, type, shortcut } = ev.detail ?? {};
+      if (!name || !type || !shortcut) throw Error(`Missing suite update event information`);
+      this.#content.displayTest();
+    });
 
-    // Init all values
-    this.#setup();
+    // Test state - Test interruptions = Reset all without evaluation.
+    this.#content.addEventListener("interrupt", () => this.#timer.interrupt());
+    this.#timer.addEventListener("interrupted", () => {
+      // Note: Timer resets itself, just need to reload the test, and reset the test state.
+      this.#content.displayTest();
+      this.#keyEvaluator.reset();
+    });
+
+    // Keyboard input evaluation
+    window.addEventListener("keydown", this.#keyEvaluator.keydown);
+
+    // Do these to trigger the event listeners after construction to setup
+    this.#duration.init();
+    this.#suite.init();
   }
 }
 
-new Theme(); // Self sufficient object.
+new Theme(); // Self sufficient object - Attempt no flashbang
 export const PTProgram = new Program();

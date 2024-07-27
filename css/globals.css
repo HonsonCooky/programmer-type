@@ -117,7 +117,6 @@ table {
   flex-direction: column;
   border-radius: var(--border) var(--border) 0 0;
   padding: var(--s-3xs) var(--s-s);
-  height: 100%;
 
   &:hover,
   &:focus {
@@ -152,7 +151,7 @@ table {
     border-top: none;
     border-radius: 0 0 var(--border) var(--border);
     background-color: var(--base);
-    width: 100%;
+    min-width: 100%;
 
     > button {
       border-radius: 0;

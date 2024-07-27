@@ -35,7 +35,7 @@ header {
 
     > div {
       display: flex;
-      row-gap: var(--s-m);
+      column-gap: var(--s-m);
       flex-direction: row;
       flex-wrap: wrap;
       justify-content: center;
@@ -50,6 +50,10 @@ header {
         .dropdown-content {
           right: 0;
         }
+      }
+
+      > button {
+        border: var(--border) solid var(--surface);
       }
     }
   }

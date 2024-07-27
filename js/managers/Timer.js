@@ -1,87 +1,82 @@
-import { IElementManager } from "./IElementManager.js";
-
-export class Timer extends IElementManager {
-  // Elements
+/** Timer class that extends EventTarget. */
+export class Timer extends EventTarget {
   #displayValue = document.getElementById("timer-value");
-
-  // In Memory Contents
-  #duration = 60;
+  #duration = 0;
   #time = 0;
-  #intervalId = null;
-  #countUp = false;
+  #intervalId = undefined;
 
-  /** Prime the timer with the last know duration. */
-  reset() {
-    this.prime(this.#duration);
-  }
-
-  /** Get the current time value */
-  getTime() {
-    return this.#time;
+  /**
+   * Render the current time to the display element.
+   * @private
+   */
+  #render() {
+    this.#displayValue.innerText = this.#time;
   }
 
   /**
-   * Ready the timer with the number of seconds for the next test. Without
-   * being primed, the timer will not run. Thus, we have a system that can wait
-   * for the users first input before starting.
-   *
-   * @param {number} seconds
+   * Dispatch a timer event with the current state.
+   * @param {string} type
+   * @private
    */
-  prime(seconds) {
-    if (this.#intervalId) this.stop();
-    this.#duration = seconds;
-    this.#time = seconds;
-    this.#countUp = seconds === 0;
-    this.render();
+  #dispatchTimerEvent(type) {
+    this.dispatchEvent(
+      new CustomEvent(type, { detail: { duration: this.#duration, time: this.#time, intervalId: this.#intervalId } }),
+    );
   }
 
-  /** Start the timer. This requires the timer to be primed first. */
+  /**
+   * Stop the timer and reset it to the initial duration.
+   * @private
+   */
+  #stop() {
+    clearInterval(this.#intervalId);
+    this.#intervalId = undefined;
+    this.#time = this.#duration;
+    this.#render();
+  }
+
+  /**
+   * Prime the timer with a specified duration.
+   * @param {number} duration - The duration to set the timer to.
+   */
+  prime(duration) {
+    if (this.#intervalId) this.interrupt();
+    this.#duration = duration;
+    this.#time = duration;
+    this.#render();
+    this.#dispatchTimerEvent("primed");
+  }
+
+  /** Start the timer. */
   run() {
     if (this.#intervalId) return;
-
     this.#intervalId = setInterval(() => {
-      if (!this.#countUp && this.#time <= 0) this.stop();
-      else {
-        this.#countUp ? this.#time++ : this.#time--;
-        this.dispatchEvent(new CustomEvent("tick", { detail: this.#time }));
-        this.render();
-      }
+      this.#time += this.#duration === 0 ? 1 : -1;
+      this.#render();
+      this.#dispatchTimerEvent("tick");
     }, 1000);
   }
 
-  /** Detect if the timer is running */
-  running() {
-    return !!this.#intervalId;
-  }
-
-  /** Stop the timer without removing it's "primed" state. */
+  /** Pause the timer. */
   pause() {
     if (!this.#intervalId) return;
-
     clearInterval(this.#intervalId);
-    this.#intervalId = null;
-
-    this.render();
+    this.#intervalId = undefined;
+    this.#render();
+    this.#dispatchTimerEvent("paused");
   }
 
-  /**
-   * Stop the timer. Removing it's "primed" state, and resetting the timer back
-   * to initial state.
-   */
-  stop(options) {
+  /** Stop the timer and reset it to the initial duration. */
+  stop() {
     if (!this.#intervalId) return;
-
-    clearInterval(this.#intervalId);
-    this.#intervalId = null;
-    this.#time = this.#duration;
-    this.#countUp = false;
-
-    this.render();
-    this.dispatchEvent(new CustomEvent("stopped", { detail: options }));
+    this.#stop();
+    this.#dispatchTimerEvent("stopped");
   }
 
-  /**@override*/
-  render() {
-    this.#displayValue.innerText = this.#time;
+  /** Interrupt the timer and reset it to the initial duration. */
+  interrupt() {
+    if (!this.#intervalId) return;
+    this.#stop();
+    this.#dispatchTimerEvent("interrupted");
   }
 }
