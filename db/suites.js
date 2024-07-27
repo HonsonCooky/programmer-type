@@ -1,7 +1,7 @@
 /**
  * @typedef {Object} SuiteItem
  * @property {string} name - The name of the suite.
- * @property {string} type - The type of the suite.
+ * @property {"Code"|"Action"} type - The type of the suite.
  * @property {string} shortcut - The type of the suite.
  * @property {Array<string>} tests - An array of paths to the test files for the suite.
  */
@@ -50,23 +50,11 @@ class SuiteDb {
 
   /**
    * @param {string} suiteName
-   * @param {string[]} avoid
    */
-  async getRandomTest(suiteName, avoid = []) {
+  getTests(suiteName) {
     const suite = this.#suites.find((s) => s.name === suiteName);
-    if (!suite) return new Response(`Unable to find test suite "${suiteName}"`, { status: 400 });
-
-    const potentialTests = suite.tests.filter((t) => !avoid.includes(t));
-    if (potentialTests.length === 0) potentialTests = suite.tests;
-
-    const randomIndex = Math.floor(Math.random() * potentialTests.length);
-    const randomTest = potentialTests[randomIndex];
-
-    const testContent = await fetch(`./test-suites/${suiteName}/${randomTest}`);
-    if (!testContent.ok) return new Response(`Failed to GET ${suiteTestPath}`, { status: 400 });
-
-    const resObj = { suite, testData: await testContent.text() };
-    return new Response(JSON.stringify(resObj), { status: 200 });
+    if (!suite) return [];
+    return Object.freeze(suite.tests);
   }
 }
 

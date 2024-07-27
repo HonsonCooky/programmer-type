@@ -84,6 +84,10 @@ table {
   color: var(--sky);
 }
 
+.error {
+  color: var(--red);
+}
+
 /* CHECKBOX */
 .checkbox {
   display: flex;

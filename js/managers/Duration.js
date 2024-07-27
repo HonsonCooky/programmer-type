@@ -14,11 +14,10 @@ export class Duration extends EventTarget {
       child.addEventListener("click", () => this.#selectDuration(child));
     });
 
-    const middleIndex = Math.max(Math.floor(durations.length / 2), 0);
-    this.#selectDuration(durations[middleIndex]);
+    this.#selectDuration(durations[0]);
 
     // Ensure post construction event listeners can trigger
-    this.init = () => this.#selectDuration(durations[middleIndex]);
+    this.init = () => this.#selectDuration(durations[0]);
   }
 
   /**

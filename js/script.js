@@ -1,4 +1,4 @@
-import { KeyEvaluator } from "./evaluators/KeyEvaluator.js";
+import { KeyboardEvaluator } from "./evaluators/KeyboardEvaluator.js";
 import { Content } from "./managers/Content.js";
 import { Duration } from "./managers/Duration.js";
 import { Suite } from "./managers/Suite.js";
@@ -14,10 +14,17 @@ export class Program {
   #suite = new Suite();
   #content = new Content();
 
-  // Non-Mouse Evaluations
-  #keyEvaluator = new KeyEvaluator();
+  // State evaluations
+  #keyEvaluator = new KeyboardEvaluator();
 
   constructor() {
+    // Evaluator - Reload Test
+    this.#keyEvaluator.addEventListener("reload", () => this.#content.displayTest());
+    // Evaluator - Start Test
+    this.#keyEvaluator.addEventListener("start", () => this.#timer.run());
+    // Evaluator - Quit Test
+    this.#keyEvaluator.addEventListener("quit", () => this.#timer.stop());
+
     // NavBar - Duration Update -> Set Timer
     this.#duration.addEventListener("updated", (ev) => {
       const { duration } = ev.detail ?? {};
@@ -29,19 +36,23 @@ export class Program {
     this.#suite.addEventListener("updated", (ev) => {
       const { name, type, shortcut } = ev.detail ?? {};
       if (!name || !type || !shortcut) throw Error(`Missing suite update event information`);
-      this.#content.displayTest();
+      this.#content.displayTest({ name, type });
     });
+
+    // Test state - Test stopped = Reset all with evaluation.
 
     // Test state - Test interruptions = Reset all without evaluation.
     this.#content.addEventListener("interrupt", () => this.#timer.interrupt());
     this.#timer.addEventListener("interrupted", () => {
+      console.log("here");
       // Note: Timer resets itself, just need to reload the test, and reset the test state.
       this.#content.displayTest();
       this.#keyEvaluator.reset();
     });
 
     // Keyboard input evaluation
-    window.addEventListener("keydown", this.#keyEvaluator.keydown);
+    window.addEventListener("keydown", (ev) => this.#keyEvaluator.keydown(ev));
+    window.addEventListener("mousedown", () => this.#keyEvaluator.reset(true));
 
     // Do these to trigger the event listeners after construction to setup
     this.#duration.init();

@@ -39,21 +39,10 @@ main {
       word-wrap: break-word;
       filter: blur(2px);
       min-height: var(--fs-0);
+      line-height: 1.5;
 
       * {
         scroll-margin-top: var(--fs-0);
-      }
-
-      .selected {
-        text-decoration: underline;
-      }
-
-      .correct {
-        color: var(--green);
-      }
-
-      .incorrect {
-        color: var(--red);
       }
     }
 
@@ -65,7 +54,15 @@ main {
       height: 100%;
     }
 
-    .fail {
+    .selected {
+      text-decoration: underline;
+    }
+
+    .correct {
+      color: var(--green);
+    }
+
+    .incorrect {
       color: var(--red);
     }
 
@@ -90,15 +87,29 @@ main {
 }
 
 #info-message {
-  font-size: var(--fs-1);
+  * {
+    -webkit-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+  }
 
   h3 {
+    margin-top: var(--s-3xl);
+    margin-bottom: var(--s-s);
     color: var(--yellow);
     font-weight: bold;
-    font-size: var(--fs-3);
+    font-size: 200%;
+
+    &:first-of-type {
+      margin-top: var(--s-s);
+    }
   }
 
   b {
     font-weight: bold;
+  }
+
+  p {
+    line-height: 1.5;
   }
 }
