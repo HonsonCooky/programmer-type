@@ -54,23 +54,21 @@ export class Program {
     this.#testLoader.load(suite);
   }
 
-  #initSetup() {
+  #setup() {
     this.#initTimer();
     this.#initRandomTest();
     this.#content.reset();
   }
 
-  #navUpdate(duration, suite) {
-    if (this.#timer.running()) return this.#timer.stop({ interrupted: true });
-    if (duration) this.#initTimer();
-    if (suite) this.#initRandomTest();
+  #reset() {
+    this.#initTimer();
     this.#content.reset();
   }
 
   constructor() {
     // Navbar Update - Run setup to stop everything and load a new test.
-    this.#duration.addEventListener("update", () => this.#navUpdate(true, false));
-    this.#suite.addEventListener("update", () => this.#navUpdate(false, true));
+    this.#duration.addEventListener("update", () => this.#reset());
+    this.#suite.addEventListener("update", () => this.#setup());
 
     // Content Loader Updates - Set the main content on update.
     this.#infoLoader.addEventListener("update", () => this.#content.setContent(this.#infoLoader.getHTML()));
@@ -81,15 +79,15 @@ export class Program {
     this.#content.addEventListener("run", () => this.#timer.run());
     this.#content.addEventListener("pause", () => this.#timer.pause());
     this.#content.addEventListener("quit", () => this.#timer.stop());
-    this.#content.addEventListener("interrupt", () => this.#navUpdate());
+    this.#content.addEventListener("interrupt", () => this.#timer.stop({ interrupted: true }));
     this.#content.addEventListener("next", () => this.#testLoader.load());
 
     // Timer Events - Dictate major events. Timer stop indicates the end of a test (regardless of how).
     this.#timer.addEventListener("tick", (ev) => this.#content.record(ev.detail));
     this.#timer.addEventListener("stopped", (ev) => {
-      if (ev.detail?.interrupted) return this.#initSetup();
+      if (ev.detail?.interrupted) return this.#reset();
       const testResults = this.#content.getTestRecords();
-      this.#initSetup();
+      this.#setup();
       this.#resLoader.load(testResults);
     });
 
@@ -97,7 +95,7 @@ export class Program {
     window.addEventListener("keydown", this.#content.keydown.bind(this.#content));
 
     // Init all values
-    this.#initSetup();
+    this.#setup();
   }
 }
 
