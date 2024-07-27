@@ -57,7 +57,7 @@ export class Content extends IElementManager {
   }
 
   #resetTest() {
-    if (this.#currentEvaluator) this.#currentEvaluator.loadTokens();
+    if (this.#currentEvaluator) this.#currentEvaluator._loadTokens();
     this.render();
   }
 
@@ -170,7 +170,7 @@ export class Content extends IElementManager {
       const testType = Array.from(testElement.classList).filter((c) => c != "test")[0];
       if (testType === "action") this.#currentEvaluator = this.#actionEvaluator;
       if (testType === "code") this.#currentEvaluator = this.#codeEvaluator;
-      this.#currentEvaluator.loadTokens();
+      this.#currentEvaluator._loadTokens();
     } else {
       this.dispatchEvent(new Event("interrupt"));
       this.#contentDisplayPane.tabIndex = -1;
@@ -200,7 +200,6 @@ export class Content extends IElementManager {
     this.#resetNav();
     this.#resetTest();
     this.#testRecords = [];
-    this.render();
   }
 
   /**@param {KeyboardEvent} ev */

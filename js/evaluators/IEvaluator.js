@@ -14,6 +14,11 @@ export class IEvaluator extends EventTarget {
   _tokens = [];
   _tokenIndex = 0;
 
+  /**Load relevant HTML elements into the _tokens array, such that they can be evaluated later.*/
+  _loadTokens() {
+    throw Error("Unimplemeneted '_loadTokens' method");
+  }
+
   /** This is the only thing unique to each Evaluator */
   _evaluateKey() {
     throw Error("Unimplemeneted '_evaluateKey' method");
@@ -25,27 +30,6 @@ export class IEvaluator extends EventTarget {
     if (!nextCharElement) return this.dispatchEvent(new Event("next"));
     nextCharElement.className = "selected";
     nextCharElement.scrollIntoView();
-  }
-
-  /**Load HTML elements into the _tokens array, such that they can be evaluated later.*/
-  loadTokens() {
-    if (!document.querySelector(".test")) {
-      this._tokens = [];
-      this._tokenIndex = 0;
-      return;
-    }
-
-    this._tokenIndex = 0;
-    this._tokens = Array.from(document.querySelector(".test").children)
-      .map((line) => Array.from(line.children))
-      .flat();
-
-    this._tokens[0]?.scrollIntoView();
-    this._tokens.forEach((t) => {
-      t.classList.remove("selected");
-      t.classList.remove("correct");
-      t.classList.remove("incorrect");
-    });
   }
 
   /** @returns {{correct: number, incorrect: number, index: number}}*/
