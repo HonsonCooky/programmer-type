@@ -206,18 +206,14 @@ export class KeyboardEvaluator extends EventTarget {
     this.#backspaces++;
   }
 
-  #resetLine() {
-    let currentToken = this.#tokens[this.#tokenIndex];
-    const lineNum = Number.parseInt(currentToken.getAttribute("line"));
-    if (!lineNum || isNaN(lineNum)) return;
-
-    let curLineNum = lineNum;
-    while (curLineNum === lineNum) {
-      let currentToken = this.#tokens[this.#tokenIndex];
-      const lineNum = Number.parseInt(currentToken.getAttribute("line"));
-      if (!lineNum || isNaN(lineNum)) break;
-      this.#backspace();
-    }
+  #resetLine(ln) {
+    const lineElements = this.#tokens.filter((e) => e.getAttribute("line") === ln);
+    const incorrectIndex = lineElements.findIndex((e) => e.className.includes("incorrect"));
+    for (let i = 0; i < incorrectIndex; i++) this.#backspace();
+    lineElements.forEach((e) => {
+      e.className = "incorrect";
+      setTimeout(() => (e.className = e.className === "incorrect" ? "" : e.className), 200);
+    });
   }
 
   #controlBackspace() {
@@ -232,19 +228,52 @@ export class KeyboardEvaluator extends EventTarget {
     }
   }
 
-  /**@param {KeyboardEvent} ev */
-  #actionEvaluation(ev) {
-    const currentToken = this.#tokens[this.#tokenIndex];
+  /**@param {string} msg */
+  #updateLineMessage(msg) {}
+
+  /**@param {string} content */
+  #copyText(content) {
+    navigator.clipboard.writeText(content).catch(() => {});
+  }
+
+  /**@param {string} content */
+  #pasteText(content) {}
+
+  async #actionInterpreter(currentToken) {
     const action = currentToken.getAttribute("action");
     const content = currentToken.getAttribute("content");
 
-    if (ev.key.length > 1) {
-      this.#resetLine();
+    if (!action) return undefined;
+
+    switch (action) {
+      case "copy":
+        return this.#copyText(content);
+      case "paste":
+        return this.#pasteText(content);
+    }
+  }
+
+  /**@param {KeyboardEvent} ev */
+  #actionEvaluation(ev) {
+    const currentToken = this.#tokens[this.#tokenIndex];
+
+    if (ev.key === "Backspace") {
+      this.#resetLine(currentToken.getAttribute("line"));
       return;
     }
 
-    // Evaluate the key first
+    if (currentToken.className.includes("message") && currentToken.innerText.length === 0) return;
+
+    // Extend upon character evaluation.
     this.#codeEvaluation(ev);
+
+    if (currentToken.className.includes("incorrect")) {
+      this.#tokenIndex--; // Revert jump to next from code evaluation
+      this.#resetLine(currentToken.getAttribute("line"));
+      return;
+    }
+
+    this.#actionInterpreter(currentToken);
   }
 
   /**@param {KeyboardEvent} ev */
@@ -267,7 +296,6 @@ export class KeyboardEvaluator extends EventTarget {
       currentToken.className = char === " " ? "incorrect-space" : "incorrect";
       this.#incorrect++;
     }
-
     this.#tokenIndex++;
   }
 
@@ -338,19 +366,7 @@ export class KeyboardEvaluator extends EventTarget {
     this.#tokenIndex = 0;
     this.#tokens = Array.from(testDiv.children)
       .filter((line) => !!line.getAttribute("action")) // Only interested in actionable components.
-      .map((line, i) => {
-        const action = line.getAttribute("action");
-        const content = line.getAttribute("content");
-        const children = Array.from(line.children);
-
-        children.forEach((child) => child.setAttribute("line", i));
-
-        // Set action to end of line character
-        children[children.length - 1].setAttribute("action", action);
-        children[children.length - 1].setAttribute("content", content);
-
-        return children;
-      })
+      .map((line) => Array.from(line.children))
       .flat();
     this.#highlightCurrentToken();
   }

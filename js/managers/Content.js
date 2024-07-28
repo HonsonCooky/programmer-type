@@ -87,6 +87,38 @@ export class Content extends EventTarget {
   }
 
   /**
+   * Manipulate the file contents of an Action Test into an HTML string ready for testing.
+   * @param {string} fileContents
+   */
+  #getActionTestHTML(fileContents) {
+    /**@type {ATFile}*/
+    const instructions = JSON.parse(fileContents);
+    const stepBlocks = instructions.map((i) => {
+      const { action, comments, content, keybind } = i;
+
+      const nlLine = `<div class="line newline"></div>`;
+      const commentStrs = comments.map((c) => {
+        if (c.includes("Title:")) return `<div class="line title">${c}</div>`;
+        return `<div class="line comment">// ${c}</div>`;
+      });
+      let inputDiv = "";
+
+      // If the user requires come action.
+      if (action && content && keybind) {
+        const inputStrs = keybind.split("").map((k) => `<span>${k}</span>`);
+        inputStrs.push(`<div class="message"></div>`);
+        const inputDivAttrs = `class="line" action="${action}" content="${content.join("\\n")}"`;
+        inputDiv = `<div ${inputDivAttrs}>${inputStrs.join("")}</div>`;
+      }
+
+      return `${commentStrs.join("")}${inputDiv}${nlLine}`;
+    });
+
+    // Wrap it all in a div with a class to help identify the type of test.
+    return `<div class="test action">${stepBlocks.join("")}</div>`;
+  }
+
+  /**
    * Manipulate the file contents of a Coding Test into an HTML string ready for testing.
    * @param {string} fileContents
    */
@@ -122,37 +154,6 @@ export class Content extends EventTarget {
 
     // Wrap it all in a div with a class to help identify the type of test.
     return `<div class="test code">${lineStrs.join("")}</div>`;
-  }
-
-  /**
-   * Manipulate the file contents of an Action Test into an HTML string ready for testing.
-   * @param {string} fileContents
-   */
-  #getActionTestHTML(fileContents) {
-    /**@type {ATFile}*/
-    const instructions = JSON.parse(fileContents);
-    const stepBlocks = instructions.map((i) => {
-      const { action, comments, content, keybind } = i;
-
-      const nlLine = `<div class="line newline"></div>`;
-      const commentStrs = comments.map((c) => {
-        if (c.includes("Title:")) return `<div class="line title">${c}</div>`;
-        return `<div class="line comment">// ${c}</div>`;
-      });
-      let inputDiv = "";
-
-      // If the user requires come action.
-      if (action && content && keybind) {
-        const inputStrs = keybind.split("").map((k) => `<span>${k}</span>`);
-        const inputDivAttrs = `class="line" action="${action}" content="${content.join("\\n")}"`;
-        inputDiv = `<div ${inputDivAttrs}>${inputStrs.join("")}</div>`;
-      }
-
-      return `${commentStrs.join("")}${inputDiv}${nlLine}`;
-    });
-
-    // Wrap it all in a div with a class to help identify the type of test.
-    return `<div class="test action">${stepBlocks.join("")}</div>`;
   }
 
   /**
