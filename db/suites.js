@@ -1,7 +1,11 @@
 /**
+ * @typedef {"Action"|"Code"} SuiteType
+ */
+
+/**
  * @typedef {Object} SuiteItem
  * @property {string} name - The name of the suite.
- * @property {"Code"|"Action"} type - The type of the suite.
+ * @property {SuiteType} type - The type of the suite.
  * @property {string} shortcut - The type of the suite.
  * @property {Array<string>} tests - An array of paths to the test files for the suite.
  */

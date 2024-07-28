@@ -54,6 +54,11 @@ main {
       height: 100%;
     }
 
+    .newline,
+    .comment {
+      color: var(--overlay);
+    }
+
     .selected {
       text-decoration: underline;
     }
@@ -64,6 +69,14 @@ main {
 
     .incorrect {
       color: var(--red);
+    }
+
+    .incorrect-space {
+      background-color: var(--red);
+    }
+
+    .title {
+      color: var(--yellow);
     }
 
     &:focus {
@@ -94,8 +107,6 @@ main {
   }
 
   h3 {
-    margin-top: var(--s-3xl);
-    margin-bottom: var(--s-s);
     color: var(--yellow);
     font-weight: bold;
     font-size: 200%;
@@ -105,11 +116,23 @@ main {
     }
   }
 
+  h4 {
+    color: var(--peach);
+    font-weight: bold;
+    font-size: 120%;
+  }
+
   b {
     font-weight: bold;
   }
 
   p {
-    line-height: 1.5;
+    line-height: 1.4;
+  }
+
+  ul {
+    li {
+      margin-bottom: 1em;
+    }
   }
 }

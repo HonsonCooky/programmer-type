@@ -52,18 +52,15 @@ export class Timer extends EventTarget {
     if (this.#intervalId) return;
     this.#intervalId = setInterval(() => {
       this.#time += this.#duration === 0 ? 1 : -1;
+
+      if (this.#time < 0 || this.#time >= Number.MAX_VALUE) {
+        this.stop();
+        return;
+      }
+
       this.#render();
       this.#dispatchTimerEvent("tick");
     }, 1000);
-  }
-
-  /** Pause the timer. */
-  pause() {
-    if (!this.#intervalId) return;
-    clearInterval(this.#intervalId);
-    this.#intervalId = undefined;
-    this.#render();
-    this.#dispatchTimerEvent("paused");
   }
 
   /** Stop the timer and reset it to the initial duration. */

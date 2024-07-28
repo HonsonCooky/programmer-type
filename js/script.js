@@ -22,6 +22,8 @@ export class Program {
     this.#keyEvaluator.addEventListener("reload", () => this.#content.displayTest());
     // Evaluator - Start Test
     this.#keyEvaluator.addEventListener("start", () => this.#timer.run());
+    // Evaluator - Pause Test
+    this.#keyEvaluator.addEventListener("pause", () => this.#timer.pause());
     // Evaluator - Quit Test
     this.#keyEvaluator.addEventListener("quit", () => this.#timer.stop());
 
@@ -34,17 +36,29 @@ export class Program {
 
     // NavBar - Suite Update -> Set Test Content
     this.#suite.addEventListener("updated", (ev) => {
+      this.#timer.interrupt();
       const { name, type, shortcut } = ev.detail ?? {};
       if (!name || !type || !shortcut) throw Error(`Missing suite update event information`);
       this.#content.displayTest({ name, type });
     });
 
+    // Test state - New Test Loaded
+    this.#content.addEventListener("actionTestLoaded", () => this.#keyEvaluator.loadActionTokens());
+    this.#content.addEventListener("codeTestLoaded", () => this.#keyEvaluator.loadCodeTokens());
+
+    // Test state - Test ticked = Record current results
+    this.#timer.addEventListener("tick", (ev) => this.#keyEvaluator.record(ev.detail));
+
     // Test state - Test stopped = Reset all with evaluation.
+    this.#timer.addEventListener("stopped", () => {
+      const recordings = this.#keyEvaluator.getRecordings();
+      this.#keyEvaluator.reset();
+      this.#content.displayResults(recordings);
+    });
 
     // Test state - Test interruptions = Reset all without evaluation.
     this.#content.addEventListener("interrupt", () => this.#timer.interrupt());
     this.#timer.addEventListener("interrupted", () => {
-      console.log("here");
       // Note: Timer resets itself, just need to reload the test, and reset the test state.
       this.#content.displayTest();
       this.#keyEvaluator.reset();

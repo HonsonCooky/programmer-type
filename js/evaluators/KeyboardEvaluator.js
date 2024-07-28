@@ -1,3 +1,12 @@
+/**
+ * This file is a bit of a mess... sorry. The idea behind the
+ * `KeyboardEvaluator` is to evaluate all keyboard inputs.
+ *
+ * Keyboard inputs are used to navigate AND to take tests. So, it's kinda all
+ * lumped together here. Previous attempts to separate these concerns have
+ * resulted in disconnected code that makes it hard to use `Event` based
+ * systems. State
+ */
 export class KeyboardEvaluator extends EventTarget {
   // Elements
   #contentDisplayPane = Object.freeze(document.getElementById("_enter_content"));
@@ -11,18 +20,33 @@ export class KeyboardEvaluator extends EventTarget {
   #selectedElement = document.activeElement;
 
   // Test Items
-  /**@type {Element[]}*/
-  #running = false;
-  #tokens = [];
-  #tokenIndex = 0;
   #commandPrimed = false;
+  #running = false;
+  #tokenIndex = 0;
+  /**@type {import("../../db/suites").SuiteType|undefined} */
+  #tokensType;
+  /**@type {Element[]}*/
+  #tokens = [];
+
+  // Recording Items
+  #testNumber = 0;
+  #correct = 0;
+  #incorrect = 0;
+  #backspaces = 0;
+  /**@type {{}[]}*/
+  #testRecordings = [];
 
   constructor() {
     super();
 
     this.#contentDisplayPane.addEventListener("focusin", () => {
-      if (this.#isContentTest()) this.#contextDisplayText.innerText = "[:q] Quit";
-      else this.#contextDisplayText.innerText = "[Escape] Unfocus, [j] Scroll Down, [k] Scroll Up";
+      if (this.#isTestInput()) {
+        this.#contextDisplayText.innerText = "[:q] Quit";
+        return;
+      }
+
+      this.#contextDisplayText.innerText = "[Escape] Unfocus, [j] Scroll Down, [k] Scroll Up, [r] Reload Test";
+      this.#keySeq = ["enter"];
     });
 
     this.#contentDisplayPane.addEventListener("focusout", () => {
@@ -30,17 +54,34 @@ export class KeyboardEvaluator extends EventTarget {
     });
 
     this.#contextDisplayText.innerText = "[Enter] Focus, [r] Reload Test";
-    this.#render();
+    this.#renderNav();
   }
 
-  #isContentTest() {
-    return document.activeElement === this.#contentDisplayPane && !!this.#contentDisplayPane.querySelector(".test");
+  //-------------------------------------------------------------------------------------------------------------------
+  // UTILS
+  //-------------------------------------------------------------------------------------------------------------------
+
+  #isTestInput() {
+    return (
+      document.activeElement === this.#contentDisplayPane &&
+      this.#contentDisplayPane.querySelector(".test") &&
+      this.#tokens.length > 0
+    );
+  }
+
+  //-------------------------------------------------------------------------------------------------------------------
+  // NAVIGATION
+  //-------------------------------------------------------------------------------------------------------------------
+
+  #renderNav() {
+    this.#displayValue.innerText = this.#keySeq.length > 0 ? this.#keySeq.join("-") : "*base*";
+    this.#contentDisplayPane.style.fontSize = `var(--fs-${this.#fontSize})`;
   }
 
   #resetNav() {
     this.#keySeq = [];
     document.activeElement.blur();
-    this.#render();
+    this.#renderNav();
   }
 
   #activeDropdowns() {
@@ -51,7 +92,7 @@ export class KeyboardEvaluator extends EventTarget {
 
   /**@param {KeyboardEvent} ev */
   #navEvaluation(ev) {
-    const key = ev.key;
+    const key = ev.key.toLowerCase();
     this.#running = false;
 
     // Alter Font Size
@@ -59,28 +100,15 @@ export class KeyboardEvaluator extends EventTarget {
       if (key === "+") {
         ev.preventDefault();
         this.#fontSize = Math.max(-2, Math.min(this.#fontSize + 1, 5));
-        this.#render();
+        this.#renderNav();
         return;
       }
       if (key === "-") {
         ev.preventDefault();
         this.#fontSize = Math.max(-2, Math.min(this.#fontSize - 1, 5));
-        this.#render();
+        this.#renderNav();
         return;
       }
-    }
-
-    if (document.activeElement === this.#contentDisplayPane) {
-      if (key === "j") {
-        this.#contentDisplayPane.scrollBy({ top: 50 });
-      }
-      if (key === "k") {
-        this.#contentDisplayPane.scrollBy({ top: -50 });
-      }
-      if (key === "Escape") {
-        this.#resetNav();
-      }
-      return;
     }
 
     // Escape navigation context
@@ -92,7 +120,18 @@ export class KeyboardEvaluator extends EventTarget {
 
     if (key === "r") {
       ev.preventDefault();
-      this.dispatchEvent(new Event("reload"));
+      this.#resetNav();
+      this.dispatchEvent(new CustomEvent("reload"));
+      return;
+    }
+
+    if (document.activeElement === this.#contentDisplayPane) {
+      if (key === "j") {
+        this.#contentDisplayPane.scrollBy({ top: 50 });
+      }
+      if (key === "k") {
+        this.#contentDisplayPane.scrollBy({ top: -50 });
+      }
       return;
     }
 
@@ -123,47 +162,227 @@ export class KeyboardEvaluator extends EventTarget {
       this.#selectedElement.click();
     }
 
-    this.#render();
+    this.#renderNav();
+  }
+
+  //-------------------------------------------------------------------------------------------------------------------
+  // TESTS
+  //-------------------------------------------------------------------------------------------------------------------
+
+  #resetTest() {
+    this.#commandPrimed = false;
+    this.#running = false;
+
+    this.#tokenIndex = 0;
+    this.#tokensType = undefined;
+    this.#tokens = [];
+
+    this.#testNumber = 0;
+    this.#correct = 0;
+    this.#incorrect = 0;
+    this.#backspaces = 0;
+    this.#testRecordings = [];
+  }
+
+  #highlightCurrentToken() {
+    if (this.#tokenIndex >= this.#tokens.length) {
+      this.#testNumber++;
+      this.dispatchEvent(new CustomEvent("reload"));
+      return;
+    }
+
+    const currentToken = this.#tokens[this.#tokenIndex];
+    currentToken.className = "selected";
+    currentToken.scrollIntoView();
+  }
+
+  #backspace() {
+    const currentToken = this.#tokens[this.#tokenIndex];
+    // Remove indicators
+    currentToken.className = "";
+    if (currentToken.innerText === "\\n") currentToken.className = "newline";
+
+    this.#tokenIndex = Math.max(0, this.#tokenIndex - 1);
+    this.#backspaces++;
+  }
+
+  #resetLine() {
+    let currentToken = this.#tokens[this.#tokenIndex];
+    const lineNum = Number.parseInt(currentToken.getAttribute("line"));
+    if (!lineNum || isNaN(lineNum)) return;
+
+    let curLineNum = lineNum;
+    while (curLineNum === lineNum) {
+      let currentToken = this.#tokens[this.#tokenIndex];
+      const lineNum = Number.parseInt(currentToken.getAttribute("line"));
+      if (!lineNum || isNaN(lineNum)) break;
+      this.#backspace();
+    }
+  }
+
+  #controlBackspace() {
+    // Find last whitespace character
+    let count = 0;
+    while (this.#tokenIndex > 0) {
+      const peekTokenIndex = Math.max(0, this.#tokenIndex - 1);
+      const peekToken = this.#tokens[peekTokenIndex];
+      if ((peekToken.innerText === " " || peekToken.innerText === "\\n") && count > 0) break;
+      this.#backspace();
+      count++;
+    }
+  }
+
+  /**@param {KeyboardEvent} ev */
+  #actionEvaluation(ev) {
+    const currentToken = this.#tokens[this.#tokenIndex];
+    const action = currentToken.getAttribute("action");
+    const content = currentToken.getAttribute("content");
+
+    if (ev.key.length > 1) {
+      this.#resetLine();
+      return;
+    }
+
+    // Evaluate the key first
+    this.#codeEvaluation(ev);
+  }
+
+  /**@param {KeyboardEvent} ev */
+  #codeEvaluation(ev) {
+    if (ev.key === "Backspace") {
+      if (ev.ctrlKey) return this.#controlBackspace();
+      return this.#backspace();
+    }
+
+    // Character input - no meta characters
+    const currentToken = this.#tokens[this.#tokenIndex];
+    const char = currentToken.innerText;
+    let key = ev.key;
+    if (ev.key === "Enter") key = "\\n";
+
+    if (char === key) {
+      currentToken.className = "correct";
+      this.#correct++;
+    } else {
+      currentToken.className = char === " " ? "incorrect-space" : "incorrect";
+      this.#incorrect++;
+    }
+
+    this.#tokenIndex++;
   }
 
   /**@param {KeyboardEvent} ev */
   #testEvaluation(ev) {
-    //if (this._tokens.length === 0) return;
+    if (this.#tokens.length === 0) return;
     ev.preventDefault();
 
     // Command Mechanics
     if (this.#commandPrimed) {
       if (ev.key === "q") {
+        this.#resetNav();
         this.dispatchEvent(new Event("quit"));
         return;
       }
       // TODO: Remove on publish - Cheat to finish test quickly
       if (ev.key === "~") {
-        this._tokens.slice(0, -2).forEach((e) => e.classList.add("correct"));
-        this._tokenIndex = this._tokens.length - 2;
-        //this.#highlightNextToken();
+        this.#tokens.slice(0, -2).forEach((e) => (e.className = "correct"));
+        this.#tokenIndex = this.#tokens.length - 2;
+        this.#correct += this.#tokenIndex;
         return;
       }
     }
 
     if (ev.key === ":") this.#commandPrimed = true;
     else this.#commandPrimed = false;
+
+    if (this.#tokensType === "Action") this.#actionEvaluation(ev);
+    if (this.#tokensType === "Code") this.#codeEvaluation(ev);
+    this.#highlightCurrentToken();
   }
 
-  #render() {
-    this.#displayValue.innerText = this.#keySeq.length > 0 ? this.#keySeq.join("-") : "*base*";
-    this.#contentDisplayPane.style.fontSize = `var(--fs-${this.#fontSize})`;
+  //-------------------------------------------------------------------------------------------------------------------
+  // API
+  //-------------------------------------------------------------------------------------------------------------------
+
+  /**@param {Object} param0
+   * @param {number} param0.duration
+   * @param {number} param0.time
+   * @param {number} param0.intervalId
+   */
+
+  async record({ duration, time, intervalId }) {
+    this.#testRecordings.push({
+      duration,
+      time,
+      intervalId,
+      correct: this.#correct,
+      incorrect: this.#incorrect,
+      backspaces: this.#backspaces,
+      testNumber: this.#testNumber,
+    });
+  }
+
+  getRecordings() {
+    return JSON.parse(JSON.stringify(this.#testRecordings));
+  }
+
+  loadActionTokens() {
+    const testDiv = this.#contentDisplayPane.querySelector(".test");
+    if (!testDiv || !testDiv.classList.contains("action")) {
+      this.#tokens = [];
+      this.#tokenIndex = 0;
+      return;
+    }
+
+    this.#tokensType = "Action";
+    this.#tokenIndex = 0;
+    this.#tokens = Array.from(testDiv.children)
+      .filter((line) => !!line.getAttribute("action")) // Only interested in actionable components.
+      .map((line, i) => {
+        const action = line.getAttribute("action");
+        const content = line.getAttribute("content");
+        const children = Array.from(line.children);
+
+        children.forEach((child) => child.setAttribute("line", i));
+
+        // Set action to end of line character
+        children[children.length - 1].setAttribute("action", action);
+        children[children.length - 1].setAttribute("content", content);
+
+        return children;
+      })
+      .flat();
+    this.#highlightCurrentToken();
+  }
+
+  loadCodeTokens() {
+    const testDiv = this.#contentDisplayPane.querySelector(".test");
+    if (!testDiv || !testDiv.classList.contains("code")) {
+      this.#tokens = [];
+      this.#tokenIndex = 0;
+      return;
+    }
+
+    this.#tokensType = "Code";
+    this.#tokenIndex = 0;
+    this.#tokens = Array.from(testDiv.children)
+      .map((line) => Array.from(line.children))
+      .flat();
+    this.#highlightCurrentToken();
   }
 
   reset(usingMouse) {
-    this.#running = false;
-    this.#displayValue.innerText = "*base*";
+    this.#resetNav();
     if (usingMouse) this.#displayValue.innerHTML = `<div class="error">MOUSE USED!<div>`;
+    else this.#resetTest();
   }
 
   /**@param {KeyboardEvent} ev */
   keydown(ev) {
-    if (this.#isContentTest()) {
+    // Ignore modifier only events
+    if (["alt", "control", "meta", "shift"].includes(ev.key.toLowerCase())) return;
+
+    if (this.#isTestInput()) {
       if (!this.#running) {
         this.#running = true;
         this.dispatchEvent(new CustomEvent("start"));

@@ -4,6 +4,7 @@ export class Content extends EventTarget {
   // Elements
   #contentDisplayPane = document.getElementById("_enter_content");
   #infoDisplayBtn = document.getElementById("_i_info");
+  #cacheBtn = document.getElementById("cache-btn");
 
   // Cached Templates
   #infoTemplate;
@@ -12,7 +13,10 @@ export class Content extends EventTarget {
   // Last known values
   /**@type {{name: string; type: string; seenTests:string[]}|null}*/
   #knownSuite;
-  #lastTestTemplate = "";
+  #knownTestHTML = "";
+
+  // State
+  #currentContent = "";
 
   constructor() {
     super();
@@ -24,44 +28,62 @@ export class Content extends EventTarget {
     });
 
     this.#infoDisplayBtn.addEventListener("click", () => this.#displayInfoMessage());
+
+    this.#cacheBtn.addEventListener("click", () => {});
   }
+
+  //-------------------------------------------------------------------------------------------------------------------
+  // UTILS
+  //-------------------------------------------------------------------------------------------------------------------
 
   /** Display Loading Screen */
   #loading() {
-    this.#contentDisplayPane.innerHTML = `<div class="screen">Loading...</div>`;
+    this.#currentContent = `<div class="screen">Loading...</div>`;
+    this.#render();
   }
+
+  #render() {
+    this.#contentDisplayPane.innerHTML = this.#currentContent;
+  }
+
+  /** Determine if a test should be cached */
+  #shoudCache() {
+    return this.#cacheBtn?.checked ?? false;
+  }
+
+  //-------------------------------------------------------------------------------------------------------------------
+  // INTERNAL LOADING
+  //-------------------------------------------------------------------------------------------------------------------
 
   /** Display Information Screen */
   #displayInfoMessage() {
     this.dispatchEvent(new CustomEvent("interrupt"));
+
+    this.#loading();
+
     const isInfoShowing = this.#contentDisplayPane.querySelector("#info-message");
-    console.log("here2");
 
     if (isInfoShowing) {
-      this.#contentDisplayPane.innerHTML = this.#lastTestTemplate;
+      this.#currentContent = this.#knownTestHTML;
       return;
     }
 
-    this.#lastTestTemplate = this.#contentDisplayPane.innerHTML;
-    this.#loading();
     if (!this.#infoTemplate) {
       fetch("../../templates/info-message.html")
         .then((res) => res.text())
         .then((txt) => {
           this.#infoTemplate = txt;
-          this.#contentDisplayPane.innerHTML = this.#infoTemplate;
+          this.#currentContent = this.#infoTemplate;
         })
         .catch(() => {
-          this.#contentDisplayPane.innerHTML = `<div class="screen">Oops! We had a technical issue getting the info template. How embarassing.</div>`;
-        });
-    } else {
-      this.#contentDisplayPane.innerHTML = this.#infoTemplate;
+          this.#currentContent = `<div class="screen">Oops! We had a technical issue getting the info template. How embarassing.</div>`;
+        })
+        .finally(() => this.#render());
+      return;
     }
-  }
 
-  /** Determine if a test should be cached */
-  #shoudCache() {
-    return document.getElementById("cache-btn")?.checked ?? false;
+    this.#currentContent = this.#infoTemplate;
+    this.#render();
   }
 
   /**
@@ -73,11 +95,19 @@ export class Content extends EventTarget {
     const lines = fileContents.split(/\r?\n/g);
 
     // Get characters and indentation level.
-    const linesMapped = lines.map((line) => {
-      const indent = (line.match(/^(\s+)/) || [""])[0].length;
-      const chars = line.trim().split("");
-      return { indent, chars };
-    });
+    const linesMapped = lines
+      .map((line) => {
+        const indent = (line.match(/^(\s+)/) || [""])[0].length;
+        const chars = line.trim().split("");
+        return { indent, chars };
+      })
+      .map((lineMap, i, lineMaps) => {
+        // Align empty newlines with their previous scope. Doesn't work for newlines after scope entry.
+        if (i > 0 && lineMap.chars.length === 0) {
+          lineMap.indent = lineMaps[i - 1].indent;
+        }
+        return lineMap;
+      });
 
     // Map each line to a DIV of SPANs, each span being a character.
     const lineStrs = linesMapped.map(({ indent, chars }) => {
@@ -109,6 +139,7 @@ export class Content extends EventTarget {
         if (c.includes("Title:")) return `<div class="line title">${c}</div>`;
         return `<div class="line comment">// ${c}</div>`;
       });
+      let inputDiv = "";
 
       // If the user requires come action.
       if (action && content && keybind) {
@@ -154,6 +185,10 @@ export class Content extends EventTarget {
     return remote;
   }
 
+  //-------------------------------------------------------------------------------------------------------------------
+  // API
+  //-------------------------------------------------------------------------------------------------------------------
+
   /**
    * Display a test. If no suite is parsed in, then we assume the new test
    * comes from the existing suite. If a suite (name and type) are passing in,
@@ -171,19 +206,28 @@ export class Content extends EventTarget {
     const testURL = this.#getRandomTestURL();
     this.#getTestContents(testURL)
       .then((fileContents) => {
-        if (this.#knownSuite.type === "Action")
-          this.#contentDisplayPane.innerHTML = this.#getActionTestHTML(fileContents);
-        else if (this.#knownSuite.type === "Code")
-          this.#contentDisplayPane.innerHTML = this.#getCodeTestHTML(fileContents);
-        else {
-          this.#contentDisplayPane.innerHTML = `<div class="screen">Unknown Test Type: Oops, how'd we get here?</div>`;
+        if (this.#knownSuite.type === "Action") {
+          this.#currentContent = this.#getActionTestHTML(fileContents);
+          this.#knownTestHTML = this.#currentContent;
+        } else if (this.#knownSuite.type === "Code") {
+          this.#currentContent = this.#getCodeTestHTML(fileContents);
+          this.#knownTestHTML = this.#currentContent;
+        } else {
+          this.#currentContent = `<div class="screen">Unknown Test Type: Oops, how'd we get here?</div>`;
         }
       })
       .catch((e) => {
-        this.#contentDisplayPane.innerHTML = `<div class="error screen">${e.message}</div>`;
+        this.#currentContent = `<div class="error screen">${e.message}</div>`;
+      })
+      .finally(() => {
+        this.#render();
+        if (this.#knownSuite.type === "Action") this.dispatchEvent(new CustomEvent("actionTestLoaded"));
+        if (this.#knownSuite.type === "Code") this.dispatchEvent(new CustomEvent("codeTestLoaded"));
       });
   }
 
   /** Display the results from the current test. */
-  displayResults() {}
+  displayResults(recordings) {
+    console.log(recordings);
+  }
 }

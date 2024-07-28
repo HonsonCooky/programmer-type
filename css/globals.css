@@ -47,39 +47,6 @@ code {
   padding: 2px var(--s-3xs);
 }
 
-table {
-  border: var(--border) solid var(--crust);
-
-  caption {
-    h3 {
-      font-weight: 400;
-      font-size: var(--fs-0);
-      white-space: nowrap;
-    }
-  }
-
-  th:first-child,
-  td:first-child {
-    width: 1%;
-  }
-
-  th {
-    width: 30%;
-    font-weight: 900;
-    text-align: start;
-  }
-
-  td {
-    font-weight: 400;
-    font-family: monospace;
-  }
-
-  th,
-  td {
-    padding: var(--border) var(--s-s);
-  }
-}
-
 .selected {
   color: var(--sky);
 }
