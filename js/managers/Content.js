@@ -93,8 +93,8 @@ export class Content extends EventTarget {
   #getActionTestHTML(fileContents) {
     /**@type {ATFile}*/
     const instructions = JSON.parse(fileContents);
-    const stepBlocks = instructions.map((i) => {
-      const { action, comments, content, keybind } = i;
+    const stepBlocks = instructions.map((instruct, i) => {
+      const { action, comments, content, keybind } = instruct;
 
       const nlLine = `<div class="line newline"></div>`;
       const commentStrs = comments.map((c) => {
@@ -105,8 +105,7 @@ export class Content extends EventTarget {
 
       // If the user requires come action.
       if (action && content && keybind) {
-        const inputStrs = keybind.split("").map((k) => `<span>${k}</span>`);
-        inputStrs.push(`<div class="message"></div>`);
+        const inputStrs = keybind.split("").map((k) => `<span line="${i}">${k}</span>`);
         const inputDivAttrs = `class="line" action="${action}" content="${content.join("\\n")}"`;
         inputDiv = `<div ${inputDivAttrs}>${inputStrs.join("")}</div>`;
       }

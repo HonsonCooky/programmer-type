@@ -38,11 +38,11 @@ main {
     .line {
       word-wrap: break-word;
       filter: blur(2px);
-      min-height: var(--fs-0);
+      min-height: 1.5em;
       line-height: 1.5;
 
       * {
-        scroll-margin-top: var(--fs-0);
+        scroll-margin-top: 1.5em;
       }
     }
 
@@ -68,7 +68,7 @@ main {
     }
 
     .incorrect {
-      color: var(--red);
+      color: var(--red) !important;
     }
 
     .incorrect-space {

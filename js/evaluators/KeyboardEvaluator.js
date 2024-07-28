@@ -197,6 +197,7 @@ export class KeyboardEvaluator extends EventTarget {
   }
 
   #backspace() {
+    console.log("backspace");
     const currentToken = this.#tokens[this.#tokenIndex];
     // Remove indicators
     currentToken.className = "";
@@ -208,8 +209,11 @@ export class KeyboardEvaluator extends EventTarget {
 
   #resetLine(ln) {
     const lineElements = this.#tokens.filter((e) => e.getAttribute("line") === ln);
-    const incorrectIndex = lineElements.findIndex((e) => e.className.includes("incorrect"));
-    for (let i = 0; i < incorrectIndex; i++) this.#backspace();
+
+    let len = lineElements.findIndex((e) => e.className === "");
+    if (len < 0) len = lineElements.length;
+    for (let i = 0; i < len; i++) this.#backspace();
+
     lineElements.forEach((e) => {
       e.className = "incorrect";
       setTimeout(() => (e.className = e.className === "incorrect" ? "" : e.className), 200);
@@ -257,12 +261,11 @@ export class KeyboardEvaluator extends EventTarget {
   #actionEvaluation(ev) {
     const currentToken = this.#tokens[this.#tokenIndex];
 
-    if (ev.key === "Backspace") {
+    // WARN: Precatch these special cases here to ensure they aren't used in "codeEvaluation" below.
+    if (ev.key === "Backspace" && currentToken.innerText != "Backspace") {
       this.#resetLine(currentToken.getAttribute("line"));
       return;
     }
-
-    if (currentToken.className.includes("message") && currentToken.innerText.length === 0) return;
 
     // Extend upon character evaluation.
     this.#codeEvaluation(ev);

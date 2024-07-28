@@ -18,14 +18,14 @@ export class Program {
   #keyEvaluator = new KeyboardEvaluator();
 
   constructor() {
-    // Evaluator - Reload Test
-    this.#keyEvaluator.addEventListener("reload", () => this.#content.displayTest());
     // Evaluator - Start Test
     this.#keyEvaluator.addEventListener("start", () => this.#timer.run());
     // Evaluator - Pause Test
     this.#keyEvaluator.addEventListener("pause", () => this.#timer.pause());
     // Evaluator - Quit Test
     this.#keyEvaluator.addEventListener("quit", () => this.#timer.stop());
+    // Evaluator - Reload Test
+    this.#keyEvaluator.addEventListener("reload", () => this.#content.displayTest());
 
     // NavBar - Duration Update -> Set Timer
     this.#duration.addEventListener("updated", (ev) => {
