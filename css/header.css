@@ -14,13 +14,14 @@ header {
 
     h1 {
       margin: 0;
-      color: var(--flamingo);
+      color: var(--blue);
       font-weight: 300;
       font-size: var(--fs-5);
     }
 
     h2 {
       margin: 0;
+      color: var(--yellow);
       font-weight: bold;
       font-size: var(--fs-2);
     }

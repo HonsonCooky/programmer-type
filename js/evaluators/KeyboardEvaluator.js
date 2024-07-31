@@ -42,6 +42,7 @@ export class KeyboardEvaluator extends EventTarget {
     this.#contentDisplayPane.addEventListener("focusin", () => {
       if (this.#isTestInput()) {
         this.#contextDisplayText.innerText = "[:q] Quit";
+        this.#highlightCurrentToken();
         return;
       }
 
@@ -97,13 +98,13 @@ export class KeyboardEvaluator extends EventTarget {
 
     // Alter Font Size
     if (ev.ctrlKey) {
-      if (key === "+") {
+      if (key === "+" || key === "=") {
         ev.preventDefault();
         this.#fontSize = Math.max(-2, Math.min(this.#fontSize + 1, 5));
         this.#renderNav();
         return;
       }
-      if (key === "-") {
+      if (key === "-" || key === "_") {
         ev.preventDefault();
         this.#fontSize = Math.max(-2, Math.min(this.#fontSize - 1, 5));
         this.#renderNav();
@@ -371,7 +372,6 @@ export class KeyboardEvaluator extends EventTarget {
       .filter((line) => !!line.getAttribute("action")) // Only interested in actionable components.
       .map((line) => Array.from(line.children))
       .flat();
-    this.#highlightCurrentToken();
   }
 
   loadCodeTokens() {
@@ -387,7 +387,6 @@ export class KeyboardEvaluator extends EventTarget {
     this.#tokens = Array.from(testDiv.children)
       .map((line) => Array.from(line.children))
       .flat();
-    this.#highlightCurrentToken();
   }
 
   reset(usingMouse) {
