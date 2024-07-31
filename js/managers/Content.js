@@ -222,8 +222,28 @@ export class Content extends EventTarget {
       });
   }
 
-  /** Display the results from the current test. */
+  /**
+   * Display the results from the current test.
+   * @param {import("../evaluators/KeyboardEvaluator.js").TestRecording[]} recordings
+   */
   displayResults(recordings) {
-    console.log(recordings);
+    if (recordings.length === 0) {
+      this.#currentContent = `<div class="screen">No test recordings</div>`;
+    } else {
+      const results = {
+        duration: recordings[0].duration,
+        intervalId: recordings[0].intervalId,
+        tests: {},
+      };
+
+      for (const recording of recordings) {
+        const { time, correct, incorrect, backspaces, testNumber } = recording;
+        if (results.tests[testNumber] === undefined) results.tests[testNumber] = [];
+        results.tests[testNumber].push({ time, correct, incorrect, backspaces });
+      }
+
+      this.#currentContent = JSON.stringify(results);
+    }
+    this.#render();
   }
 }

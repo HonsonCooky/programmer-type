@@ -42,7 +42,7 @@ main {
       line-height: 1.5;
 
       * {
-        scroll-margin-top: var(--fs-0);
+        scroll-margin-top: 2em;
       }
     }
 

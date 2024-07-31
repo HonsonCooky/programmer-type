@@ -21,10 +21,10 @@ export class Suite extends EventTarget {
     });
 
     // Load initial suite
-    this.#selectSuite(suites[suites.length - 1]);
+    this.#selectSuite(suites[0]);
 
     // Ensure post construction event listeners can trigger
-    this.init = () => this.#selectSuite(suites[suites.length - 1]);
+    this.init = () => this.#selectSuite(suites[0]);
   }
 
   /**@param {{ name: string; type: string; shortcut: string; }} suite */

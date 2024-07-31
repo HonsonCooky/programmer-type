@@ -1,11 +1,26 @@
 /**
+ * @typedef {{
+ *   duration: number;
+ *   time: number;
+ *   intervalId: number;
+ *   correct: number;
+ *   incorrect: number;
+ *   backspaces: number;
+ *   testNumber: number;
+ * }} TestRecording
+ */
+
+/**
  * This file is a bit of a mess... sorry. The idea behind the
  * `KeyboardEvaluator` is to evaluate all keyboard inputs.
  *
  * Keyboard inputs are used to navigate AND to take tests. So, it's kinda all
- * lumped together here. Previous attempts to separate these concerns have
- * resulted in disconnected code that makes it hard to use `Event` based
- * systems. State
+ * lumped together here. Previous attempts to separate these concerns resulted
+ * in messy components that end up propagating events up with a master
+ * evaluator. Thus, having everything in one space is currently the best
+ * solution. In the event that more than two styles of tests are created, then
+ * this, and the "Content" manager will need to create some overarching
+ * components to manage tests.
  */
 export class KeyboardEvaluator extends EventTarget {
   // Elements
@@ -33,16 +48,15 @@ export class KeyboardEvaluator extends EventTarget {
   #correct = 0;
   #incorrect = 0;
   #backspaces = 0;
-  /**@type {{}[]}*/
+  /**@type {TestRecording[]}*/
   #testRecordings = [];
 
   constructor() {
     super();
 
     this.#contentDisplayPane.addEventListener("focusin", () => {
-      if (this.#isTestInput()) {
+      if (this.#isActiveTest()) {
         this.#contextDisplayText.innerText = "[:q] Quit";
-        this.#highlightCurrentToken();
         return;
       }
 
@@ -62,12 +76,12 @@ export class KeyboardEvaluator extends EventTarget {
   // UTILS
   //-------------------------------------------------------------------------------------------------------------------
 
-  #isTestInput() {
-    return (
-      document.activeElement === this.#contentDisplayPane &&
-      this.#contentDisplayPane.querySelector(".test") &&
-      this.#tokens.length > 0
-    );
+  #isTestReady() {
+    return this.#contentDisplayPane.querySelector(".test") && this.#tokens.length > 0;
+  }
+
+  #isActiveTest() {
+    return document.activeElement === this.#contentDisplayPane && this.#isTestReady();
   }
 
   //-------------------------------------------------------------------------------------------------------------------
@@ -186,7 +200,7 @@ export class KeyboardEvaluator extends EventTarget {
   }
 
   #highlightCurrentToken() {
-    if (this.#tokenIndex >= this.#tokens.length) {
+    if (this.#tokenIndex >= this.#tokens.length && this.#tokens.length > 0) {
       this.#testNumber++;
       this.dispatchEvent(new CustomEvent("reload"));
       return;
@@ -194,7 +208,7 @@ export class KeyboardEvaluator extends EventTarget {
 
     const currentToken = this.#tokens[this.#tokenIndex];
     currentToken.className = "selected";
-    currentToken.scrollIntoView();
+    if (this.#isActiveTest()) currentToken.scrollIntoView();
   }
 
   #backspace() {
@@ -354,6 +368,7 @@ export class KeyboardEvaluator extends EventTarget {
     });
   }
 
+  /**@returns {TestRecording[]}*/
   getRecordings() {
     return JSON.parse(JSON.stringify(this.#testRecordings));
   }
@@ -372,6 +387,7 @@ export class KeyboardEvaluator extends EventTarget {
       .filter((line) => !!line.getAttribute("action")) // Only interested in actionable components.
       .map((line) => Array.from(line.children))
       .flat();
+    this.#highlightCurrentToken();
   }
 
   loadCodeTokens() {
@@ -387,6 +403,7 @@ export class KeyboardEvaluator extends EventTarget {
     this.#tokens = Array.from(testDiv.children)
       .map((line) => Array.from(line.children))
       .flat();
+    this.#highlightCurrentToken();
   }
 
   reset(usingMouse) {
@@ -401,7 +418,7 @@ export class KeyboardEvaluator extends EventTarget {
     // Ignore modifier only events
     if (["alt", "control", "meta", "shift"].includes(ev.key.toLowerCase())) return;
 
-    if (this.#isTestInput()) {
+    if (this.#isActiveTest()) {
       if (!this.#running) {
         this.#running = true;
         this.dispatchEvent(new CustomEvent("start"));
