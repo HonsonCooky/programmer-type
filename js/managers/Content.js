@@ -44,6 +44,7 @@ export class Content extends EventTarget {
 
   #render() {
     this.#contentDisplayPane.innerHTML = this.#currentContent;
+    this.#contentDisplayPane.scrollTo({ top: 0 });
   }
 
   /** Determine if a test should be cached */
@@ -57,17 +58,14 @@ export class Content extends EventTarget {
 
   /** Display Information Screen */
   #displayInfoMessage() {
-    this.dispatchEvent(new CustomEvent("interrupt"));
-
-    this.#loading();
-
-    const isInfoShowing = this.#contentDisplayPane.querySelector("#info-message");
-
+    const isInfoShowing = !!this.#contentDisplayPane.querySelector("#info-message");
     if (isInfoShowing) {
-      this.#currentContent = this.#knownTestHTML;
+      this.displayTest();
       return;
     }
 
+    this.#loading();
+    this.dispatchEvent(new CustomEvent("interrupt"));
     if (!this.#infoTemplate) {
       fetch("../../templates/info-message.html")
         .then((res) => res.text())
@@ -197,12 +195,10 @@ export class Content extends EventTarget {
    * @param {{name: string; type: string}|undefined} suite
    */
   displayTest(suite) {
-    if (suite) {
-      this.#knownSuite = { name: suite.name, type: suite.type, seenTests: [] };
-    }
+    if (suite) this.#knownSuite = { name: suite.name, type: suite.type, seenTests: [] };
+    if (!this.#knownSuite) return;
 
     this.#loading();
-
     const testURL = this.#getRandomTestURL();
     this.#getTestContents(testURL)
       .then((fileContents) => {

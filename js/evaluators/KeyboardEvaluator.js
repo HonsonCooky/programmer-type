@@ -391,6 +391,7 @@ export class KeyboardEvaluator extends EventTarget {
   }
 
   reset(usingMouse) {
+    console.log("Eval Reset");
     this.#resetNav();
     if (usingMouse) this.#displayValue.innerHTML = `<div class="error">MOUSE USED!<div>`;
     else this.#resetTest();

@@ -31,15 +31,16 @@ export class Program {
     this.#duration.addEventListener("updated", (ev) => {
       const { duration } = ev.detail ?? {};
       if (duration === undefined) throw Error(`Missing duration update event information`);
+      this.#content.displayTest();
       this.#timer.prime(ev.detail.duration); // This will interrupt a running timer.
     });
 
     // NavBar - Suite Update -> Set Test Content
     this.#suite.addEventListener("updated", (ev) => {
-      this.#timer.interrupt();
       const { name, type, shortcut } = ev.detail ?? {};
       if (!name || !type || !shortcut) throw Error(`Missing suite update event information`);
       this.#content.displayTest({ name, type });
+      this.#timer.interrupt();
     });
 
     // Test state - New Test Loaded
@@ -60,7 +61,7 @@ export class Program {
     this.#content.addEventListener("interrupt", () => this.#timer.interrupt());
     this.#timer.addEventListener("interrupted", () => {
       // Note: Timer resets itself, just need to reload the test, and reset the test state.
-      this.#content.displayTest();
+      //this.#content.displayTest();
       this.#keyEvaluator.reset();
     });
 
