@@ -139,7 +139,6 @@ main {
 
 #results {
   canvas {
-    background-color: white;
-    color: white;
+    background-color: var(--mantle);
   }
 }

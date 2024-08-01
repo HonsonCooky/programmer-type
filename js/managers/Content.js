@@ -1,4 +1,5 @@
 import { SuiteDataBase } from "../../db/suites.js";
+import { ResEval } from "../evaluators/ResultsEvaluator.js";
 
 export class Content extends EventTarget {
   // Elements
@@ -163,33 +164,7 @@ export class Content extends EventTarget {
   #loadResultsGraphs(recordings) {
     // Create a canvas for the graph
     const resultsDiv = this.#contentDisplayPane.querySelector("#results");
-    const graph = document.createElement("canvas");
-
-    /**
-     * @param {Element} resultsDiv
-     * @param {HTMLCanvasElement} graph
-     */
-    function renderGraph(resultsDiv, graph) {
-      const width = resultsDiv.offsetWidth;
-      const height = (window.innerHeight / 100) * 40;
-      graph.width = width;
-      graph.height = height;
-      const ctx = graph.getContext("2d");
-      drawAxis({ ctx, width, height });
-    }
-
-    /**@param {Object} param0
-     * @param {(CanvasRenderingContext2D & ImageBitmapRenderingContext & WebGLRenderingContext & WebGL2RenderingContext)} param0.ctx
-     * @param {number} param0.width
-     * @param {number} param0.height */
-    function drawAxis({ ctx, width, height }) {
-      ctx.beginPath();
-      ctx.moveTo(10, 10);
-      ctx.lineTo(10, height - 10);
-    }
-
-    renderGraph(graph, resultsDiv);
-    window.addEventListener("resize", renderGraph(graph, resultsDiv));
+    const graph = ResEval.generateGraph(resultsDiv);
     resultsDiv.appendChild(graph);
   }
 
