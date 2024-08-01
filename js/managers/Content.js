@@ -164,7 +164,7 @@ export class Content extends EventTarget {
   #loadResultsGraphs(recordings) {
     // Create a canvas for the graph
     const resultsDiv = this.#contentDisplayPane.querySelector("#results");
-    const graph = ResEval.generateGraph(resultsDiv);
+    const graph = ResEval.generateGraph(resultsDiv, recordings);
     resultsDiv.appendChild(graph);
   }
 
@@ -212,6 +212,8 @@ export class Content extends EventTarget {
     }
 
     this.#loading();
+    this.#contentDisplayPane.tabIndex = -1;
+    this.#contentDisplayPane.focus();
 
     if (!this.#resultsTemplate) {
       fetch("../../templates/results-sheet.html")
@@ -233,7 +235,5 @@ export class Content extends EventTarget {
     // Remove the loading component
     const loadingElement = this.#contentDisplayPane.querySelector("#loading");
     loadingElement.parentNode.removeChild(loadingElement);
-
-    console.log(results);
   }
 }

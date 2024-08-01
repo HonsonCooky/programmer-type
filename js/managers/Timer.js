@@ -53,7 +53,7 @@ export class Timer extends EventTarget {
     this.#intervalId = setInterval(() => {
       this.#time += this.#duration === 0 ? 1 : -1;
 
-      if (this.#time < 0 || this.#time >= Number.MAX_VALUE) {
+      if (this.#time <= 0 || this.#time >= Number.MAX_VALUE) {
         this.stop();
         return;
       }
@@ -61,6 +61,8 @@ export class Timer extends EventTarget {
       this.#render();
       this.#dispatchTimerEvent("tick");
     }, 1000);
+
+    this.#dispatchTimerEvent("tick");
   }
 
   /** Stop the timer and reset it to the initial duration. */
