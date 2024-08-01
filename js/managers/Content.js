@@ -4,18 +4,13 @@ export class Content extends EventTarget {
   // Elements
   #contentDisplayPane = document.getElementById("_enter_content");
   #infoDisplayBtn = document.getElementById("_i_info");
-  #cacheBtn = document.getElementById("cache-btn");
 
   // Cached Templates
   #infoTemplate;
   #resultsTemplate;
 
-  // Last known values
   /**@type {{name: string; type: string; seenTests:string[]}|null}*/
-  #knownSuite;
-  #knownTestHTML = "";
-
-  // State
+  #suite;
   #currentContent = "";
 
   constructor() {
@@ -28,8 +23,6 @@ export class Content extends EventTarget {
     });
 
     this.#infoDisplayBtn.addEventListener("click", () => this.#displayInfoMessage());
-
-    this.#cacheBtn.addEventListener("click", () => {});
   }
 
   //-------------------------------------------------------------------------------------------------------------------
@@ -47,13 +40,8 @@ export class Content extends EventTarget {
     this.#contentDisplayPane.scrollTo({ top: 0 });
   }
 
-  /** Determine if a test should be cached */
-  #shoudCache() {
-    return this.#cacheBtn?.checked ?? false;
-  }
-
   //-------------------------------------------------------------------------------------------------------------------
-  // INTERNAL LOADING
+  // INTERNAL LOADING - INFO
   //-------------------------------------------------------------------------------------------------------------------
 
   /** Display Information Screen */
@@ -84,11 +72,15 @@ export class Content extends EventTarget {
     this.#render();
   }
 
+  //-------------------------------------------------------------------------------------------------------------------
+  // INTERNAL LOADING - TESTS
+  //-------------------------------------------------------------------------------------------------------------------
+
   /**
    * Manipulate the file contents of an Action Test into an HTML string ready for testing.
    * @param {string} fileContents
    */
-  #getActionTestHTML(fileContents) {
+  #loadActionTestHTML(fileContents) {
     /**@type {ATFile}*/
     const instructions = JSON.parse(fileContents);
     const stepBlocks = instructions.map((instruct, i) => {
@@ -112,14 +104,14 @@ export class Content extends EventTarget {
     });
 
     // Wrap it all in a div with a class to help identify the type of test.
-    return `<div class="test action">${stepBlocks.join("")}</div>`;
+    this.#currentContent = `<div class="test action">${stepBlocks.join("")}</div>`;
   }
 
   /**
    * Manipulate the file contents of a Coding Test into an HTML string ready for testing.
    * @param {string} fileContents
    */
-  #getCodeTestHTML(fileContents) {
+  #loadCodeTestHTML(fileContents) {
     // Get the lines.
     const lines = fileContents.split(/\r?\n/g);
 
@@ -150,37 +142,33 @@ export class Content extends EventTarget {
     });
 
     // Wrap it all in a div with a class to help identify the type of test.
-    return `<div class="test code">${lineStrs.join("")}</div>`;
+    this.#currentContent = `<div class="test code">${lineStrs.join("")}</div>`;
   }
 
-  /**
-   * Get a new test URL based on the currently loaded test suite.
-   * @param {string[]} tests
-   */
-  #getRandomTestURL() {
-    const tests = SuiteDataBase.getTests(this.#knownSuite.name);
+  //-------------------------------------------------------------------------------------------------------------------
+  // INTERNAL LOADING - RESULTS
+  //-------------------------------------------------------------------------------------------------------------------
 
-    if (!this.#knownSuite) throw Error("No suite loaded");
-    let unseenTests = tests.filter((t) => !this.#knownSuite.seenTests.includes(t));
-    if (unseenTests.length === 0) {
-      this.#knownSuite.seenTests = [];
-      unseenTests = tests;
-    }
-
-    const randomIndex = Math.floor(Math.random() * unseenTests.length);
-    const randomTest = unseenTests[randomIndex];
-    this.#knownSuite.seenTests.push(randomTest);
-    return `../../db/test-suites/${this.#knownSuite.name}/${randomTest}`;
+  /** @param {import("../evaluators/KeyboardEvaluator.js").TestRecording[]} recordings*/
+  #loadResultsTitles(recordings) {
+    const suiteName = this.#contentDisplayPane.querySelector("#result-suite-name");
+    suiteName.innerText = this.#suite.name;
+    const suiteType = this.#contentDisplayPane.querySelector("#result-suite-type");
+    suiteType.innerText = this.#suite.type;
+    const testDuration = this.#contentDisplayPane.querySelector("#result-duration");
+    testDuration.innerText = recordings[0].duration ? `${recordings[0].duration}s` : "Infinite";
   }
 
-  async #getTestContents(testURL) {
-    const local = localStorage.getItem(testURL);
-    if (local) return local;
+  /** @param {import("../evaluators/KeyboardEvaluator.js").TestRecording[]} recordings*/
+  #loadResultsGraphs(recordings) {
+    // Create a canvas for the graph
+    const resultsDiv = this.#contentDisplayPane.querySelector("#results");
+    const graph = document.createElement("canvas");
+    graph.width = resultsDiv.offsetWidth;
+    graph.height = (window.innerHeight / 100) * 40;
 
-    const remote = await fetch(testURL).then((res) => res.text());
-    if (!remote) return null;
-    if (this.#shoudCache()) localStorage.setItem(testURL, remote);
-    return remote;
+    window.addEventListener("resize");
+    resultsDiv.appendChild(graph);
   }
 
   //-------------------------------------------------------------------------------------------------------------------
@@ -195,30 +183,23 @@ export class Content extends EventTarget {
    * @param {{name: string; type: string}|undefined} suite
    */
   displayTest(suite) {
-    if (suite) this.#knownSuite = { name: suite.name, type: suite.type, seenTests: [] };
-    if (!this.#knownSuite) return;
+    if (suite) this.#suite = { name: suite.name, type: suite.type };
+    if (!this.#suite) return;
 
     this.#loading();
-    const testURL = this.#getRandomTestURL();
-    this.#getTestContents(testURL)
+    SuiteDataBase.getNextTest(this.#suite.name)
       .then((fileContents) => {
-        if (this.#knownSuite.type === "Action") {
-          this.#currentContent = this.#getActionTestHTML(fileContents);
-          this.#knownTestHTML = this.#currentContent;
-        } else if (this.#knownSuite.type === "Code") {
-          this.#currentContent = this.#getCodeTestHTML(fileContents);
-          this.#knownTestHTML = this.#currentContent;
-        } else {
-          this.#currentContent = `<div class="screen">Unknown Test Type: Oops, how'd we get here?</div>`;
-        }
+        if (this.#suite.type === "Action") this.#loadActionTestHTML(fileContents);
+        else if (this.#suite.type === "Code") this.#loadCodeTestHTML(fileContents);
+        else throw Error("Unknown suite type");
       })
       .catch((e) => {
         this.#currentContent = `<div class="error screen">${e.message}</div>`;
       })
       .finally(() => {
         this.#render();
-        if (this.#knownSuite.type === "Action") this.dispatchEvent(new CustomEvent("actionTestLoaded"));
-        if (this.#knownSuite.type === "Code") this.dispatchEvent(new CustomEvent("codeTestLoaded"));
+        if (this.#suite.type === "Action") this.dispatchEvent(new CustomEvent("actionTestLoaded"));
+        if (this.#suite.type === "Code") this.dispatchEvent(new CustomEvent("codeTestLoaded"));
       });
   }
 
@@ -229,21 +210,33 @@ export class Content extends EventTarget {
   displayResults(recordings) {
     if (recordings.length === 0) {
       this.#currentContent = `<div class="screen">No test recordings</div>`;
-    } else {
-      const results = {
-        duration: recordings[0].duration,
-        intervalId: recordings[0].intervalId,
-        tests: {},
-      };
-
-      for (const recording of recordings) {
-        const { time, correct, incorrect, backspaces, testNumber } = recording;
-        if (results.tests[testNumber] === undefined) results.tests[testNumber] = [];
-        results.tests[testNumber].push({ time, correct, incorrect, backspaces });
-      }
-
-      this.#currentContent = JSON.stringify(results);
+      this.#render();
+      return;
     }
+
+    this.#loading();
+
+    if (!this.#resultsTemplate) {
+      fetch("../../templates/results-sheet.html")
+        .then((res) => res.text())
+        .then((template) => {
+          this.#resultsTemplate = template;
+          this.displayResults(recordings);
+        });
+      return;
+    }
+
+    this.#currentContent = this.#resultsTemplate;
     this.#render();
+
+    // Add the test titles and details
+    this.#loadResultsTitles(recordings);
+    this.#loadResultsGraphs(recordings);
+
+    // Remove the loading component
+    const loadingElement = this.#contentDisplayPane.querySelector("#loading");
+    loadingElement.parentNode.removeChild(loadingElement);
+
+    console.log(results);
   }
 }

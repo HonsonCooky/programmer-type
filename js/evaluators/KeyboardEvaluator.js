@@ -107,7 +107,7 @@ export class KeyboardEvaluator extends EventTarget {
 
   /**@param {KeyboardEvent} ev */
   #navEvaluation(ev) {
-    const key = ev.key.toLowerCase();
+    const key = ev.key;
     this.#running = false;
 
     // Alter Font Size
@@ -212,7 +212,6 @@ export class KeyboardEvaluator extends EventTarget {
   }
 
   #backspace() {
-    console.log("backspace");
     const currentToken = this.#tokens[this.#tokenIndex];
     // Remove indicators
     currentToken.className = "";
@@ -319,6 +318,11 @@ export class KeyboardEvaluator extends EventTarget {
 
   /**@param {KeyboardEvent} ev */
   #testEvaluation(ev) {
+    if (!this.#running) {
+      this.#running = true;
+      this.dispatchEvent(new CustomEvent("start"));
+    }
+
     if (this.#tokens.length === 0) return;
     ev.preventDefault();
 
@@ -407,7 +411,6 @@ export class KeyboardEvaluator extends EventTarget {
   }
 
   reset(usingMouse) {
-    console.log("Eval Reset");
     this.#resetNav();
     if (usingMouse) this.#displayValue.innerHTML = `<div class="error">MOUSE USED!<div>`;
     else this.#resetTest();
@@ -418,14 +421,7 @@ export class KeyboardEvaluator extends EventTarget {
     // Ignore modifier only events
     if (["alt", "control", "meta", "shift"].includes(ev.key.toLowerCase())) return;
 
-    if (this.#isActiveTest()) {
-      if (!this.#running) {
-        this.#running = true;
-        this.dispatchEvent(new CustomEvent("start"));
-      }
-      this.#testEvaluation(ev);
-    } else {
-      this.#navEvaluation(ev);
-    }
+    if (this.#isActiveTest()) this.#testEvaluation(ev);
+    else this.#navEvaluation(ev);
   }
 }

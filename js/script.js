@@ -61,7 +61,7 @@ export class Program {
     this.#content.addEventListener("interrupt", () => this.#timer.interrupt());
     this.#timer.addEventListener("interrupted", () => {
       // Note: Timer resets itself, just need to reload the test, and reset the test state.
-      //this.#content.displayTest();
+      this.#content.displayTest();
       this.#keyEvaluator.reset();
     });
 

@@ -48,7 +48,7 @@ code {
 }
 
 .selected {
-  color: var(--sapphire);
+  color: var(--blue);
 }
 
 .error {
