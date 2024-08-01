@@ -19,6 +19,7 @@ body {
   box-sizing: border-box;
   outline: none;
   border-radius: var(--border);
+  background-color: transparent;
   color: inherit;
   font-weight: inherit;
   font-size: inherit;
@@ -34,11 +35,10 @@ body {
 
 button {
   border: none;
-  background-color: transparent;
   padding: var(--s-3xs) var(--s-s);
 
   &:hover {
-    background-color: var(--crust) !important;
+    background-color: var(--mantle) !important;
   }
 }
 
@@ -77,7 +77,7 @@ code {
     margin: 0;
     background-color: var(--surface);
     padding: 0;
-    accent-color: var(--mauve);
+    accent-color: var(--blue);
   }
 }
 
@@ -91,7 +91,7 @@ code {
 
   &:hover,
   &:focus {
-    background-color: var(--crust);
+    background-color: var(--mantle);
 
     .dropdown-content {
       display: flex;

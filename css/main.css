@@ -17,7 +17,7 @@ main {
     }
 
     .value {
-      color: var(--peach);
+      color: var(--blue);
     }
   }
 
@@ -32,7 +32,7 @@ main {
     padding: var(--s-s) var(--s-m);
 
     &:focus {
-      border-color: var(--base);
+      border-color: transparent;
     }
 
     .line {
@@ -56,7 +56,7 @@ main {
 
     .newline,
     .comment {
-      color: var(--overlay);
+      color: var(--surface);
     }
 
     .selected {

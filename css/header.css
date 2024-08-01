@@ -52,10 +52,6 @@ header {
           right: 0;
         }
       }
-
-      > button {
-        border: var(--border) solid var(--surface);
-      }
     }
   }
 

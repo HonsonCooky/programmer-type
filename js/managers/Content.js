@@ -174,7 +174,7 @@ export class Content extends EventTarget {
       const height = (window.innerHeight / 100) * 40;
       graph.width = width;
       graph.height = height;
-      const ctx = graph.getContext();
+      const ctx = graph.getContext("2d");
       drawAxis({ ctx, width, height });
     }
 
