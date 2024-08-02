@@ -39,7 +39,10 @@ header {
       column-gap: var(--s-m);
       flex-direction: row;
       flex-wrap: wrap;
-      justify-content: center;
+
+      * {
+        flex: 1;
+      }
 
       &:first-of-type {
         .dropdown-content {

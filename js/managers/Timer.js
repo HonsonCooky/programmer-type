@@ -61,8 +61,6 @@ export class Timer extends EventTarget {
       this.#render();
       this.#dispatchTimerEvent("tick");
     }, 1000);
-
-    this.#dispatchTimerEvent("tick");
   }
 
   /** Stop the timer and reset it to the initial duration. */

@@ -360,11 +360,10 @@ export class KeyboardEvaluator extends EventTarget {
    * @param {number} param0.intervalId
    */
 
-  async record({ duration, time, intervalId }) {
+  async record({ duration, time }) {
     this.#testRecordings.push({
       duration,
       time,
-      intervalId,
       correct: this.#correct,
       incorrect: this.#incorrect,
       backspaces: this.#backspaces,

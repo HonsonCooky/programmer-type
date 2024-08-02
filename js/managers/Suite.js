@@ -4,7 +4,6 @@ export class Suite extends EventTarget {
   #dropdown = document.getElementById("_s_suite");
   #options = this.#dropdown.querySelector(".dropdown-content");
   #displayValue = this.#dropdown.querySelector(".current-value");
-  #suiteTypeValue = document.getElementById("suite-value");
 
   constructor() {
     super();
@@ -30,7 +29,6 @@ export class Suite extends EventTarget {
   /**@param {{ name: string; type: string; shortcut: string; }} suite */
   #selectSuite(suite) {
     this.#displayValue.innerText = suite.name;
-    this.#suiteTypeValue.innerText = suite.type;
     Array.from(this.#options.children).forEach((child) => {
       if (child.tagName != "BUTTON") return;
       if (child.innerText.includes(suite.name)) child.classList.add("selected");

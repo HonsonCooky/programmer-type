@@ -6,15 +6,11 @@ main {
   padding: var(--s-s) var(--s-m);
 
   #content-info {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: var(--s-3xl);
+    display: flex;
+    justify-content: center;
+    align-items: center;
     color: var(--subtext);
     font-size: var(--fs-3);
-
-    > div:first-of-type {
-      text-align: end;
-    }
 
     .value {
       color: var(--blue);
