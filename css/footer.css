@@ -3,22 +3,38 @@ footer {
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
-  padding: var(--s-s) var(--s-m);
+  padding: var(--s-xs) var(--s-m);
 
   > * {
     display: flex;
-    column-gap: var(--s-xl);
+    column-gap: var(--s-m);
     flex: 1;
     flex-direction: row;
     align-items: center;
   }
 
+  #key-context {
+    justify-content: center;
+    min-width: 20dvw;
+    white-space: nowrap;
+  }
+
   #info-app {
     justify-content: end;
 
-    > *:last-child {
-      min-width: calc(var(--fs-0) * 6);
-      text-align: right;
+    * {
+      white-space: nowrap;
+    }
+
+    > button {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  @media screen and (max-width: 600px) {
+    #key-context {
+      display: none;
     }
   }
 

@@ -6,15 +6,13 @@ keyboard-only setup. Despite my progress, one persistent challenge has been the 
 layouts.
 
 While there are numerous typing tests available online, I haven't found any that match the finesse of `Monkeytype.com`
-that are tailored for programming. Programming often uses special characters, numbers, etc, and most common layouts do
-not put these keys in easy reach.
+that are tailored for programmers. `ProgrammerType` is designed to be a similar typing test to `Monkeytype`, but with a
+focus on programming and keyboard-based navigation. Instead of words and paragraphs, users will encounter random code
+snippets, navigation challenges, and command sequences. This allows developers to practice and refine their
+keyboard-centric development skills in a realistic and practical context.
 
-`ProgrammerType` is designed to be a similar typing test to `Monkeytype`, but with a focus on programming and
-keyboard-based navigation. Instead of words and paragraphs, users will encounter random code snippets, navigation
-challenges, and command sequences. This allows developers to practice and refine their keyboard-centric development
-skills in a realistic and practical context.
+By integrating real-world programming scenarios and navigation tasks, `ProgrammerType` offers a unique approach to
+typing tests. Whether you’re a seasoned developer looking to optimize your workflow or a beginner aiming to build strong
+keyboard habits, `ProgrammerType` will help you achieve your goals.
 
-By integrating real-world programming scenarios and navigation tasks, `ProgrammerType` offers a unique and practical
-approach to typing tests. Whether you’re a seasoned developer looking to optimize your workflow or a beginner aiming to
-build strong keyboard habits, `ProgrammerType` will help you achieve your goals. Join me in this journey to create a
-more efficient and enjoyable programming experience.
+Read more about the tool in the information segment of the website.

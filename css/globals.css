@@ -55,6 +55,14 @@ code {
   color: var(--red);
 }
 
+.warn {
+  color: var(--peach);
+}
+
+.hide {
+  visibility: hidden;
+}
+
 /* CHECKBOX */
 .checkbox {
   display: flex;
@@ -88,6 +96,7 @@ code {
   flex-direction: column;
   border-radius: var(--border) var(--border) 0 0;
   padding: var(--s-3xs) var(--s-s);
+  height: 100%;
 
   &:hover,
   &:focus {
@@ -101,10 +110,9 @@ code {
   > label {
     display: flex;
     column-gap: var(--s-s);
-    flex-direction: column;
-    justify-content: start;
-    align-items: center;
-    height: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    white-space: nowrap;
 
     .current-value {
       color: var(--subtext);
@@ -116,15 +124,20 @@ code {
     display: none;
     position: absolute;
     top: 100%;
+    right: 0;
+    left: 0;
     flex-direction: column;
     z-index: 1;
-    border: var(--border) solid var(--surface);
+    border: var(--border) solid var(--mantle);
     border-top: none;
     border-radius: 0 0 var(--border) var(--border);
     background-color: var(--base);
     min-width: 100%;
 
     > button {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
       border-radius: 0;
       width: 100%;
       text-align: left;
@@ -136,9 +149,11 @@ code {
       padding: var(--s-xs) 0;
       width: 100%;
       text-align: center;
+      white-space: nowrap;
 
       span {
         vertical-align: top;
+        white-space: nowrap;
       }
     }
   }

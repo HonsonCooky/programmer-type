@@ -13,49 +13,31 @@
     <header>
       <hgroup>
         <h2>Programmer See?</h2>
-        <h1>No; Programmer Type!</h1>
+        <h1>No; ProgrammerType!</h1>
       </hgroup>
       <nav>
-        <!-- Gameplay Settings -->
-        <div>
-          <div class="dropdown" id="_d_duration">
-            <label>
-              <span>[D] Duration &#9013;</span>
-              <span class="current-value">60s</span>
-            </label>
-            <div class="dropdown-content">
-              <button id="_d0_duration-15">[0] 15s</button>
-              <button id="_d1_duration-30">[1] 30s</button>
-              <button id="_d2_duration-60">[2] 60s</button>
-              <button id="_d3_duration-90">[3] 90s</button>
-              <button id="_d4_duration-120">[4] 120s</button>
-              <button id="_d5_duration-infinite">[5] Infinite</button>
-            </div>
-          </div>
-          <div class="dropdown" id="_s_suite">
-            <label>
-              <span>[S] Test Suite &#9013;</span>
-              <span class="current-value"></span>
-            </label>
-            <div class="dropdown-content"></div>
+        <div class="dropdown" id="_d_duration">
+          <label><span>[D] Duration</span><span>&#9013;</span></label>
+          <div class="dropdown-content">
+            <button id="_d0_duration-15">[0] 15s</button>
+            <button id="_d1_duration-30">[1] 30s</button>
+            <button id="_d2_duration-60">[2] 60s</button>
+            <button id="_d3_duration-90">[3] 90s</button>
+            <button id="_d4_duration-120">[4] 120s</button>
+            <button id="_d5_duration-infinite">[5] Infinite</button>
           </div>
         </div>
-
-        <!-- App Settings -->
-        <div>
-          <div class="dropdown" id="_t_theme">
-            <label>
-              <span>[T] Theme &#9013;</span>
-              <span class="current-value">System</span>
-            </label>
-            <div class="dropdown-content">
-              <label><i>Catppuccin</i></label>
-              <button id="_ts_system-theme">[S] System</button>
-              <button id="_tl_light-theme">[L] Light</button>
-              <button id="_td_dark-theme">[D] Dark</button>
-            </div>
+        <div class="dropdown" id="_s_suite" style="min-width: calc(var(--fs-0) * 15)">
+          <label><span>[S] Test Suite</span><span>&#9013;</span></label>
+          <div class="dropdown-content"></div>
+        </div>
+        <div class="dropdown" id="_t_theme">
+          <label><span>[T] Theme</span><span>&#9013;</span></label>
+          <div class="dropdown-content">
+            <button id="_ts_system-theme">[S] System</button>
+            <button id="_tl_light-theme">[L] Light</button>
+            <button id="_td_dark-theme">[D] Dark</button>
           </div>
-          <button id="_i_info">[I] Info &#x1f6c8;</button>
         </div>
       </nav>
     </header>
@@ -65,6 +47,10 @@
         <div id="timer-info">
           <span>Time:</span>
           <span class="value" id="timer-value">_</span>
+        </div>
+        <div id="suite-info">
+          <span id="suite-value">_</span>
+          <span> Suite</span>
         </div>
       </div>
       <div id="_enter_content"></div>
@@ -76,12 +62,13 @@
         <div id="info-creator">HonsonCooky</div>
         <div id="info-version">v1.0.0</div>
       </div>
+      <div id="key-context">*base*</div>
       <div id="info-app">
+        <button id="_i_info">[I] Info &#x1f6c8;</button>
         <label class="checkbox" id="_c_cache">
           <input id="cache-btn" type="checkbox" />
           <label for="cache-btn">[C] Cache</label>
         </label>
-        <div id="key-context">*base*</div>
       </div>
     </footer>
   </body>

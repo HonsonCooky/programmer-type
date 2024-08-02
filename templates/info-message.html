@@ -2,32 +2,25 @@
   <h3>Welcome</h3>
   <p>
     Ever felt like your keyboard is a mysterious artifact from an ancient civilization? Fear not, brave coder!
-    <code>Programmer Type</code> is here to transform you into a keyboard wizard faster than you can say
+    <code>ProgrammerType</code> is here to transform you into a keyboard wizard faster than you can say
     <span class="correct">“Hello, World!”</span> Whether you’re looking to master new keyboard layouts, discover
     shortcuts that make your fingers dance, or simply want to test your programming typing speed, we've got you covered.
-    Say goodbye to the days of hunting and pecking like a lost pigeon and hello to the era of lightning-fast, error-free
-    typing! Join us on this epic quest to conquer the keyboard and become the ultimate typing legend! (Or maybe just
-    reduce your skill issues).
+    Say goodbye to the days of hunting and pecking like a lost pigeon and hello to the era of blazingly-fast, error-free
+    typing! Join us on this epic quest to conquer the keyboard and become the ultimate developer! (Or maybe just reduce
+    your skill issues).
   </p>
 
   <h3>Keyboard Inputs</h3>
   <p>
     This application is designed with context-driven keyboard navigation. Remember to disable Vimium and follow the key
     bindings indicated by braces <code>[X]</code>. Context-driven navigation meaning that when a sub-menu is open, only
-    keys from that menu will be valid for the next inputs; any other key will reset the context. You can view the
-    current key combination in the bottom right corner, where *base* indicates no active context. While the buttons are
-    functional, switching between mouse and keyboard interactions may not provide a seamless experience.
+    keys from that menu will be valid next inputs. You can view the current key context in the center of the footer,
+    where *base* indicates no active context. While the buttons are functional, switching between mouse and keyboard
+    interactions may not provide a seamless experience.
   </p>
   <p>
-    <i>
-      Future Developer Note: This style of keyboard input indicator is very basic. I've implemented "which-key" style
-      navigation before (
-      <a id="_enterb_browser-home" href="https://github.com/HonsonCooky/browser-home" target="_blank">
-        [B] Browser Home
-      </a>
-      ), but it seems a little excessive here as there's at most, two layers to any menu system. Should the need arise,
-      this is an option.
-    </i>
+    The center console (what you're currently looking at) will be highlighted when active (press "Enter"). Below the
+    console will indicate keyboard inputs that are relvant to the console (based on the state it's in).
   </p>
 
   <h3>Suite Types</h3>
@@ -65,7 +58,7 @@
   <h4>Action Suites</h4>
   <p>
     Action challenges are more complicated tests that require you to follow the instructions on screen. This will likely
-    require you to jump to another program or open a new tab. <code>Programmer Type</code> does not track your activity
+    require you to jump to another program or open a new tab. <code>ProgrammerType</code> does not track your activity
     outside of this web application, so completing tasks as instructed will be up to you.
   </p>
   <p>
@@ -79,11 +72,10 @@
 
   <h3>Caching Tests</h3>
   <p>
-    Down the bottom of your screen is a "Cache" checkbox for the local storage of test data. By unchecking this box, you
-    will clear all local storage, and make HTTP requests for every new test. If you tick the checkbox, test files will
-    be stored in local storage upon first contact. If you find yourself constantly hit with a loading screen between
-    tests, or have the storage on your device to reduce requests to the server, consider checking this box to reduce
-    wait times.
+    Down the bottom of your screen is a "Cache" checkbox for the local storage of test data. By checking this tickbox,
+    tests will be cached in local storage after first fetch, and will be loaded from local storage upon seeing it again.
+    Please consider using this option if you have the resources available. By "unchecking" this tickbox, you will clear
+    all local storage (if needed).
   </p>
 
   <h3>Potential Contributors</h3>

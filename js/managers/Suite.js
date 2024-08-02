@@ -3,7 +3,7 @@ import { SuiteDataBase } from "../../db/suites.js";
 export class Suite extends EventTarget {
   #dropdown = document.getElementById("_s_suite");
   #options = this.#dropdown.querySelector(".dropdown-content");
-  #displayValue = this.#dropdown.querySelector(".current-value");
+  #displayValue = document.getElementById("suite-value");
 
   constructor() {
     super();
@@ -13,7 +13,7 @@ export class Suite extends EventTarget {
     suites.forEach((s) => {
       const suiteBtn = document.createElement("button");
       suiteBtn.id = `_s${s.shortcut}_suite-${s.name.toLowerCase()}`;
-      suiteBtn.innerHTML = `[${s.shortcut.toUpperCase()}] ${s.name}<br/>&emsp;&emsp;<i>-${s.type}-</i>`;
+      suiteBtn.innerHTML = `<span>[${s.shortcut.toUpperCase()}] ${s.name}</span><i>${s.type}</i>`;
       suiteBtn.addEventListener("click", () => this.#selectSuite(s));
 
       this.#options.appendChild(suiteBtn);
@@ -28,7 +28,7 @@ export class Suite extends EventTarget {
 
   /**@param {{ name: string; type: string; shortcut: string; }} suite */
   #selectSuite(suite) {
-    this.#displayValue.innerText = suite.name;
+    this.#displayValue.innerHTML = `<span class="value">${suite.name}</span> : <span class="value2">${suite.type}</span>`;
     Array.from(this.#options.children).forEach((child) => {
       if (child.tagName != "BUTTON") return;
       if (child.innerText.includes(suite.name)) child.classList.add("selected");

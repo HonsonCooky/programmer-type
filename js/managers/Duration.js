@@ -2,7 +2,6 @@ export class Duration extends EventTarget {
   // Elements
   #dropdown = document.getElementById("_d_duration");
   #options = this.#dropdown.querySelector(".dropdown-content");
-  #displayValue = this.#dropdown.querySelector(".current-value");
 
   constructor() {
     super();
@@ -36,7 +35,6 @@ export class Duration extends EventTarget {
    */
   #selectDuration(child) {
     const durationLabel = child.innerText.replace(/\[.*\]/, "").trim();
-    this.#displayValue.innerText = durationLabel;
     Array.from(this.#options.children).forEach((child) => {
       if (child.tagName != "BUTTON") return;
       if (child.innerText.includes(durationLabel)) child.classList.add("selected");

@@ -1,0 +1,70 @@
+{
+  "format": 1,
+  "restore": {
+    "C:\\Users\\Honso\\source\\programmer-type\\db\\test-suites\\FSharp\\FSharp.fsproj": {}
+  },
+  "projects": {
+    "C:\\Users\\Honso\\source\\programmer-type\\db\\test-suites\\FSharp\\FSharp.fsproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "C:\\Users\\Honso\\source\\programmer-type\\db\\test-suites\\FSharp\\FSharp.fsproj",
+        "projectName": "FSharp",
+        "projectPath": "C:\\Users\\Honso\\source\\programmer-type\\db\\test-suites\\FSharp\\FSharp.fsproj",
+        "packagesPath": "C:\\Users\\Honso\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Honso\\source\\programmer-type\\db\\test-suites\\FSharp\\obj\\",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "C:\\Users\\Honso\\AppData\\Roaming\\NuGet\\NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "C:\\Users\\Honso\\scoop\\apps\\dotnet-sdk\\current\\sdk\\8.0.303\\FSharp\\library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "FSharp.Core": {
+              "include": "Runtime, Compile, Build, Native, Analyzers, BuildTransitive",
+              "target": "Package",
+              "version": "[8.0.301, )",
+              "generatePathProperty": true
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "C:\\Users\\Honso\\scoop\\apps\\dotnet-sdk\\current\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

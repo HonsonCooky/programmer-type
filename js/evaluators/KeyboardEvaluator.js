@@ -31,7 +31,6 @@ export class KeyboardEvaluator extends EventTarget {
   // Nav Items
   /**@type {string[]}*/
   #keySeq = [];
-  #fontSize = 1;
   #selectedElement = document.activeElement;
 
   // Test Items
@@ -60,15 +59,15 @@ export class KeyboardEvaluator extends EventTarget {
         return;
       }
 
-      this.#contextDisplayText.innerText = "[Escape] Unfocus, [j] Scroll Down, [k] Scroll Up, [r] Reload Test";
+      this.#contextDisplayText.innerText = "[Escape] Unfocus, [j] Scroll Down, [k] Scroll Up";
       this.#keySeq = ["enter"];
     });
 
     this.#contentDisplayPane.addEventListener("focusout", () => {
-      this.#contextDisplayText.innerText = "[Enter] Focus, [r] Reload Test";
+      this.#contextDisplayText.innerText = "[Enter] Focus, [Ctrl + d] Next Test, [Ctrl + u] Prev Results";
     });
 
-    this.#contextDisplayText.innerText = "[Enter] Focus, [r] Reload Test";
+    this.#contextDisplayText.innerText = "[Enter] Focus, [Ctrl + d] Next Test, [Ctrl + u] Prev Results";
     this.#renderNav();
   }
 
@@ -90,7 +89,6 @@ export class KeyboardEvaluator extends EventTarget {
 
   #renderNav() {
     this.#displayValue.innerText = this.#keySeq.length > 0 ? this.#keySeq.join("-") : "*base*";
-    this.#contentDisplayPane.style.fontSize = `var(--fs-${this.#fontSize})`;
   }
 
   #resetNav() {
@@ -110,33 +108,10 @@ export class KeyboardEvaluator extends EventTarget {
     const key = ev.key;
     this.#running = false;
 
-    // Alter Font Size
-    if (ev.ctrlKey) {
-      if (key === "+" || key === "=") {
-        ev.preventDefault();
-        this.#fontSize = Math.max(-2, Math.min(this.#fontSize + 1, 5));
-        this.#renderNav();
-        return;
-      }
-      if (key === "-" || key === "_") {
-        ev.preventDefault();
-        this.#fontSize = Math.max(-2, Math.min(this.#fontSize - 1, 5));
-        this.#renderNav();
-        return;
-      }
-    }
-
     // Escape navigation context
     if (key === "Escape") {
       ev.preventDefault();
       this.#resetNav();
-      return;
-    }
-
-    if (key === "r") {
-      ev.preventDefault();
-      this.#resetNav();
-      this.dispatchEvent(new CustomEvent("reload"));
       return;
     }
 
@@ -148,6 +123,22 @@ export class KeyboardEvaluator extends EventTarget {
         this.#contentDisplayPane.scrollBy({ top: -50 });
       }
       return;
+    }
+
+    if (ev.ctrlKey) {
+      if (key === "d") {
+        ev.preventDefault();
+        this.#resetNav();
+        this.dispatchEvent(new CustomEvent("reloadTest"));
+        return;
+      }
+
+      if (key === "u") {
+        ev.preventDefault();
+        this.#resetNav();
+        this.dispatchEvent(new CustomEvent("reloadResult"));
+        return;
+      }
     }
 
     // Hovered Dropdowns in base case
@@ -202,7 +193,7 @@ export class KeyboardEvaluator extends EventTarget {
   #highlightCurrentToken() {
     if (this.#tokenIndex >= this.#tokens.length && this.#tokens.length > 0) {
       this.#testNumber++;
-      this.dispatchEvent(new CustomEvent("reload"));
+      this.dispatchEvent(new CustomEvent("reloadTest"));
       return;
     }
 
@@ -329,15 +320,25 @@ export class KeyboardEvaluator extends EventTarget {
     // Command Mechanics
     if (this.#commandPrimed) {
       if (ev.key === "q") {
-        this.#resetNav();
         this.dispatchEvent(new Event("quit"));
         return;
       }
       // TODO: Remove on publish - Cheat to finish test quickly
-      if (ev.key === "~") {
-        this.#tokens.slice(0, -2).forEach((e) => (e.className = "correct"));
-        this.#tokenIndex = this.#tokens.length - 2;
-        this.#correct += this.#tokenIndex;
+      if (ev.key === "f") {
+        const duration = this.#testRecordings[0]?.duration ?? 30;
+        this.#testRecordings = [];
+        for (let i = 0; i < duration; i++) {
+          this.#testRecordings.push({
+            duration,
+            time: i,
+            correct: Math.floor(Math.random() * 30),
+            incorrect: Math.floor(Math.random() * 3),
+            backspaces: Math.floor(Math.random() * 10),
+            testNumber: i % (duration - 10),
+          });
+        }
+
+        this.dispatchEvent(new Event("quit"));
         return;
       }
     }

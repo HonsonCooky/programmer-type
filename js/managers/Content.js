@@ -5,14 +5,19 @@ export class Content extends EventTarget {
   // Elements
   #contentDisplayPane = document.getElementById("_enter_content");
   #infoDisplayBtn = document.getElementById("_i_info");
+  #contentInfo = document.getElementById("content-info");
 
   // Cached Templates
   #infoTemplate;
   #resultsTemplate;
 
+  // State Values
+  #isResultsScreen = false;
+  #currentContent = "";
   /**@type {{name: string; type: string; seenTests:string[]}|null}*/
   #suite;
-  #currentContent = "";
+  /**@type {import("../evaluators/KeyboardEvaluator.js").TestRecording[]}*/
+  #recordings = [];
 
   constructor() {
     super();
@@ -49,12 +54,15 @@ export class Content extends EventTarget {
   #displayInfoMessage() {
     const isInfoShowing = !!this.#contentDisplayPane.querySelector("#info-message");
     if (isInfoShowing) {
-      this.displayTest();
-      return;
+      if (this.#isResultsScreen) return this.displayResults(this.#recordings);
+      return this.displayTest(this.#suite);
     }
 
     this.#loading();
     this.dispatchEvent(new CustomEvent("interrupt"));
+
+    this.#contentInfo.className = "hide";
+
     if (!this.#infoTemplate) {
       fetch("../../templates/info-message.html")
         .then((res) => res.text())
@@ -151,19 +159,10 @@ export class Content extends EventTarget {
   //-------------------------------------------------------------------------------------------------------------------
 
   /** @param {import("../evaluators/KeyboardEvaluator.js").TestRecording[]} recordings*/
-  #loadResultsTitles(recordings) {
-    const suiteName = this.#contentDisplayPane.querySelector("#result-suite-name");
-    suiteName.innerText = this.#suite.name;
-    const suiteType = this.#contentDisplayPane.querySelector("#result-suite-type");
-    suiteType.innerText = this.#suite.type;
-    const testDuration = this.#contentDisplayPane.querySelector("#result-duration");
-    testDuration.innerText = recordings[0].duration ? `${recordings[0].duration}s` : "Infinite";
-  }
-
-  /** @param {import("../evaluators/KeyboardEvaluator.js").TestRecording[]} recordings*/
   #loadResultsGraphs(recordings) {
     // Create a canvas for the graph
-    const resultsDiv = this.#contentDisplayPane.querySelector("#results");
+    const resultsDiv = this.#contentDisplayPane.querySelector("#result-canvas-sheet");
+    resultsDiv.innerHTML = "";
     const graph = ResEval.generateGraph(resultsDiv, recordings);
     resultsDiv.appendChild(graph);
   }
@@ -183,7 +182,10 @@ export class Content extends EventTarget {
     if (suite) this.#suite = { name: suite.name, type: suite.type };
     if (!this.#suite) return;
 
+    this.#isResultsScreen = false;
+
     this.#loading();
+    this.#contentInfo.className = "";
     SuiteDataBase.getNextTest(this.#suite.name)
       .then((fileContents) => {
         if (this.#suite.type === "Action") this.#loadActionTestHTML(fileContents);
@@ -205,15 +207,18 @@ export class Content extends EventTarget {
    * @param {import("../evaluators/KeyboardEvaluator.js").TestRecording[]} recordings
    */
   displayResults(recordings) {
+    if (!recordings) recordings = this.#recordings;
+
     if (recordings.length === 0) {
-      this.#currentContent = `<div class="screen">No test recordings</div>`;
-      this.#render();
+      this.displayTest();
       return;
     }
 
+    this.#recordings = recordings;
+    this.#isResultsScreen = true;
+
     this.#loading();
-    this.#contentDisplayPane.tabIndex = -1;
-    this.#contentDisplayPane.focus();
+    this.#contentInfo.className = "hide";
 
     if (!this.#resultsTemplate) {
       fetch("../../templates/results-sheet.html")
@@ -228,9 +233,8 @@ export class Content extends EventTarget {
     this.#currentContent = this.#resultsTemplate;
     this.#render();
 
-    // Add the test titles and details
-    this.#loadResultsTitles(recordings);
     this.#loadResultsGraphs(recordings);
+    window.addEventListener("resize", () => this.#loadResultsGraphs(recordings));
 
     // Remove the loading component
     const loadingElement = this.#contentDisplayPane.querySelector("#loading");

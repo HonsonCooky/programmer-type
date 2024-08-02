@@ -9,8 +9,7 @@ header {
   hgroup {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
 
     h1 {
       margin: 0;
@@ -30,31 +29,18 @@ header {
   nav {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
+    background-color: var(--surface);
+    padding: var(--s-3xs);
     width: 100%;
 
     > div {
-      display: flex;
-      column-gap: var(--s-m);
-      flex-direction: row;
-      flex-wrap: wrap;
+      flex: 1;
+    }
 
-      * {
-        flex: 1;
-      }
-
-      &:first-of-type {
-        .dropdown-content {
-          left: 0;
-        }
-      }
-
-      &:last-of-type {
-        .dropdown-content {
-          right: 0;
-        }
-      }
+    > div:nth-of-type(2) {
+      flex: 3;
     }
   }
 

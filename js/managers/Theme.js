@@ -1,36 +1,31 @@
 export class Theme extends EventTarget {
   #dropdown = document.getElementById("_t_theme");
   #options = this.#dropdown.querySelector(".dropdown-content");
-  #displayValue = this.#dropdown.querySelector(".current-value");
 
   // HTML values
   #themeAttrTag = "theme";
   #isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-  #labelValue = this.#displayValue.innerText;
 
   constructor() {
     super();
 
     // Set default theme
-    this.#render();
+    this.#selectTheme("System");
 
     // Setup theme switching buttons (only three, no need for a loop)
     document.getElementById("_ts_system-theme").addEventListener("click", () => {
       this.#isDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      this.#labelValue = "System";
-      this.#render();
+      this.#selectTheme("System");
     });
 
     document.getElementById("_tl_light-theme").addEventListener("click", () => {
       this.#isDark = false;
-      this.#labelValue = "Light";
-      this.#render();
+      this.#selectTheme("Light");
     });
 
     document.getElementById("_td_dark-theme").addEventListener("click", () => {
       this.#isDark = true;
-      this.#labelValue = "Dark";
-      this.#render();
+      this.#selectTheme("Dark");
     });
   }
 
@@ -39,15 +34,11 @@ export class Theme extends EventTarget {
     return this.#isDark ? "dark" : "light";
   }
 
-  #render() {
-    // Set the theme for CSS
+  #selectTheme(selectedTheme) {
     document.documentElement.setAttribute(this.#themeAttrTag, this.#getCssValue());
-
-    // Update display value and selected item
-    this.#displayValue.innerText = this.#labelValue;
     Array.from(this.#options.children).forEach((child) => {
       if (child.tagName != "BUTTON") return;
-      if (child.innerText.includes(this.#labelValue)) child.classList.add("selected");
+      if (child.innerText.includes(selectedTheme)) child.classList.add("selected");
       else child.classList.remove("selected");
     });
 

@@ -25,13 +25,14 @@ export class Program {
     // Evaluator - Quit Test
     this.#keyEvaluator.addEventListener("quit", () => this.#timer.stop());
     // Evaluator - Reload Test
-    this.#keyEvaluator.addEventListener("reload", () => this.#content.displayTest());
+    this.#keyEvaluator.addEventListener("reloadTest", () => this.#content.displayTest());
+    // Evaluator - Reload Previous Results
+    this.#keyEvaluator.addEventListener("reloadResult", () => this.#content.displayResults());
 
     // NavBar - Duration Update -> Set Timer
     this.#duration.addEventListener("updated", (ev) => {
       const { duration } = ev.detail ?? {};
       if (duration === undefined) throw Error(`Missing duration update event information`);
-      this.#content.displayTest();
       this.#timer.prime(ev.detail.duration); // This will interrupt a running timer.
     });
 

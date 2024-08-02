@@ -40,18 +40,12 @@ class ResultsEvaluator {
     const labels = [...Array(recordings[0].duration).keys()];
     const datasets = [];
 
-    // Overall performance
-    const overallData = Object.values(sanitizedData)
-      .map((tr) => tr.timeDiffs)
-      .flat()
-      .map((td) => td.correct - (td.incorrect - td.backspaces));
-
-    datasets.push({
-      label: "Overall",
-      data: overallData,
-      backgroundColor: textColor,
-      borderColor: textColor,
-    });
+    //datasets.push({
+    //  label: "Overall",
+    //  data: overallData,
+    //  backgroundColor: textColor,
+    //  borderColor: textColor,
+    //});
 
     new Chart(canvas, {
       type: "line",
