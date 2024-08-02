@@ -5,7 +5,6 @@ export class Content extends EventTarget {
   // Elements
   #contentDisplayPane = document.getElementById("_enter_content");
   #infoDisplayBtn = document.getElementById("_i_info");
-  #contentInfo = document.getElementById("content-info");
 
   // Cached Templates
   #infoTemplate;
@@ -61,8 +60,6 @@ export class Content extends EventTarget {
     this.#loading();
     this.dispatchEvent(new CustomEvent("interrupt"));
 
-    this.#contentInfo.className = "hide";
-
     if (!this.#infoTemplate) {
       fetch("../../templates/info-message.html")
         .then((res) => res.text())
@@ -104,9 +101,13 @@ export class Content extends EventTarget {
 
       // If the user requires come action.
       if (action && content && keybind) {
-        const inputStrs = keybind.split("").map((k) => `<span line="${i}">${k}</span>`);
-        const inputDivAttrs = `class="line" action="${action}" content="${content.join("\\n")}"`;
-        inputDiv = `<div ${inputDivAttrs}>${inputStrs.join("")}</div>`;
+        const inputStrs = keybind.split("").map((k, j, keys) => {
+          let extras = "";
+          if (j === keys.length - 1) extras = `action="${action}" content="${content.join("\n")}"`;
+          return `<span line="${i}" ${extras}>${k}</span>`;
+        });
+        inputStrs.push(`<span class="message hide incorrect">Incorrect</span>`);
+        inputDiv = `<div class="line input">${inputStrs.join("")}</div>`;
       }
 
       return `${commentStrs.join("")}${inputDiv}${nlLine}`;
@@ -185,7 +186,6 @@ export class Content extends EventTarget {
     this.#isResultsScreen = false;
 
     this.#loading();
-    this.#contentInfo.className = "";
     SuiteDataBase.getNextTest(this.#suite.name)
       .then((fileContents) => {
         if (this.#suite.type === "Action") this.#loadActionTestHTML(fileContents);
@@ -218,7 +218,6 @@ export class Content extends EventTarget {
     this.#isResultsScreen = true;
 
     this.#loading();
-    this.#contentInfo.className = "hide";
 
     if (!this.#resultsTemplate) {
       fetch("../../templates/results-sheet.html")
@@ -234,7 +233,9 @@ export class Content extends EventTarget {
     this.#render();
 
     this.#loadResultsGraphs(recordings);
-    window.addEventListener("resize", () => this.#loadResultsGraphs(recordings));
+    window.addEventListener("resize", () => {
+      if (this.#contentDisplayPane.querySelector("#result-canvas-sheet")) this.#loadResultsGraphs(recordings);
+    });
 
     // Remove the loading component
     const loadingElement = this.#contentDisplayPane.querySelector("#loading");

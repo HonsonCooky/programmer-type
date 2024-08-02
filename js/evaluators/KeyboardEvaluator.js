@@ -36,6 +36,7 @@ export class KeyboardEvaluator extends EventTarget {
   // Test Items
   #commandPrimed = false;
   #running = false;
+  #locked = false;
   #tokenIndex = 0;
   /**@type {import("../../db/suites").SuiteType|undefined} */
   #tokensType;
@@ -212,17 +213,24 @@ export class KeyboardEvaluator extends EventTarget {
     this.#backspaces++;
   }
 
-  #resetLine(ln) {
+  #resetLine(ln, errMsg = "") {
     const lineElements = this.#tokens.filter((e) => e.getAttribute("line") === ln);
+    const parent = lineElements[0].parentElement;
 
     let len = lineElements.findIndex((e) => e.className === "");
     if (len < 0) len = lineElements.length;
+    len--;
+    console.log(len);
     for (let i = 0; i < len; i++) this.#backspace();
 
-    lineElements.forEach((e) => {
-      e.className = "incorrect";
-      setTimeout(() => (e.className = e.className === "incorrect" ? "" : e.className), 200);
-    });
+    const msg = parent.querySelector(".message");
+    if (msg) {
+      if (errMsg.length > 0) msg.innerText = errMsg;
+      else msg.innerText = "Incorrect";
+
+      msg.classList.remove("hide");
+      setTimeout(() => msg.classList.add("hide"), 500);
+    }
   }
 
   #controlBackspace() {
@@ -237,28 +245,57 @@ export class KeyboardEvaluator extends EventTarget {
     }
   }
 
-  /**@param {string} msg */
-  #updateLineMessage(msg) {}
-
-  /**@param {string} content */
-  #copyText(content) {
-    navigator.clipboard.writeText(content).catch(() => {});
+  #correctActionInput() {
+    const currentToken = this.#tokens[this.#tokenIndex];
+    currentToken.className = "correct";
+    this.#tokenIndex++;
+    this.#highlightCurrentToken();
   }
 
   /**@param {string} content */
-  #pasteText(content) {}
+  #copyText(content, ln) {
+    navigator.clipboard
+      .writeText(content)
+      .then(() => this.#correctActionInput())
+      .catch(() => {
+        this.#resetLine(ln, "Unable to copy to clipboard");
+      })
+      .finally(() => (this.#locked = false));
+    return "copying";
+  }
 
-  async #actionInterpreter(currentToken) {
+  /**@param {string} content */
+  #pasteText(content, ln) {
+    const sanitizedContent = content.replaceAll(/\s/g, "");
+
+    navigator.clipboard
+      .readText()
+      .then((input) => {
+        const sanitizedInput = input.replaceAll(/\s/g, "");
+        if (sanitizedContent != sanitizedInput) {
+          this.#resetLine(ln, "Incorrect Pasted Text");
+          return;
+        }
+        this.#correctActionInput();
+      })
+      .catch(() => this.#resetLine(ln, "Unable to read from clipboard"))
+      .finally(() => (this.#locked = false));
+    return "pasting";
+  }
+
+  /**@param {Element} currentToken */
+  #actionInterpreter(currentToken) {
     const action = currentToken.getAttribute("action");
     const content = currentToken.getAttribute("content");
+    const ln = currentToken.getAttribute("line");
 
     if (!action) return undefined;
 
     switch (action) {
       case "copy":
-        return this.#copyText(content);
+        return this.#copyText(content, ln);
       case "paste":
-        return this.#pasteText(content);
+        return this.#pasteText(content, ln);
     }
   }
 
@@ -281,7 +318,11 @@ export class KeyboardEvaluator extends EventTarget {
       return;
     }
 
-    this.#actionInterpreter(currentToken);
+    const action = this.#actionInterpreter(currentToken);
+    if (action) {
+      this.#locked = true;
+      this.#tokenIndex--;
+    }
   }
 
   /**@param {KeyboardEvent} ev */
@@ -388,9 +429,10 @@ export class KeyboardEvaluator extends EventTarget {
     this.#tokensType = "Action";
     this.#tokenIndex = 0;
     this.#tokens = Array.from(testDiv.children)
-      .filter((line) => !!line.getAttribute("action")) // Only interested in actionable components.
+      .filter((line) => line.classList.contains("input")) // Only interested in actionable components.
       .map((line) => Array.from(line.children))
-      .flat();
+      .flat()
+      .filter((char) => !char.classList.contains("message"));
     this.#highlightCurrentToken();
   }
 
@@ -420,6 +462,8 @@ export class KeyboardEvaluator extends EventTarget {
   keydown(ev) {
     // Ignore modifier only events
     if (["alt", "control", "meta", "shift"].includes(ev.key.toLowerCase())) return;
+
+    if (this.#locked) return;
 
     if (this.#isActiveTest()) this.#testEvaluation(ev);
     else this.#navEvaluation(ev);
