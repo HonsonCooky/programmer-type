@@ -144,8 +144,32 @@ main {
   display: flex;
   flex-direction: column;
 
-  canvas {
-    background-color: var(--mantle);
+  #result-suite-info {
+    display: flex;
+    flex-direction: row;
+
+    > hgroup {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 15%;
+
+      h3 {
+        margin: 0;
+        font-weight: bold;
+        font-size: var(--fs-4);
+      }
+
+      span {
+        margin: 0;
+        font-weight: lighter;
+        font-size: var(--fs-4);
+      }
+    }
+
+    > div {
+      width: 80%;
+    }
   }
 
   #info-panel {

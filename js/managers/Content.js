@@ -28,6 +28,10 @@ export class Content extends EventTarget {
     });
 
     this.#infoDisplayBtn.addEventListener("click", () => this.#displayInfoMessage());
+
+    window.addEventListener("resize", () => {
+      if (this.#contentDisplayPane.querySelector("#result-canvas-sheet")) this.#loadResultsGraphs(this.#recordings);
+    });
   }
 
   //-------------------------------------------------------------------------------------------------------------------
@@ -233,9 +237,6 @@ export class Content extends EventTarget {
     this.#render();
 
     this.#loadResultsGraphs(recordings);
-    window.addEventListener("resize", () => {
-      if (this.#contentDisplayPane.querySelector("#result-canvas-sheet")) this.#loadResultsGraphs(recordings);
-    });
 
     // Remove the loading component
     const loadingElement = this.#contentDisplayPane.querySelector("#loading");

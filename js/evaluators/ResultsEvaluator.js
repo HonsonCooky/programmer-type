@@ -40,18 +40,23 @@ class ResultsEvaluator {
     const labels = [...Array(recordings[0].duration).keys()];
     const datasets = [];
 
-    //datasets.push({
-    //  label: "Overall",
-    //  data: overallData,
-    //  backgroundColor: textColor,
-    //  borderColor: textColor,
-    //});
+    datasets.push({
+      label: "Overall",
+      data: recordings.map((rec) => rec.correct),
+      backgroundColor: textColor,
+      borderColor: textColor,
+    });
 
     new Chart(canvas, {
       type: "line",
       data: {
         labels,
         datasets,
+      },
+      options: {
+        animation: {
+          duration: 0,
+        },
       },
     });
 

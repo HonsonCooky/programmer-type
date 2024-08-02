@@ -119,11 +119,12 @@ export class KeyboardEvaluator extends EventTarget {
     if (document.activeElement === this.#contentDisplayPane) {
       if (key === "j") {
         this.#contentDisplayPane.scrollBy({ top: 50 });
+        return;
       }
       if (key === "k") {
         this.#contentDisplayPane.scrollBy({ top: -50 });
+        return;
       }
-      return;
     }
 
     if (ev.ctrlKey) {
@@ -165,8 +166,8 @@ export class KeyboardEvaluator extends EventTarget {
       this.#selectedElement.tabIndex = -1;
       this.#selectedElement.focus();
     } else {
-      this.#resetNav();
       this.#selectedElement.click();
+      this.#resetNav();
     }
 
     this.#renderNav();
