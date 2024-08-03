@@ -1,12 +1,11 @@
 /**
  * @typedef {{
- *   duration: number;
- *   time: number;
+ *   timestamp: number;
  *   intervalId: number;
  *   correct: number;
  *   incorrect: number;
  *   backspaces: number;
- *   testNumber: number;
+ *   test: number;
  * }} TestRecording
  */
 
@@ -367,16 +366,14 @@ export class KeyboardEvaluator extends EventTarget {
       }
       // TODO: Remove on publish - Cheat to finish test quickly
       if (ev.key === "f") {
-        const duration = this.#testRecordings[0]?.duration ?? 30;
         this.#testRecordings = [];
-        for (let i = 0; i < duration; i++) {
+        for (let i = 0; i < Math.floor(Math.random() * 20) + 10; i++) {
           this.#testRecordings.push({
-            duration,
-            time: i,
-            correct: Math.floor(Math.random() * 30),
+            timestamp: i,
+            correct: Math.floor(Math.random() * 10),
             incorrect: Math.floor(Math.random() * 3),
-            backspaces: Math.floor(Math.random() * 10),
-            testNumber: i % (duration - 10),
+            backspaces: Math.floor(Math.random() * 3),
+            test: i % 20,
           });
         }
 
@@ -403,15 +400,18 @@ export class KeyboardEvaluator extends EventTarget {
    * @param {number} param0.intervalId
    */
 
-  async record({ duration, time }) {
+  record({ duration, time }) {
     this.#testRecordings.push({
-      duration,
-      time,
+      timestamp: duration - time,
       correct: this.#correct,
       incorrect: this.#incorrect,
       backspaces: this.#backspaces,
-      testNumber: this.#testNumber,
+      test: this.#testNumber,
     });
+
+    this.#correct = 0;
+    this.#incorrect = 0;
+    this.#backspaces = 0;
   }
 
   /**@returns {TestRecording[]}*/

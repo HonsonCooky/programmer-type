@@ -168,8 +168,7 @@ export class Content extends EventTarget {
     // Create a canvas for the graph
     const resultsDiv = this.#contentDisplayPane.querySelector("#result-canvas-sheet");
     resultsDiv.innerHTML = "";
-    const graph = ResEval.generateGraph(resultsDiv, recordings);
-    resultsDiv.appendChild(graph);
+    resultsDiv.appendChild();
   }
 
   //-------------------------------------------------------------------------------------------------------------------
@@ -213,8 +212,9 @@ export class Content extends EventTarget {
   displayResults(recordings) {
     if (!recordings) recordings = this.#recordings;
 
-    if (recordings.length === 0) {
-      this.displayTest();
+    if (recordings.length < 2) {
+      this.#currentContent = `<div class="screen">No Results</div>`;
+      this.#render();
       return;
     }
 
@@ -236,10 +236,6 @@ export class Content extends EventTarget {
     this.#currentContent = this.#resultsTemplate;
     this.#render();
 
-    this.#loadResultsGraphs(recordings);
-
-    // Remove the loading component
-    const loadingElement = this.#contentDisplayPane.querySelector("#loading");
-    loadingElement.parentNode.removeChild(loadingElement);
+    ResEval.loadResults(recordings);
   }
 }

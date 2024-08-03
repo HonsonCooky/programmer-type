@@ -26,6 +26,7 @@ main {
     border-bottom: var(--border) solid var(--surface);
     width: 100%;
     height: 50dvh;
+    min-height: 500px;
     overflow-y: auto;
     scroll-snap-type-y: mandatory;
     margin: var(--s-xs) 0;
@@ -142,17 +143,21 @@ main {
 
 #results {
   display: flex;
+  row-gap: var(--s-m);
   flex-direction: column;
+  height: 100%;
 
   #result-suite-info {
     display: flex;
+    column-gap: var(--s-m);
     flex-direction: row;
+    min-height: 60%;
 
     > hgroup {
       display: flex;
+      flex: 1;
       flex-direction: column;
       justify-content: center;
-      width: 15%;
 
       h3 {
         margin: 0;
@@ -168,7 +173,12 @@ main {
     }
 
     > div {
-      width: 80%;
+      flex: 5;
+    }
+
+    #result-canvas-sheet {
+      background-color: var(--surface);
+      padding: var(--s-3xs);
     }
   }
 
@@ -182,9 +192,6 @@ main {
       display: flex;
       flex: 1;
       flex-direction: row;
-
-      @media screen and (max-width: 300px) {
-      }
     }
   }
 }
