@@ -1,0 +1,26 @@
+nav {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  background: var(--mantle);
+  padding: var(--s-s) var(--s-m);
+
+  > h1 {
+    margin: 0;
+    font-size: var(--fs-5);
+  }
+
+  > div {
+    display: flex;
+    column-gap: var(--s-s);
+    flex-direction: row;
+    align-items: end;
+    font-size: var(--fs-0);
+  }
+
+  @media screen and (min-width: 1440px) {
+    padding: var(--s-s) calc(((100dvw - 1440px) / 2) + var(--s-m));
+  }
+}

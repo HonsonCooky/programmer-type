@@ -32,6 +32,7 @@ body {
 }
 
 button {
+  cursor: pointer;
   border: none;
 }
 
@@ -67,9 +68,12 @@ code {
 /* DROPDOWN */
 .dropdown {
   position: relative;
+  cursor: pointer;
 
   > .dropdown-content {
     display: none;
+    position: absolute;
+    top: 100%;
   }
 
   &:hover,
