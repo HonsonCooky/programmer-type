@@ -6,8 +6,6 @@ html {
 }
 
 body {
-  display: flex;
-  flex-direction: column;
   margin: 0;
   background: var(--base);
   min-height: 100dvh;
@@ -35,28 +33,12 @@ body {
 
 button {
   border: none;
-  padding: var(--s-3xs) var(--s-s);
-
-  &:hover {
-    background-color: var(--mantle) !important;
-  }
 }
 
 code {
-  background: var(--surface);
-  padding: 2px var(--s-3xs);
-}
-
-.selected {
-  color: var(--blue);
-}
-
-.error {
-  color: var(--red);
-}
-
-.warn {
-  color: var(--peach);
+  border: var(--border) solid var(--overlay);
+  background: var(--mantle);
+  padding: 0 var(--s-3xs);
 }
 
 .hide {
@@ -65,96 +47,35 @@ code {
 
 /* CHECKBOX */
 .checkbox {
-  display: flex;
-  column-gap: var(--s-2xs);
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
   cursor: pointer;
 
   * {
     cursor: pointer;
   }
 
-  label {
+  > label {
     user-select: none;
     white-space: nowrap;
   }
 
   > input {
-    margin: 0;
     background-color: var(--surface);
-    padding: 0;
     accent-color: var(--blue);
   }
 }
 
 /* DROPDOWN */
 .dropdown {
-  display: flex;
   position: relative;
-  flex-direction: column;
-  border-radius: var(--border) var(--border) 0 0;
-  padding: var(--s-3xs) var(--s-s);
-  height: 100%;
-
-  &:hover,
-  &:focus {
-    background-color: var(--mantle);
-
-    .dropdown-content {
-      display: flex;
-    }
-  }
-
-  > label {
-    display: flex;
-    column-gap: var(--s-s);
-    flex-direction: row;
-    justify-content: space-between;
-    white-space: nowrap;
-
-    .current-value {
-      color: var(--subtext);
-      text-decoration: underline;
-    }
-  }
 
   > .dropdown-content {
     display: none;
-    position: absolute;
-    top: 100%;
-    right: 0;
-    left: 0;
-    flex-direction: column;
-    z-index: 1;
-    border: var(--border) solid var(--mantle);
-    border-top: none;
-    border-radius: 0 0 var(--border) var(--border);
-    background-color: var(--base);
-    min-width: 100%;
+  }
 
-    > button {
+  &:hover,
+  &:focus {
+    > .dropdown-content {
       display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      border-radius: 0;
-      width: 100%;
-      text-align: left;
-      white-space: nowrap;
-    }
-
-    > label {
-      border-radius: 0;
-      padding: var(--s-xs) 0;
-      width: 100%;
-      text-align: center;
-      white-space: nowrap;
-
-      span {
-        vertical-align: top;
-        white-space: nowrap;
-      }
     }
   }
 }

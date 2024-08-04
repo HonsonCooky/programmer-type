@@ -38,8 +38,8 @@ export class Theme extends EventTarget {
     document.documentElement.setAttribute(this.#themeAttrTag, this.#getCssValue());
     Array.from(this.#options.children).forEach((child) => {
       if (child.tagName != "BUTTON") return;
-      if (child.innerText.includes(selectedTheme)) child.classList.add("selected");
-      else child.classList.remove("selected");
+      if (child.innerText.includes(selectedTheme)) child.className = "selected";
+      else child.className = "";
     });
 
     // Currently, completely unnecessary, but builtin just incase it's needed.

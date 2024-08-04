@@ -216,7 +216,7 @@ export class KeyboardEvaluator extends EventTarget {
     this.#backspaces++;
   }
 
-  #resetLine(ln, errMsg = "") {
+  #resetLine(ln, errMsg = "Incorrect") {
     const lineElements = this.#tokens.filter((e) => e.getAttribute("line") === ln);
     const parent = lineElements[0].parentElement;
 
@@ -226,13 +226,11 @@ export class KeyboardEvaluator extends EventTarget {
     console.log(len);
     for (let i = 0; i < len; i++) this.#backspace();
 
-    const msg = parent.querySelector(".message");
+    const msg = parent.querySelector(".hmessage");
     if (msg) {
-      if (errMsg.length > 0) msg.innerText = errMsg;
-      else msg.innerText = "Incorrect";
-
-      msg.classList.remove("hide");
-      setTimeout(() => msg.classList.add("hide"), 500);
+      msg.innerText = errMsg;
+      msg.classList.add("show");
+      setTimeout(() => msg.classList.remove("show"), 500);
     }
   }
 
@@ -345,7 +343,7 @@ export class KeyboardEvaluator extends EventTarget {
       currentToken.className = "correct";
       this.#correct++;
     } else {
-      currentToken.className = char === " " ? "incorrect-space" : "incorrect";
+      currentToken.className = char === " " ? "sincorrect" : "incorrect";
       this.#incorrect++;
     }
     this.#tokenIndex++;
@@ -448,7 +446,7 @@ export class KeyboardEvaluator extends EventTarget {
       .filter((line) => line.classList.contains("input")) // Only interested in input components for evaluation.
       .map((line) => Array.from(line.children))
       .flat()
-      .filter((char) => !char.classList.contains("message"));
+      .filter((char) => !char.classList.contains("hmessage"));
     this.#highlightCurrentToken();
   }
 

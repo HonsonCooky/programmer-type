@@ -1,50 +1,5 @@
 header {
-  display: flex;
-  row-gap: var(--s-s);
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   padding: var(--s-s) var(--s-m);
-
-  hgroup {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-
-    h1 {
-      margin: 0;
-      color: var(--blue);
-      font-weight: 300;
-      font-size: var(--fs-5);
-    }
-
-    h2 {
-      margin: 0;
-      color: var(--yellow);
-      font-weight: bold;
-      font-size: var(--fs-2);
-    }
-  }
-
-  nav {
-    display: flex;
-    column-gap: var(--s-m);
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    background-color: var(--surface);
-    padding: var(--s-3xs);
-    width: 100%;
-
-    > div {
-      flex: 1;
-    }
-
-    > div:nth-of-type(2) {
-      flex: 3;
-    }
-  }
-
   @media screen and (min-width: 1440px) {
     padding: var(--s-s) calc(((100dvw - 1440px) / 2) + var(--s-m));
   }

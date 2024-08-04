@@ -28,11 +28,11 @@ export class Suite extends EventTarget {
 
   /**@param {{ name: string; type: string; shortcut: string; }} suite */
   #selectSuite(suite) {
-    this.#displayValue.innerHTML = `<span class="value">${suite.name}</span> : <span class="value2">${suite.type}</span>`;
+    this.#displayValue.innerHTML = `<span>${suite.name}</span> : <span>${suite.type}</span>`;
     Array.from(this.#options.children).forEach((child) => {
       if (child.tagName != "BUTTON") return;
-      if (child.innerText.includes(suite.name)) child.classList.add("selected");
-      else child.classList.remove("selected");
+      if (child.innerText.includes(suite.name)) child.className = "selected";
+      else child.className = "";
     });
     this.dispatchEvent(new CustomEvent("updated", { detail: suite }));
   }

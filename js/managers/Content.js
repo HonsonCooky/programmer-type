@@ -95,32 +95,35 @@ export class Content extends EventTarget {
   #loadActionTestHTML(fileContents) {
     /**@type {ATFile}*/
     const instructions = JSON.parse(fileContents);
-    const stepBlocks = instructions.map((instruct, i) => {
+    const blocks = instructions.map((instruct, i) => {
       const { action, comments, content, keybind } = instruct;
 
-      const nlLine = `<div class="line newline"></div>`;
-      const commentStrs = comments.map((c) => {
-        if (c.includes("Title:")) return `<div class="line title">${c}</div>`;
-        return `<div class="line comment">// ${c}</div>`;
-      });
-      let inputDiv = "";
+      const emptyLineElement = `<div class="line"></div>`;
+
+      const commentElements = comments
+        .map((c) => {
+          if (c.includes("Title:")) return `<div class="line spec-comment">${c}</div>`;
+          return `<div class="line comment">// ${c}</div>`;
+        })
+        .join("");
+      let inputElement = "";
 
       // If the user requires come action.
       if (action && content && keybind) {
         const inputStrs = keybind.split("").map((k, j, keys) => {
-          let extras = "";
-          if (j === keys.length - 1) extras = `action="${action}" content="${content.join("\n")}"`;
-          return `<span line="${i}" ${extras}>${k}</span>`;
+          let actionTags = "";
+          if (j === keys.length - 1) actionTags = `action="${action}" content="${content.join("\n")}"`;
+          return `<span line="${i}" ${actionTags}>${k}</span>`;
         });
-        inputStrs.push(`<span class="message hide incorrect">Incorrect</span>`);
-        inputDiv = `<div class="line input">${inputStrs.join("")}</div>`;
+        inputStrs.push(`<span class="hmessage"></span>`); // Used to show action messages.
+        inputElement = `<div class="line input">${inputStrs.join("")}</div>`;
       }
 
-      return `${commentStrs.join("")}${inputDiv}${nlLine}`;
+      return `${commentElements}${inputElement}${emptyLineElement}`;
     });
 
     // Wrap it all in a div with a class to help identify the type of test.
-    this.#currentContent = `<div class="test action">${stepBlocks.join("")}</div>`;
+    this.#currentContent = `<div class="test action">${blocks.join("")}</div>`;
   }
 
   /**
@@ -186,7 +189,7 @@ export class Content extends EventTarget {
         else throw Error("Unknown suite type");
       })
       .catch((e) => {
-        this.#currentContent = `<div class="error screen">${e.message}</div>`;
+        this.#currentContent = `<div class="screen error">${e.message}</div>`;
       })
       .finally(() => {
         this.#render();

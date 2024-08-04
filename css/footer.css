@@ -1,42 +1,5 @@
 footer {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: center;
-  padding: var(--s-xs) var(--s-m);
-
-  > * {
-    display: flex;
-    column-gap: var(--s-m);
-    flex: 1;
-    flex-direction: row;
-    align-items: center;
-  }
-
-  #key-context {
-    justify-content: center;
-    min-width: 20dvw;
-    white-space: nowrap;
-  }
-
-  #info-app {
-    justify-content: end;
-
-    * {
-      white-space: nowrap;
-    }
-
-    > button {
-      padding-top: 0;
-      padding-bottom: 0;
-    }
-  }
-
-  @media screen and (max-width: 600px) {
-    #key-context {
-      display: none;
-    }
-  }
+  padding: var(--s-s) var(--s-m);
 
   @media screen and (min-width: 1440px) {
     padding: var(--s-s) calc(((100dvw - 1440px) / 2) + var(--s-m));

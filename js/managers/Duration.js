@@ -37,8 +37,8 @@ export class Duration extends EventTarget {
     const durationLabel = child.innerText.replace(/\[.*\]/, "").trim();
     Array.from(this.#options.children).forEach((child) => {
       if (child.tagName != "BUTTON") return;
-      if (child.innerText.includes(durationLabel)) child.classList.add("selected");
-      else child.classList.remove("selected");
+      if (child.innerText.includes(durationLabel)) child.className = "selected";
+      else child.className = "";
     });
     this.dispatchEvent(new CustomEvent("updated", { detail: { duration: this.#getDuration(durationLabel) } }));
   }
