@@ -185,7 +185,6 @@ main {
     }
 
     #result-canvas-sheet {
-      background-color: var(--surface);
       padding: var(--s-3xs);
     }
   }

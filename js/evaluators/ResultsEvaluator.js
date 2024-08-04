@@ -29,9 +29,7 @@ class ResultsEvaluator {
     const mean = keysEachSec.reduce((sum, value) => sum + value, 0) / keysEachSec.length;
     const variance = keysEachSec.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / keysEachSec.length;
     const sd = Math.sqrt(variance);
-    const range = Math.max(...keysEachSec) - Math.min(...keysEachSec);
-
-    return Math.round(((range - sd) / range) * 100);
+    return 100 - Math.round((sd / mean) * 100);
   }
 
   /** @param {import("./KeyboardEvaluator").TestRecording[]} recordings */
@@ -131,41 +129,66 @@ class ResultsEvaluator {
     timeElement.title = "Amount of time spent taking test.";
   }
 
-  #loadChart() {
-    //const style = getComputedStyle(document.body);
-    //const textColor = style.getPropertyValue("--text");
-    //
-    //const labels = [...Array(recordings[0].duration).keys()];
-    //const datasets = [];
-    //
-    //datasets.push({
-    //  label: "Overall",
-    //  data: recordings.map((rec) => rec.correct + rec.incorrect + rec.backspaces),
-    //  backgroundColor: textColor,
-    //  borderColor: textColor,
-    //});
-    //
-    //new Chart(canvas, {
-    //  type: "line",
-    //  data: {
-    //    labels,
-    //    datasets,
-    //  },
-    //  options: {
-    //    animation: {
-    //      duration: 0,
-    //    },
-    //  legend: { display: false },
-    //    scales: {
-    //      x: {
-    //        title: {
-    //          display: true,
-    //          text: "Seconds",
-    //        },
-    //      },
-    //    },
-    //  },
-    //});
+  /**
+   * @param {import("./KeyboardEvaluator").TestRecording[]} recordings
+   */
+  #loadChart(recordings) {
+    const resultSheet = document.getElementById("result-canvas-sheet");
+    const canvas = document.createElement("canvas");
+
+    const style = getComputedStyle(document.body);
+    const textColor = style.getPropertyValue("--text");
+
+    const labels = [...Array(recordings[0].duration).keys()];
+    const datasets = [];
+
+    datasets.push({
+      label: "Correct",
+      data: recordings.map((rec) => rec.correct - rec.incorrect),
+      backgroundColor: textColor,
+      borderColor: textColor,
+    });
+
+    new Chart(canvas, {
+      type: "line",
+      data: {
+        labels,
+        datasets,
+      },
+      options: {
+        animation: {
+          duration: 0,
+        },
+
+        legend: {
+          display: false,
+        },
+        tooltips: {
+          callbacks: {
+            label: function (tooltipItem) {
+              return tooltipItem.yLabel;
+            },
+          },
+        },
+        scales: {
+          x: {
+            title: {
+              display: true,
+              text: "Seconds",
+            },
+          },
+          y: {
+            title: {
+              display: true,
+              text: "Characters",
+            },
+          },
+        },
+      },
+    });
+
+    resultSheet.innerHTML = "";
+    resultSheet.appendChild(canvas);
   }
 
   /**
@@ -175,7 +198,7 @@ class ResultsEvaluator {
   loadResults(recordings) {
     const info = this.#generateInfo(recordings);
     this.#loadInfo(info);
-    this.#loadChart();
+    this.#loadChart(recordings);
   }
 }
 

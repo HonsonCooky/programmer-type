@@ -17,10 +17,9 @@
  * Keyboard inputs are used to navigate AND to take tests. So, it's kinda all
  * lumped together here. Previous attempts to separate these concerns resulted
  * in messy components that end up propagating events up with a master
- * evaluator. Thus, having everything in one space is currently the best
- * solution. In the event that more than two styles of tests are created, then
- * this, and the "Content" manager will need to create some overarching
- * components to manage tests.
+ * evaluator, or resulted in complicated hand-over logic for who was in charge
+ * (which gets messy when the mouse is used). Thus, having everything in one
+ * space is currently the best solution.
  */
 export class KeyboardEvaluator extends EventTarget {
   // Elements
@@ -446,7 +445,7 @@ export class KeyboardEvaluator extends EventTarget {
     this.#tokensType = "Action";
     this.#tokenIndex = 0;
     this.#tokens = Array.from(testDiv.children)
-      .filter((line) => line.classList.contains("input")) // Only interested in actionable components.
+      .filter((line) => line.classList.contains("input")) // Only interested in input components for evaluation.
       .map((line) => Array.from(line.children))
       .flat()
       .filter((char) => !char.classList.contains("message"));
