@@ -13,8 +13,10 @@ export class Content extends EventTarget {
   // State Values
   #isResultsScreen = false;
   #currentContent = "";
-  /**@type {{name: string; type: string; seenTests:string[]}|null}*/
+  /**@type {{name: string; type: string;}|null}*/
   #suite;
+  /**@type {{name: string; type: string;}|null}*/
+  #resultsSuite;
   /**@type {import("../evaluators/KeyboardEvaluator.js").TestRecording[]}*/
   #recordings = [];
 
@@ -30,7 +32,7 @@ export class Content extends EventTarget {
     this.#infoDisplayBtn.addEventListener("click", () => this.#displayInfoMessage());
 
     window.addEventListener("resize", () => {
-      if (this.#contentDisplayPane.querySelector("#result-canvas-sheet")) this.#loadResultsGraphs(this.#recordings);
+      if (this.#contentDisplayPane.querySelector("#result-canvas-sheet")) this.displayResults();
     });
   }
 
@@ -160,18 +162,6 @@ export class Content extends EventTarget {
   }
 
   //-------------------------------------------------------------------------------------------------------------------
-  // INTERNAL LOADING - RESULTS
-  //-------------------------------------------------------------------------------------------------------------------
-
-  /** @param {import("../evaluators/KeyboardEvaluator.js").TestRecording[]} recordings*/
-  #loadResultsGraphs(recordings) {
-    // Create a canvas for the graph
-    const resultsDiv = this.#contentDisplayPane.querySelector("#result-canvas-sheet");
-    resultsDiv.innerHTML = "";
-    resultsDiv.appendChild();
-  }
-
-  //-------------------------------------------------------------------------------------------------------------------
   // API
   //-------------------------------------------------------------------------------------------------------------------
 
@@ -200,8 +190,9 @@ export class Content extends EventTarget {
       })
       .finally(() => {
         this.#render();
-        if (this.#suite.type === "Action") this.dispatchEvent(new CustomEvent("actionTestLoaded"));
-        if (this.#suite.type === "Code") this.dispatchEvent(new CustomEvent("codeTestLoaded"));
+        if (this.#suite.type === "Action")
+          this.dispatchEvent(new CustomEvent("actionTestLoaded", { detail: this.#suite }));
+        if (this.#suite.type === "Code") this.dispatchEvent(new CustomEvent("codeTestLoaded", { detail: this.#suite }));
       });
   }
 
@@ -210,7 +201,12 @@ export class Content extends EventTarget {
    * @param {import("../evaluators/KeyboardEvaluator.js").TestRecording[]} recordings
    */
   displayResults(recordings) {
-    if (!recordings) recordings = this.#recordings;
+    let suite = this.#suite;
+
+    if (!recordings) {
+      suite = this.#resultsSuite;
+      recordings = this.#recordings;
+    }
 
     if (recordings.length < 2) {
       this.#currentContent = `<div class="screen">No Results</div>`;
@@ -218,6 +214,7 @@ export class Content extends EventTarget {
       return;
     }
 
+    this.#resultsSuite = suite;
     this.#recordings = recordings;
     this.#isResultsScreen = true;
 

@@ -45,8 +45,8 @@ export class Program {
     });
 
     // Test state - New Test Loaded
-    this.#content.addEventListener("actionTestLoaded", () => this.#keyEvaluator.loadActionTokens());
-    this.#content.addEventListener("codeTestLoaded", () => this.#keyEvaluator.loadCodeTokens());
+    this.#content.addEventListener("actionTestLoaded", (ev) => this.#keyEvaluator.loadActionTokens(ev.detail));
+    this.#content.addEventListener("codeTestLoaded", (ev) => this.#keyEvaluator.loadCodeTokens(ev.detail));
 
     // Test state - Test ticked = Record current results
     this.#timer.addEventListener("tick", (ev) => this.#keyEvaluator.record(ev.detail));

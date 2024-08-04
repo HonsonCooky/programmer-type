@@ -1,11 +1,12 @@
 /**
  * @typedef {{
+ * duration: number;
  *   timestamp: number;
  *   intervalId: number;
  *   correct: number;
  *   incorrect: number;
  *   backspaces: number;
- *   test: number;
+ *   test: {name: string; type: string; testNumber: number};
  * }} TestRecording
  */
 
@@ -43,6 +44,8 @@ export class KeyboardEvaluator extends EventTarget {
   #tokens = [];
 
   // Recording Items
+  /** @type {{name: string; type: string}} suite */
+  #suite;
   #testNumber = 0;
   #correct = 0;
   #incorrect = 0;
@@ -205,6 +208,7 @@ export class KeyboardEvaluator extends EventTarget {
 
   #backspace() {
     const currentToken = this.#tokens[this.#tokenIndex];
+
     // Remove indicators
     currentToken.className = "";
     if (currentToken.innerText === "\\n") currentToken.className = "newline";
@@ -367,13 +371,18 @@ export class KeyboardEvaluator extends EventTarget {
       // TODO: Remove on publish - Cheat to finish test quickly
       if (ev.key === "f") {
         this.#testRecordings = [];
-        for (let i = 0; i < Math.floor(Math.random() * 20) + 10; i++) {
+        const duration = 30;
+        for (let i = 0; i < Math.floor(Math.random() * (duration - 10)) + 10; i++) {
           this.#testRecordings.push({
+            duration: duration,
             timestamp: i,
             correct: Math.floor(Math.random() * 10),
             incorrect: Math.floor(Math.random() * 3),
             backspaces: Math.floor(Math.random() * 3),
-            test: i % 20,
+            test: {
+              ...this.#suite,
+              testNumber: Math.floor(i / 10),
+            },
           });
         }
 
@@ -402,11 +411,15 @@ export class KeyboardEvaluator extends EventTarget {
 
   record({ duration, time }) {
     this.#testRecordings.push({
+      duration,
       timestamp: duration - time,
       correct: this.#correct,
       incorrect: this.#incorrect,
       backspaces: this.#backspaces,
-      test: this.#testNumber,
+      test: {
+        ...this.#suite,
+        testNumber: this.#testNumber,
+      },
     });
 
     this.#correct = 0;
@@ -419,7 +432,10 @@ export class KeyboardEvaluator extends EventTarget {
     return JSON.parse(JSON.stringify(this.#testRecordings));
   }
 
-  loadActionTokens() {
+  /** @param {{name: string; type: string}} suite */
+  loadActionTokens(suite) {
+    this.#suite = suite;
+
     const testDiv = this.#contentDisplayPane.querySelector(".test");
     if (!testDiv || !testDiv.classList.contains("action")) {
       this.#tokens = [];
@@ -437,7 +453,10 @@ export class KeyboardEvaluator extends EventTarget {
     this.#highlightCurrentToken();
   }
 
-  loadCodeTokens() {
+  /** @param {{name: string; type: string}} suite */
+  loadCodeTokens(suite) {
+    this.#suite = suite;
+
     const testDiv = this.#contentDisplayPane.querySelector(".test");
     if (!testDiv || !testDiv.classList.contains("code")) {
       this.#tokens = [];
