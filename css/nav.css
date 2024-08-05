@@ -20,17 +20,13 @@ nav {
     font-size: var(--fs-0);
 
     > .dropdown {
-      > label {
-        white-space: nowrap;
-      }
-
       > .dropdown-content {
         left: 50%;
         row-gap: var(--s-3xs);
         flex-direction: column;
         transform: translateX(-50%);
-        background: var(--mantle);
-        padding-top: var(--s-m);
+        background: var(--surface);
+        padding: var(--s-3xs);
         width: max-content;
         min-width: 100%;
 
@@ -42,9 +38,6 @@ nav {
           width: 100%;
           text-align: start;
           white-space: nowrap;
-
-          > span {
-          }
         }
       }
     }

@@ -6,6 +6,8 @@ html {
 }
 
 body {
+  display: flex;
+  flex-direction: column;
   margin: 0;
   background: var(--base);
   min-height: 100dvh;
@@ -73,12 +75,19 @@ code {
 /* DROPDOWN */
 .dropdown {
   position: relative;
-  cursor: pointer;
+  > label {
+    cursor: pointer;
+    white-space: nowrap;
+  }
 
   > .dropdown-content {
     display: none;
     position: absolute;
     top: 100%;
+
+    > button {
+      cursor: pointer;
+    }
   }
 
   &:hover,

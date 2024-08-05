@@ -1,10 +1,26 @@
 main {
   flex: 1;
   padding: var(--s-s) var(--s-m);
-  min-height: 50dvh;
+  height: 60%;
+  min-height: 60dvh;
+  overflow-y: auto;
 
   > #_enter_content {
     scroll-margin-top: var(--s-m);
+
+    > .test {
+      > .line {
+        filter: blur(2px);
+      }
+    }
+
+    &:focus-within {
+      > .test {
+        > .line {
+          filter: none;
+        }
+      }
+    }
   }
 
   @media screen and (min-width: 1440px) {

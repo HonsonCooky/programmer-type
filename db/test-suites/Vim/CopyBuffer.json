@@ -1,10 +1,15 @@
 [
   {
-    "comments": ["Title: Application Jumping - Copy Paste", "Before starting test (on keypress), open Vim / Neovim."]
+    "comments": [
+      "Title: Copy Buffer",
+      "Open Vim/Neovim before test start."
+    ]
   },
   {
-    "keybind": "ggVG",
-    "comments": ["yank buffer: Copy the entire buffer to the clipboard."],
+    "keybind": "ggVGy",
+    "comments": [
+      "Emulated buffer yank."
+    ],
     "action": "copy",
     "content": [
       "S8ogjPokwvJMTLr3McrT7rFM",
@@ -20,16 +25,13 @@
     ]
   },
   {
-    "comments": [
-      "Jump to Vim / Neovim.",
-      "Paste the copied text.",
-      "Copy the first 5 lines to clipboard : ggV4jy.",
-      "Jump to browser."
-    ]
-  },
-  {
     "keybind": "p",
-    "comments": ["paste: Paste the first 5 lines into programmer-type."],
+    "comments": [
+      "Jump to an empty Vim/Neovim buffer.",
+      "<p> : Paste the yanked buffer.",
+      "<ggV4jy> : Yank the first 5 lines to the clipboard.",
+      "Paste the first 5 lines into programmer-type."
+    ],
     "action": "paste",
     "content": [
       "S8ogjPokwvJMTLr3McrT7rFM",
@@ -41,7 +43,11 @@
   },
   {
     "keybind": "p",
-    "comments": ["cleanup: Go To Vim / Neovim.", "Delete all content : ggVGd.", "Paste the result here."],
+    "comments": [
+      "cleanup: Go To Vim / Neovim.",
+      "Delete all content : ggVGd.",
+      "Paste the result here."
+    ],
     "action": "paste",
     "content": [
       "S8ogjPokwvJMTLr3McrT7rFM",

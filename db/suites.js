@@ -135,7 +135,7 @@ class SuiteDb {
 }
 
 /**
- * An instance of the SuiteDb class.
+ * A singleton instance of the SuiteDb class.
  * @type {SuiteDb}
  */
 export const SuiteDataBase = new SuiteDb();

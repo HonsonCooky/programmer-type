@@ -8,7 +8,7 @@ footer {
     display: flex;
     column-gap: var(--s-s);
     flex-direction: row;
-    text-align: middle;
+    align-items: center;
   }
 
   @media screen and (max-width: 600px) {
