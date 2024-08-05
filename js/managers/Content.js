@@ -152,7 +152,7 @@ export class Content extends EventTarget {
     // Map each line to a DIV of SPANs, each span being a character.
     const lineStrs = linesMapped.map(({ indent, chars }) => {
       const cStrs = chars.map((c) => `<span>${c}</span>`);
-      const nlStr = `<span class="newline">\\n</span>`;
+      const nlStr = `<span class="comment">\\n</span>`;
       const divAttr = `class="line" style="margin-left:calc(var(--fs--2) * ${indent})"`;
 
       // Little complicated, but we are just creating the DIV of SPANs with

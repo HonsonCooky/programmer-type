@@ -1,14 +1,23 @@
 footer {
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   padding: var(--s-s) var(--s-m);
 
   > div {
     display: flex;
     column-gap: var(--s-s);
+    flex: 1;
     flex-direction: row;
+    justify-content: center;
     align-items: center;
+
+    > #_c_cache {
+      color: var(--green);
+
+      &.off {
+        color: var(--red);
+      }
+    }
   }
 
   @media screen and (max-width: 600px) {

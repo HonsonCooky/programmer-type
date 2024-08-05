@@ -14,16 +14,19 @@
  * Class representing a database of test suites.
  */
 class SuiteDb {
-  #cacheBtn = document.getElementById("cache-btn");
+  #cacheBtn = document.getElementById("_c_cache");
   #lastTestName = "";
 
   constructor() {
     this.#cacheBtn.addEventListener("click", () => {
-      if (!this.#cacheBtn.checked) localStorage.clear();
-      localStorage.setItem("PTCache", this.#cacheBtn.checked);
+      this.#cacheBtn.className = this.#shoudCache() ? "off" : ""; // Toggle
+
+      if (!this.#shoudCache()) this.#clearLocalStorage();
+      localStorage.setItem("PTCache", this.#shoudCache());
     });
 
-    this.#cacheBtn.checked = localStorage.getItem("PTCache") === "true";
+    const shouldCacheInit = localStorage.getItem("PTCache") === "true" ?? false;
+    this.#cacheBtn.className = shouldCacheInit ? "" : "off";
   }
 
   /**
@@ -88,7 +91,16 @@ class SuiteDb {
 
   /** Determine if a test should be cached */
   #shoudCache() {
-    return this.#cacheBtn?.checked ?? false;
+    return !this.#cacheBtn.classList.contains("off");
+  }
+
+  #clearLocalStorage() {
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key.startsWith("PT")) {
+        localStorage.removeItem(key);
+      }
+    }
   }
 
   /**

@@ -13,10 +13,12 @@ export class Duration extends EventTarget {
       child.addEventListener("click", () => this.#selectDuration(child));
     });
 
-    this.#selectDuration(durations[0]);
+    const cachedDuration = localStorage.getItem("PTDuration");
+    const initDuration = durations.filter((c) => c.innerText.includes(cachedDuration))[0] ?? durations[0];
+    this.#selectDuration(initDuration);
 
     // Ensure post construction event listeners can trigger
-    this.init = () => this.#selectDuration(durations[0]);
+    this.init = () => this.#selectDuration(initDuration);
   }
 
   /**
@@ -40,6 +42,10 @@ export class Duration extends EventTarget {
       if (child.innerText.includes(durationLabel)) child.className = "selected";
       else child.className = "";
     });
+
+    // Save Preference
+    localStorage.setItem("PTDuration", durationLabel);
+
     this.dispatchEvent(new CustomEvent("updated", { detail: { duration: this.#getDuration(durationLabel) } }));
   }
 }

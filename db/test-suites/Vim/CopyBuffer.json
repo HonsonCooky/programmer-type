@@ -28,9 +28,9 @@
     "keybind": "p",
     "comments": [
       "Jump to an empty Vim/Neovim buffer.",
-      "<p> : Paste the yanked buffer.",
-      "<ggV4jy> : Yank the first 5 lines to the clipboard.",
-      "Paste the first 5 lines into programmer-type."
+      "p : Paste the yanked buffer.",
+      "ggV4jy : Yank the first 5 lines to the clipboard.",
+      "Emulated paste."
     ],
     "action": "paste",
     "content": [

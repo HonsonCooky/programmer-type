@@ -6,6 +6,32 @@ main {
   align-items: center;
   padding: var(--s-s) var(--s-m);
 
+  > #content-info {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: var(--s-s) var(--s-m);
+    width: 100%;
+    font-size: var(--fs-1);
+
+    > #timer-info {
+      > #timer-value {
+        color: var(--blue);
+      }
+    }
+
+    > #suite-info {
+      > #suite-value {
+        > span:first-of-type {
+          color: var(--blue);
+        }
+        > span:last-of-type {
+          color: var(--yellow);
+        }
+      }
+    }
+  }
+
   > #_enter_content {
     margin: var(--s-xs) 0;
     padding: var(--s-s) var(--s-m);
@@ -18,8 +44,18 @@ main {
     > .test {
       > .line {
         filter: blur(2px);
+        min-height: 1em;
         scroll-margin-top: var(--fs-0);
-        font-size: var(--fs-2);
+        font-size: var(--fs-3);
+
+        &.spec-comment {
+          color: var(--yellow);
+        }
+
+        &.comment,
+        .comment {
+          color: var(--overlay);
+        }
       }
     }
 

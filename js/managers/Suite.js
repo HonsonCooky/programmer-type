@@ -19,11 +19,12 @@ export class Suite extends EventTarget {
       this.#options.appendChild(suiteBtn);
     });
 
-    // Load initial suite
-    this.#selectSuite(suites[0]);
+    const cachedSuite = localStorage.getItem("PTSuite");
+    const initSuite = suites.filter((s) => s.name === cachedSuite)[0] ?? suites[0];
+    this.#selectSuite(initSuite);
 
     // Ensure post construction event listeners can trigger
-    this.init = () => this.#selectSuite(suites[0]);
+    this.init = () => this.#selectSuite(initSuite);
   }
 
   /**@param {{ name: string; type: string; shortcut: string; }} suite */
@@ -34,6 +35,10 @@ export class Suite extends EventTarget {
       if (child.innerText.includes(suite.name)) child.className = "selected";
       else child.className = "";
     });
+
+    // Save Preference
+    localStorage.setItem("PTSuite", suite.name);
+
     this.dispatchEvent(new CustomEvent("updated", { detail: suite }));
   }
 }
