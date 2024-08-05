@@ -42,6 +42,10 @@ code {
   padding: 0 var(--s-3xs);
 }
 
+.selected {
+  color: var(--blue);
+}
+
 .hide {
   visibility: hidden;
 }
@@ -60,6 +64,7 @@ code {
   }
 
   > input {
+    margin: 0;
     background-color: var(--surface);
     accent-color: var(--blue);
   }

@@ -14,10 +14,40 @@ nav {
 
   > div {
     display: flex;
-    column-gap: var(--s-s);
+    column-gap: var(--s-m);
     flex-direction: row;
     align-items: end;
     font-size: var(--fs-0);
+
+    > .dropdown {
+      > label {
+        white-space: nowrap;
+      }
+
+      > .dropdown-content {
+        left: 50%;
+        row-gap: var(--s-3xs);
+        flex-direction: column;
+        transform: translateX(-50%);
+        background: var(--mantle);
+        padding-top: var(--s-m);
+        width: max-content;
+        min-width: 100%;
+
+        > button {
+          display: flex;
+          column-gap: var(--s-s);
+          flex-direction: row;
+          justify-content: space-between;
+          width: 100%;
+          text-align: start;
+          white-space: nowrap;
+
+          > span {
+          }
+        }
+      }
+    }
   }
 
   @media screen and (min-width: 1440px) {

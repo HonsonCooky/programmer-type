@@ -1,5 +1,21 @@
 footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   padding: var(--s-s) var(--s-m);
+
+  > div {
+    display: flex;
+    column-gap: var(--s-s);
+    flex-direction: row;
+    text-align: middle;
+  }
+
+  @media screen and (max-width: 600px) {
+    > div:nth-of-type(2) {
+      display: none;
+    }
+  }
 
   @media screen and (min-width: 1440px) {
     padding: var(--s-s) calc(((100dvw - 1440px) / 2) + var(--s-m));

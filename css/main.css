@@ -1,5 +1,11 @@
 main {
+  flex: 1;
   padding: var(--s-s) var(--s-m);
+  min-height: 50dvh;
+
+  > #_enter_content {
+    scroll-margin-top: var(--s-m);
+  }
 
   @media screen and (min-width: 1440px) {
     padding: var(--s-s) calc(((100dvw - 1440px) / 2) + var(--s-m));

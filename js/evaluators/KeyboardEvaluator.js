@@ -56,6 +56,8 @@ export class KeyboardEvaluator extends EventTarget {
     super();
 
     this.#contentDisplayPane.addEventListener("focusin", () => {
+      this.#contentDisplayPane.scrollIntoView();
+
       if (this.#isActiveTest()) {
         this.#contextDisplayText.innerText = "[:q] Quit";
         return;
