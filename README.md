@@ -41,6 +41,6 @@ ProgrammerType), the aim for ProgrammerType differs in it's intention for what s
 ProgrammerType was developed because I was having trouble quickly identifying issues with new keyboard layouts. I would
 use MonkeyType to quickly identify any major issues, however, I often found that it wasn't until I attempted to program
 with my new layout that I would actually identify most of the issues I hadn't accounted for; Consecutive special
-characters and commonly used keyboard shortcuts (`Alt + Tab`, `Ctrl + Tab`, etc). ProgrammerType was primarily design as
-a solution to this particular issue. It's ability to perform as a tool beyond this scope is viable, but not it's primary
-purpose.
+characters and commonly used keyboard shortcuts (`Alt + Tab`, `Ctrl + Tab`, etc). ProgrammerType was primarily designed
+as a solution to this particular issue. It's ability to perform as a tool beyond this scope is viable, but not it's
+primary purpose.
