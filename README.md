@@ -4,7 +4,7 @@ The typing test for developers with skill issues.
 
 ## How'd We Get Here?
 
-<sarcasm>
+\<sarcasm\>
 
 Good question, I'm glad you asked. After finishing University I started working corporate. As any developer who has made
 this change will know; I felt empty with the interpreted meaninglessness of what I was accomplishing. Of course, this
@@ -19,7 +19,7 @@ old "its because of the color scheme" approach. Once this stopped working, I stu
 go blazingly-fast". 2 years later, 181 commits to my Neovim configuration, 3 different keyboards, and here we are;
 Building a web application to resolve problems you encounter when you reinvent the wheel.
 
-</sarcasm>
+\</sarcasm\>
 
 ## What is ProgrammerType?
 
