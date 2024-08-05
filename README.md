@@ -1,6 +1,6 @@
 # ProgrammerType
 
-ProgrammerType: The typing test for developers with skill issues.
+The typing test for developers with skill issues.
 
 ## How'd We Get Here?
 
