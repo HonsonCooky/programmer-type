@@ -39,14 +39,14 @@ main {
     height: 50dvh;
     min-height: 500px;
     overflow-y: auto;
-    scroll-margin-top: var(--s-m);
+    scroll-margin-top: var(--fs-3);
 
     > .test {
       > .line {
         filter: blur(2px);
         min-height: 1em;
         scroll-margin-top: var(--fs-0);
-        font-size: var(--fs-3);
+        font-size: var(--fs-2);
 
         &.spec-comment {
           color: var(--yellow);
@@ -56,6 +56,29 @@ main {
         .comment {
           color: var(--overlay);
         }
+
+        > .correct {
+          color: var(--green);
+        }
+        > .incorrect {
+          color: var(--red);
+        }
+        > .sincorrect {
+          background-color: var(--red);
+        }
+        > .hmessage {
+          display: none;
+          margin-left: var(--fs-2);
+
+          &.show {
+            display: inline-block;
+          }
+        }
+        /*- **.correct**: Indication of correct input*/
+        /*- **.incorrect**: Indication of incorrect input*/
+        /*- **.sincorrect**: Incorrect input is a space*/
+        /*- **.hmessage**: A hidden message at the end of a line that is shown to indicate action state*/
+        /*- **.hmessage show**: Show the hidden message at the end of a line*/
       }
     }
 

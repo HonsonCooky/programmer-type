@@ -52,24 +52,13 @@ code {
   visibility: hidden;
 }
 
-/* CHECKBOX */
-.checkbox {
-  cursor: pointer;
-
-  * {
-    cursor: pointer;
-  }
-
-  > label {
-    user-select: none;
-    white-space: nowrap;
-  }
-
-  > input {
-    margin: 0;
-    background-color: var(--surface);
-    accent-color: var(--blue);
-  }
+.screen {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
 
 /* DROPDOWN */

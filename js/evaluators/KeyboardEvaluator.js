@@ -51,6 +51,7 @@ export class KeyboardEvaluator extends EventTarget {
   #backspaces = 0;
   /**@type {TestRecording[]}*/
   #testRecordings = [];
+  #lastFlickerInterval;
 
   constructor() {
     super();
@@ -218,22 +219,27 @@ export class KeyboardEvaluator extends EventTarget {
     this.#backspaces++;
   }
 
-  #resetLine(ln, errMsg = "Incorrect") {
+  #resetLine(ln) {
     const lineElements = this.#tokens.filter((e) => e.getAttribute("line") === ln);
-    const parent = lineElements[0].parentElement;
-
     let len = lineElements.findIndex((e) => e.className === "");
     if (len < 0) len = lineElements.length;
     len--;
-    console.log(len);
     for (let i = 0; i < len; i++) this.#backspace();
+  }
 
-    const msg = parent.querySelector(".hmessage");
-    if (msg) {
-      msg.innerText = errMsg;
-      msg.classList.add("show");
-      setTimeout(() => msg.classList.remove("show"), 500);
-    }
+  /**@param {{txt: string; mod: string;}} msg */
+  #flickerActionMessage(msg) {
+    //clearInterval(this.#lastFlickerInterval);
+    //const parent = this.#tokens[this.#tokenIndex].parentElement;
+    //const msgElement = parent.querySelector(".hmessage");
+    //msgElement.innerText = msg.txt;
+    //msgElement.classList.add("show");
+    //msgElement.classList.add(msg.mod);
+    //this.#lastFlickerInterval = setInterval(() => {
+    //  msgElement.classList.remove("show");
+    //  msgElement.classList.remove(msg.mod);
+    //  msgElement.innerText = "";
+    //}, 500);
   }
 
   #controlBackspace() {
@@ -257,32 +263,51 @@ export class KeyboardEvaluator extends EventTarget {
 
   /**@param {string} content */
   #copyText(content, ln) {
+    this.#locked = true;
+
     navigator.clipboard
       .writeText(content)
-      .then(() => this.#correctActionInput())
+      .then(() => {
+        this.#flickerActionMessage({ txt: "Copied Text", mod: "comment" });
+        this.#correctActionInput();
+      })
       .catch(() => {
-        this.#resetLine(ln, "Unable to copy to clipboard");
+        this.#flickerActionMessage({ txt: "Unable to copy to clipboard", mod: "incorrect" });
+        this.#resetLine(ln);
       })
       .finally(() => (this.#locked = false));
+
     return "copying";
   }
 
   /**@param {string} content */
   #pasteText(content, ln) {
+    this.#locked = true;
     const sanitizedContent = content.replaceAll(/\s/g, "");
 
     navigator.clipboard
       .readText()
       .then((input) => {
+        console.log("here2");
+        this.#flickerActionMessage({ txt: "Evaluating...", mod: "comment" });
         const sanitizedInput = input.replaceAll(/\s/g, "");
+
         if (sanitizedContent != sanitizedInput) {
-          this.#resetLine(ln, "Incorrect Pasted Text");
+          this.#flickerActionMessage({ txt: "Incorrect Pasted Text", mod: "incorrect" });
+          this.#resetLine(ln);
           return;
         }
+
+        this.#flickerActionMessage({ txt: "Pasted Text", mod: "comment" });
         this.#correctActionInput();
       })
-      .catch(() => this.#resetLine(ln, "Unable to read from clipboard"))
+      .catch(() => {
+        console.log("here3");
+        this.#flickerActionMessage({ txt: "Unable to read from clipboard", mod: "incorrect" });
+        this.#resetLine(ln);
+      })
       .finally(() => (this.#locked = false));
+
     return "pasting";
   }
 
@@ -317,15 +342,13 @@ export class KeyboardEvaluator extends EventTarget {
 
     if (currentToken.className.includes("incorrect")) {
       this.#tokenIndex--; // Revert jump to next from code evaluation
+      this.#flickerActionMessage({ txt: "Incorrect Input", mod: "incorrect" });
       this.#resetLine(currentToken.getAttribute("line"));
       return;
     }
 
     const action = this.#actionInterpreter(currentToken);
-    if (action) {
-      this.#locked = true;
-      this.#tokenIndex--;
-    }
+    if (action) this.#tokenIndex--;
   }
 
   /**@param {KeyboardEvent} ev */
@@ -392,6 +415,8 @@ export class KeyboardEvaluator extends EventTarget {
 
     if (ev.key === ":") this.#commandPrimed = true;
     else this.#commandPrimed = false;
+
+    if (this.#locked) return;
 
     if (this.#tokensType === "Action") this.#actionEvaluation(ev);
     if (this.#tokensType === "Code") this.#codeEvaluation(ev);
@@ -481,8 +506,6 @@ export class KeyboardEvaluator extends EventTarget {
   keydown(ev) {
     // Ignore modifier only events
     if (["alt", "control", "meta", "shift"].includes(ev.key.toLowerCase())) return;
-
-    if (this.#locked) return;
 
     if (this.#isActiveTest()) this.#testEvaluation(ev);
     else this.#navEvaluation(ev);
